@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="es">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#172d2b"><title>LUMBRAL · El llamado</title><link rel="stylesheet" href="src/style.css"></head>
+<body>
+<main>
+<header><a class="brand" href="./">LUMBRAL<span>UNA AVENTURA DE FE</span></a><button id="reset" class="quiet">Reiniciar</button></header>
+<section class="chapter"><p class="eyebrow">CAPÍTULO 01 · GALILEA</p><h1>El llamado</h1><p>Todo gran camino comienza con un pequeño acto de amor.</p></section>
+<section class="game" aria-label="Aventura de exploración">
+<div class="quest"><span class="quest-icon">✦</span><div><small>TU CAMINO</small><p id="objective" aria-live="polite"></p></div><span id="progress"></span></div>
+<div class="viewport"><canvas id="world" width="480" height="320" tabindex="0" aria-label="Mapa de la aldea. Usa las flechas o WASD para caminar y E para interactuar."></canvas><div class="location">ORILLAS DE GALILEA <span>✦</span></div>
+<div id="intro" class="overlay"><div class="card"><p class="eyebrow">UN NUEVO COMIENZO</p><h2>Un paso de fe.</h2><p>Eres un discípulo al comienzo de su camino. Explora la aldea, escucha a sus habitantes y prepárate para acompañar a Jesús.</p><button id="start">Comenzar aventura <span>→</span></button><small>Escena y diálogos originales inspirados en los Evangelios.</small></div></div>
+<div id="dialog" class="dialog" hidden role="dialog" aria-modal="true" aria-labelledby="speaker"><small id="speaker"></small><p id="speech"></p><button id="next">Continuar →</button></div>
+<div id="ending" class="overlay" hidden><div class="card"><p class="eyebrow">PRIMER RECORRIDO COMPLETADO</p><h2>El camino continúa.</h2><p>Escuchaste, ayudaste y diste el primer paso para acompañar a Jesús.</p><p>Fin de este prototipo. La aventura apenas comienza.</p><button id="replay">Volver a jugar →</button></div></div>
+</div>
+<div class="controls"><div class="dpad" aria-label="Controles de movimiento"><button data-move="up" aria-label="Caminar arriba">▲</button><button data-move="left" aria-label="Caminar izquierda">◀</button><button data-move="down" aria-label="Caminar abajo">▼</button><button data-move="right" aria-label="Caminar derecha">▶</button></div><p id="hint">Explora a tu ritmo.<br><span>WASD / flechas para caminar</span></p><button id="action" disabled>Hablar <kbd>E</kbd></button></div>
+</section>
+<footer><span>EXPLORAR · ESCUCHAR · SERVIR</span><p>Prototipo 0.1 · Pixel art provisional · Sin citas bíblicas textuales</p></footer>
+</main><script type="module" src="src/game.js"></script>
+</body></html>

@@ -1,0 +1,566 @@
+{
+ "id": "cap2",
+ "titulo": "Capítulo 2 · Pozo Hondo",
+ "subtitulo": "Agua para la sed que no se ve",
+ "mirar_inicio": 0,
+ "suelo": ",",
+ "ambiente": {
+  "cielo_arriba": "#2a2a5a",
+  "cielo_horizonte": "#d98a5a",
+  "luz_ambiente": "#a08070",
+  "energia_ambiente": 0.75,
+  "niebla": "#6a4a48",
+  "densidad_niebla": 0.015,
+  "sol_color": "#ffb37a",
+  "sol_energia": 0.7,
+  "sol_rotacion": [
+   -20,
+   60
+  ]
+ },
+ "mapa": [
+  "############################",
+  "#,,,,,,,,,,,,,,,,,,,RRRRRRR#",
+  "#,HHHH,,,,,,,,,,,,,,R,,s,,R#",
+  "#,HHHH,,,,,,,,,,,,,,R,,,,,R#",
+  "#,HHHH,,,,T,,,,,,,,,RRRbRRR#",
+  "#,,,4,,,,,,,,,,,,,,,,,,,,,,#",
+  "#,,,,,,,,,,,,,,,,,,,,,,,,,,#",
+  "#,,,T,,,,,,,,w2,,,,,,,,,,,,#",
+  "#,,,,,,,,,,,,,,,,,,,,,,,,,,#",
+  "#,,,,,,,,,,,,i,,,,,,,,,,,,,#",
+  "#,,,,,,,,,,,,,,,,,,,,,FFFF,#",
+  "#,,HHH,,,,,,,,,,,,,,,,F3,,,S",
+  "#,,HHH,,,,,,,,,,,,,,,,FFFF,#",
+  "#,,,,,,,,,T,,,,,,,,,,,,,,,,#",
+  "#,,,,,,,,,,,,,,,,HHH,,,T,,,#",
+  "#,,,,,,,,,,,,,,,,HHH,,,,,,,#",
+  "#,T,,,,,,1P,,,,,,,,,,,,T,,,#",
+  "############################"
+ ],
+ "leyenda": {
+  "1": {
+   "tipo": "npc",
+   "nombre": "Caminante",
+   "sprite": "caminante",
+   "seguir": true,
+   "dialogos": [
+    {
+     "si": [
+      "flag:pozo_reparado"
+     ],
+     "id": "caminante2_despues"
+    },
+    {
+     "id": "caminante2_charla"
+    }
+   ]
+  },
+  "2": {
+   "tipo": "npc",
+   "nombre": "Noemí",
+   "sprite": "noemi",
+   "dialogos": [
+    {
+     "si": [
+      "flag:pozo_reparado"
+     ],
+     "id": "noemi_final"
+    },
+    {
+     "si": [
+      "flag:hablo_noemi"
+     ],
+     "id": "noemi_espera"
+    },
+    {
+     "id": "noemi_inicio"
+    }
+   ]
+  },
+  "3": {
+   "tipo": "npc",
+   "nombre": "Jared",
+   "sprite": "jared",
+   "dialogos": [
+    {
+     "si": [
+      "flag:jared_dio"
+     ],
+     "id": "jared_final"
+    },
+    {
+     "si": [
+      "flag:hablo_noemi"
+     ],
+     "id": "jared_inicio"
+    },
+    {
+     "id": "jared_lejos"
+    }
+   ]
+  },
+  "4": {
+   "tipo": "npc",
+   "nombre": "Abuela Ana",
+   "sprite": "abuela",
+   "dialogos": [
+    {
+     "si": [
+      "flag:dio_piedra_abuela"
+     ],
+     "id": "abuela_final"
+    },
+    {
+     "id": "abuela_inicio"
+    }
+   ]
+  },
+  "w": {
+   "tipo": "mecanismo",
+   "modelo": "pozo",
+   "requiere": [
+    "cont:piezas>=3"
+   ],
+   "flag_activo": "pozo_reparado",
+   "efectos": {
+    "flag": "pozo_reparado",
+    "luz": 20,
+    "esperanza": 1
+   },
+   "dialogo_listo": "pozo_listo",
+   "dialogo_falta": "pozo_falta",
+   "dialogo_hecho": "pozo_hecho"
+  },
+  "i": {
+   "tipo": "letrero",
+   "dialogo": "letrero_pozo"
+  },
+  "s": {
+   "tipo": "objeto",
+   "id": "piedra_rocas",
+   "icono": "pieza",
+   "color_luz": "#80c0ff",
+   "dialogo": "hallazgo_piedra",
+   "efectos": {
+    "sumar": {
+     "piezas": 1
+    },
+    "secreto": 1,
+    "luz": 5,
+    "aviso": "Piedra del brocal encontrada"
+   }
+  },
+  "S": {
+   "tipo": "salida",
+   "requiere": [
+    "flag:pozo_reparado"
+   ],
+   "dialogo_cerrado": "salida_cerrada2"
+  }
+ },
+ "objetivos": [
+  {
+   "texto": "Habla con Noemí junto al pozo",
+   "hecho": [
+    "flag:hablo_noemi"
+   ]
+  },
+  {
+   "texto": "Reúne las tres piedras del brocal (abuela Ana, rocas del norte, Jared)",
+   "hecho": [
+    "cont:piezas>=3"
+   ]
+  },
+  {
+   "texto": "Repara el pozo",
+   "hecho": [
+    "flag:pozo_reparado"
+   ]
+  },
+  {
+   "texto": "Sal por la puerta del este",
+   "hecho": [
+    "flag:__nunca"
+   ]
+  }
+ ],
+ "intro": [
+  {
+   "quien": "",
+   "texto": "Tras dos días de camino, Ezra y el Caminante llegan a Pozo Hondo."
+  },
+  {
+   "quien": "",
+   "texto": "La arena cubre las calles. El pozo del pueblo lleva años seco."
+  },
+  {
+   "quien": "Caminante",
+   "texto": "Aquí la gente tiene sed de agua... y de algo más."
+  }
+ ],
+ "epilogo": [
+  {
+   "quien": "Caminante",
+   "texto": "Más allá del desierto están las ruinas de Peniel."
+  },
+  {
+   "quien": "Caminante",
+   "texto": "Allí, dicen, alguien luchó toda una noche... y al amanecer salió bendecido."
+  }
+ ],
+ "dialogos": {
+  "caminante2_charla": [
+   {
+    "quien": "Caminante",
+    "texto": "Un pozo seco y dos corazones secos. A veces se arreglan juntos."
+   }
+  ],
+  "caminante2_despues": [
+   {
+    "quien": "Caminante",
+    "texto": "El agua viva no se guarda: se comparte."
+   }
+  ],
+  "noemi_inicio": [
+   {
+    "quien": "Noemí",
+    "texto": "Bienvenidos a Pozo Hondo... aunque ya no le queda nada de hondo."
+   },
+   {
+    "quien": "Noemí",
+    "texto": "El brocal del pozo se rompió en tres piedras. Sin ellas, el agua no sube."
+   },
+   {
+    "quien": "Noemí",
+    "texto": "Una la guarda la abuela Ana. Otra se perdió entre las rocas del norte. Y la tercera..."
+   },
+   {
+    "quien": "Noemí",
+    "texto": "La tercera la tiene Jared. Se la llevó cuando se fue... después de nuestra pelea.",
+    "opciones": [
+     {
+      "texto": "¿Qué pasó entre ustedes?",
+      "siguiente": "noemi_historia"
+     },
+     {
+      "texto": "Traeré las tres piedras.",
+      "efectos": {
+       "esperanza": 1,
+       "flag": "hablo_noemi"
+      }
+     }
+    ]
+   }
+  ],
+  "noemi_historia": [
+   {
+    "quien": "Noemí",
+    "texto": "Lo acusé de robar el agua de mi familia. Delante de todos."
+   },
+   {
+    "quien": "Noemí",
+    "texto": "Después supe que no había sido él. Pero nunca le pedí perdón... y él nunca volvió a hablarme.",
+    "opciones": [
+     {
+      "texto": "Quizás todavía estás a tiempo de pedírselo.",
+      "efectos": {
+       "perdon": 1,
+       "flag": "hablo_noemi"
+      }
+     },
+     {
+      "texto": "Traeré las piedras... y quizás también una conversación.",
+      "efectos": {
+       "amor": 1,
+       "flag": "hablo_noemi"
+      }
+     }
+    ]
+   }
+  ],
+  "noemi_espera": [
+   {
+    "quien": "Noemí",
+    "texto": "Junta las tres piedras y tráelas al pozo. Yo no me muevo de aquí."
+   }
+  ],
+  "noemi_final": [
+   {
+    "quien": "Noemí",
+    "texto": "El agua volvió... y algo más volvió también.",
+    "si": [
+     "flag:jared_reconciliado"
+    ]
+   },
+   {
+    "quien": "Noemí",
+    "texto": "El agua volvió. Ojalá algún día también vuelva Jared.",
+    "si": [
+     "!flag:jared_reconciliado"
+    ]
+   }
+  ],
+  "abuela_inicio": [
+   {
+    "quien": "Abuela Ana",
+    "texto": "Ven, hijo, siéntate. Hace tanto que nadie me visita..."
+   },
+   {
+    "quien": "Abuela Ana",
+    "texto": "¿La piedra del brocal? Sí, la guardo desde que se rompió."
+   },
+   {
+    "quien": "Abuela Ana",
+    "texto": "Pero antes, ¿escucharías a esta anciana un ratito?",
+    "opciones": [
+     {
+      "texto": "Claro, cuénteme. Tengo tiempo.",
+      "efectos": {
+       "amor": 1
+      },
+      "siguiente": "abuela_escucha"
+     },
+     {
+      "texto": "Lo siento, tengo prisa.",
+      "siguiente": "abuela_prisa"
+     }
+    ]
+   }
+  ],
+  "abuela_escucha": [
+   {
+    "quien": "Abuela Ana",
+    "texto": "Cuando era niña, este pozo cantaba. El agua sonaba como una canción..."
+   },
+   {
+    "quien": "Abuela Ana",
+    "texto": "Mi madre decía: el que bebe del agua que Él da, nunca más tendrá sed."
+   },
+   {
+    "quien": "Abuela Ana",
+    "texto": "Toma la piedra. Y vuelve a visitarme, ¿sí?",
+    "efectos": {
+     "sumar": {
+      "piezas": 1
+     },
+     "flag": "dio_piedra_abuela",
+     "aviso": "Piedra del brocal obtenida"
+    }
+   }
+  ],
+  "abuela_prisa": [
+   {
+    "quien": "Abuela Ana",
+    "texto": "Los jóvenes siempre corren... Está bien, toma la piedra. Que Dios te acompañe.",
+    "efectos": {
+     "sumar": {
+      "piezas": 1
+     },
+     "flag": "dio_piedra_abuela",
+     "aviso": "Piedra del brocal obtenida"
+    }
+   }
+  ],
+  "abuela_final": [
+   {
+    "quien": "Abuela Ana",
+    "texto": "¿Oyes? El pozo vuelve a cantar. Gracias por venir, hijo.",
+    "si": [
+     "flag:pozo_reparado"
+    ]
+   },
+   {
+    "quien": "Abuela Ana",
+    "texto": "Cada piedra cuenta, hijo. Igual que cada persona.",
+    "si": [
+     "!flag:pozo_reparado"
+    ]
+   }
+  ],
+  "jared_lejos": [
+   {
+    "quien": "Jared",
+    "texto": "No tengo nada que decirle a nadie de este pueblo."
+   }
+  ],
+  "jared_inicio": [
+   {
+    "quien": "Jared",
+    "texto": "¿Vienes de parte de Noemí? Entonces vete."
+   },
+   {
+    "quien": "Jared",
+    "texto": "Me acusó delante de todos. Me quitó el nombre. ¿Y ahora quiere mi piedra?",
+    "opciones": [
+     {
+      "texto": "Ella sabe que se equivocó. Le duele no haberte pedido perdón.",
+      "efectos": {
+       "perdon": 1
+      },
+      "siguiente": "jared_suaviza"
+     },
+     {
+      "texto": "Tienes razón en estar herido. No vengo a obligarte.",
+      "efectos": {
+       "amor": 1
+      },
+      "siguiente": "jared_suaviza"
+     },
+     {
+      "texto": "Esa piedra no es tuya. Devuélvela.",
+      "siguiente": "jared_duro"
+     }
+    ]
+   }
+  ],
+  "jared_duro": [
+   {
+    "quien": "Jared",
+    "texto": "...¿Ves? Todos aquí hablan igual."
+   },
+   {
+    "quien": "Jared",
+    "texto": "Pero el pueblo tiene sed, y eso no es culpa de los niños. Toma la piedra.",
+    "efectos": {
+     "sumar": {
+      "piezas": 1
+     },
+     "flag": "jared_dio",
+     "aviso": "Piedra del brocal obtenida"
+    }
+   },
+   {
+    "quien": "",
+    "texto": "Jared te da la piedra sin mirarte."
+   }
+  ],
+  "jared_suaviza": [
+   {
+    "quien": "Jared",
+    "texto": "¿Ella dijo eso?"
+   },
+   {
+    "quien": "Jared",
+    "texto": "Cargué este enojo tanto tiempo que ya no recuerdo cómo era vivir sin él."
+   },
+   {
+    "quien": "Jared",
+    "texto": "Toma la piedra. Y dile a Noemí... que la espero junto al pozo.",
+    "efectos": {
+     "sumar": {
+      "piezas": 1
+     },
+     "flag": [
+      "jared_dio",
+      "jared_reconciliado"
+     ],
+     "aviso": "Piedra del brocal obtenida"
+    }
+   }
+  ],
+  "jared_final": [
+   {
+    "quien": "Jared",
+    "texto": "Quizás mañana hable con ella. Quizás hoy."
+   }
+  ],
+  "letrero_pozo": [
+   {
+    "quien": "",
+    "texto": "Hay palabras grabadas en el borde del pozo:"
+   },
+   {
+    "quien": "",
+    "texto": "«Todo el que beba de esta agua volverá a tener sed; pero el que beba del agua que yo le daré, no tendrá sed jamás.»"
+   },
+   {
+    "quien": "",
+    "texto": "(Juan 4:13-14)"
+   }
+  ],
+  "hallazgo_piedra": [
+   {
+    "quien": "",
+    "texto": "Entre las rocas, cubierta de arena, encuentras una piedra tallada del brocal."
+   }
+  ],
+  "pozo_falta": [
+   {
+    "quien": "",
+    "texto": "El pozo está seco. Al brocal le faltan tres piedras talladas.",
+    "si": [
+     "!cont:piezas>=1"
+    ]
+   },
+   {
+    "quien": "",
+    "texto": "Colocas lo que tienes, pero al brocal todavía le faltan piedras.",
+    "si": [
+     "cont:piezas>=1"
+    ]
+   }
+  ],
+  "pozo_listo": [
+   {
+    "quien": "",
+    "texto": "Colocas las tres piedras. Encajan perfectamente."
+   },
+   {
+    "quien": "",
+    "texto": "Un rumor sube desde lo hondo... ¡el agua vuelve a subir!"
+   },
+   {
+    "quien": "Noemí",
+    "texto": "¡Agua! ¡Hay agua otra vez!"
+   },
+   {
+    "quien": "Jared",
+    "texto": "Noemí...",
+    "si": [
+     "flag:jared_reconciliado"
+    ]
+   },
+   {
+    "quien": "Noemí",
+    "texto": "Jared... perdóname. Debí decírtelo hace años.",
+    "si": [
+     "flag:jared_reconciliado"
+    ]
+   },
+   {
+    "quien": "Jared",
+    "texto": "Ya está. Hoy volvió el agua... y yo también.",
+    "si": [
+     "flag:jared_reconciliado"
+    ]
+   },
+   {
+    "quien": "Noemí",
+    "texto": "Ojalá Jared estuviera aquí para verlo.",
+    "si": [
+     "!flag:jared_reconciliado"
+    ]
+   },
+   {
+    "quien": "Caminante",
+    "texto": "El perdón a veces toma tiempo. No pierdas la esperanza.",
+    "si": [
+     "!flag:jared_reconciliado"
+    ]
+   }
+  ],
+  "pozo_hecho": [
+   {
+    "quien": "",
+    "texto": "El agua brilla bajo la luz de tu candil."
+   }
+  ],
+  "salida_cerrada2": [
+   {
+    "quien": "Caminante",
+    "texto": "Todavía no. Este pueblo necesita su agua."
+   }
+  ]
+ }
+}
