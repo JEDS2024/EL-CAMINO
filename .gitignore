@@ -5,3 +5,16 @@
 builds/
 export_credentials.cfg
 __pycache__/
+
+# Prototipo "El llamado" de Codex: se queda en la PC, fuera de este repo
+godot/
+src/
+docs/
+tests/
+index.html
+server.mjs
+package.json
+.codex/
+.agents/
+.aws/
+EL-CAMINO/

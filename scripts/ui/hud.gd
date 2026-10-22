@@ -163,11 +163,11 @@ func mostrar_titulo(titulo: String, subtitulo: String) -> void:
 	t.parallel().tween_property(_subtitulo, "modulate:a", 0.0, 1.0)
 
 
-func mostrar_aviso(texto: String, _icono: String) -> void:
+func mostrar_aviso(texto: String, _icono: String, segundos := 1.6) -> void:
 	if _tween_aviso:
 		_tween_aviso.kill()
 	_aviso.text = texto
 	_aviso.modulate.a = 1.0
 	_tween_aviso = create_tween()
-	_tween_aviso.tween_interval(1.6)
+	_tween_aviso.tween_interval(segundos)
 	_tween_aviso.tween_property(_aviso, "modulate:a", 0.0, 0.8)

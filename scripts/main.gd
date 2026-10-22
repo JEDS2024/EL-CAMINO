@@ -132,7 +132,14 @@ func iniciar_capitulo(i: int) -> void:
 	if not Juego.flags.get(marca, false):
 		Juego.flags[marca] = true
 		await get_tree().create_timer(2.2).timeout
-		_abrir_dialogo(datos_cap.get("intro", []))
+		_abrir_dialogo(datos_cap.get("intro", []), _ayuda_controles if i == 0 else Callable())
+
+
+func _ayuda_controles() -> void:
+	var texto := "Joystick para caminar · desliza en el resto de la pantalla para mirar"
+	if not DisplayServer.is_touchscreen_available():
+		texto = "WASD: caminar · Flechas o arrastrar el mouse: mirar · E: interactuar · C: vista"
+	hud.mostrar_aviso(texto, "", 6.0)
 
 
 func terminar_capitulo() -> void:
@@ -279,11 +286,10 @@ func mostrar_titulo() -> void:
 	_modo_juego(false)
 	_cargar_nivel(0)
 	en_titulo = true
-	jugador.sprite.visible = false
 	jugador.brazo.spring_length = 9.0
 	jugador.pitch = -0.35
 	var col := _pantalla(0.45)
-	_texto(col, "LUMBRAL", 120, Color("ffd36b"))
+	_texto(col, "EL CAMINO", 120, Color("ffd36b"))
 	_texto(col, "Una aventura de fe, esperanza, amor y perdón", 30, Color(1, 1, 1, 0.85))
 	col.add_child(Control.new())
 	if Juego.hay_partida():
@@ -295,7 +301,7 @@ func mostrar_titulo() -> void:
 
 func _elegir_vista() -> void:
 	var col := _pantalla(0.6)
-	_texto(col, "¿Cómo quieres recorrer Lumbral?", 46, Color("ffd36b"))
+	_texto(col, "¿Cómo quieres recorrer el camino?", 46, Color("ffd36b"))
 	_boton(col, "Primera persona — ver con los ojos de Ezra", func():
 		Juego.nueva_partida(true)
 		iniciar_capitulo(0))
@@ -369,7 +375,7 @@ func _mostrar_final() -> void:
 		var col := _pantalla(0.85)
 		_texto(col, "Fin del primer viaje", 60, Color("ffd36b"))
 		_texto(col, "«¿No ardía nuestro corazón mientras nos hablaba en el camino?» — Lucas 24:32", 30)
-		_texto(col, "Gracias por jugar este prototipo de Lumbral.", 26, Color(1, 1, 1, 0.8))
+		_texto(col, "Gracias por jugar este prototipo de El Camino.", 26, Color(1, 1, 1, 0.8))
 		_boton(col, "Volver al inicio", func():
 			if FileAccess.file_exists(Juego.RUTA_PARTIDA):
 				DirAccess.remove_absolute(ProjectSettings.globalize_path(Juego.RUTA_PARTIDA))

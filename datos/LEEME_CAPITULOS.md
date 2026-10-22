@@ -1,4 +1,4 @@
-# Cómo crear capítulos de Lumbral
+# Cómo crear capítulos de El Camino
 
 Cada capítulo es un archivo JSON en `datos/capitulos/`. Para agregar uno nuevo:
 

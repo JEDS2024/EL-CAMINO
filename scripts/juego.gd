@@ -34,8 +34,10 @@ func _ready() -> void:
 
 func _registrar_acciones() -> void:
 	var mapa := {
-		"mover_arriba": [KEY_W, KEY_UP], "mover_abajo": [KEY_S, KEY_DOWN],
-		"mover_izquierda": [KEY_A, KEY_LEFT], "mover_derecha": [KEY_D, KEY_RIGHT],
+		"mover_arriba": [KEY_W], "mover_abajo": [KEY_S],
+		"mover_izquierda": [KEY_A], "mover_derecha": [KEY_D],
+		"mirar_izquierda": [KEY_LEFT, KEY_J], "mirar_derecha": [KEY_RIGHT, KEY_L],
+		"mirar_arriba": [KEY_UP, KEY_I], "mirar_abajo": [KEY_DOWN, KEY_K],
 		"interactuar": [KEY_E, KEY_SPACE, KEY_ENTER], "cambiar_vista": [KEY_C, KEY_V],
 		"pausa": [KEY_ESCAPE, KEY_P],
 	}

@@ -1,7 +1,7 @@
 class_name ControlesTactiles
 extends Control
-## Joystick virtual (mitad izquierda) y arrastrar para mirar (mitad derecha).
-## Con "emulate_touch_from_mouse" también funciona con el mouse en la PC.
+## Joystick virtual (abajo a la izquierda) y arrastrar en cualquier otra parte para mirar.
+## En la PC: clic izquierdo funciona como un dedo y el clic derecho arrastrado también mira.
 
 signal mover(v: Vector2)
 signal mirar(delta: Vector2)
@@ -41,7 +41,7 @@ func _input(ev: InputEvent) -> void:
 		if ev.pressed:
 			if _sobre_boton(ev.position):
 				return
-			if ev.position.x < size.x * 0.42 and _idx_joy == -1:
+			if _en_zona_joystick(ev.position) and _idx_joy == -1:
 				_idx_joy = ev.index
 				_origen = ev.position
 				_pos = ev.position
@@ -55,6 +55,8 @@ func _input(ev: InputEvent) -> void:
 				queue_redraw()
 			if ev.index == _idx_mirar:
 				_idx_mirar = -1
+	elif ev is InputEventMouseMotion and ev.button_mask & MOUSE_BUTTON_MASK_RIGHT:
+		mirar.emit(ev.relative)
 	elif ev is InputEventScreenDrag:
 		if ev.index == _idx_joy:
 			_pos = ev.position
@@ -62,6 +64,10 @@ func _input(ev: InputEvent) -> void:
 			queue_redraw()
 		elif ev.index == _idx_mirar:
 			mirar.emit(ev.relative)
+
+
+func _en_zona_joystick(p: Vector2) -> bool:
+	return p.x < size.x * 0.4 and p.y > size.y * 0.35
 
 
 func _draw() -> void:

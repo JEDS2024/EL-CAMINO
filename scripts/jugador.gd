@@ -16,7 +16,7 @@ var entrada_tactil := Vector2.ZERO
 var pivote: Node3D
 var brazo: SpringArm3D
 var camara: Camera3D
-var sprite: SpritePersonaje
+var modelo: Personaje3D
 var candil: OmniLight3D
 
 
@@ -29,9 +29,9 @@ func _ready() -> void:
 	forma.position.y = 0.8
 	add_child(forma)
 
-	sprite = SpritePersonaje.new()
-	add_child(sprite)
-	sprite.configurar("ezra")
+	modelo = Personaje3D.new()
+	add_child(modelo)
+	modelo.configurar("ezra")
 
 	pivote = Node3D.new()
 	add_child(pivote)
@@ -61,7 +61,7 @@ func _ready() -> void:
 
 func aplicar_vista(primera: bool, animar := true) -> void:
 	Juego.primera_persona = primera
-	sprite.visible = not primera
+	modelo.visible = not primera
 	var altura := ALTURA_OJOS if primera else 1.7
 	var largo := 0.0 if primera else DISTANCIA_3P
 	if not primera and pitch > -0.1:
@@ -101,7 +101,11 @@ func _physics_process(delta: float) -> void:
 	else:
 		velocity.y -= GRAVEDAD * delta
 	move_and_slide()
-	sprite.actualizar(delta, dir, dir.length() > 0.1, camara)
+	if not bloqueado:
+		var giro := Input.get_vector("mirar_izquierda", "mirar_derecha", "mirar_arriba", "mirar_abajo")
+		if giro != Vector2.ZERO:
+			mirar(giro * 520.0 * delta)
+	modelo.actualizar(delta, dir, dir.length() > 0.1)
 	# un leve parpadeo de la llama
 	candil.light_energy = 1.35 + sin(Time.get_ticks_msec() * 0.011) * 0.06
 
@@ -110,4 +114,4 @@ func _process(_delta: float) -> void:
 	pivote.rotation.y = yaw
 	brazo.rotation.x = pitch
 	if not Juego.primera_persona:
-		sprite.visible = brazo.get_hit_length() > 1.4
+		modelo.visible = brazo.get_hit_length() > 1.2

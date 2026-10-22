@@ -1,14 +1,14 @@
-# Lumbral
+# El Camino
 
 Aventura cristiana en 3D con estilo pixel art para celular (Android), hecha en **Godot 4.7**.
 Ezra recorre un valle donde las luces se apagaron, acompañado por un misterioso Caminante.
 Las decisiones hacen crecer la **fe, la esperanza, el amor y el perdón**, y con ellas la luz de su candil.
 
-## Qué tiene esta versión (0.1)
+## Qué tiene esta versión (0.2)
 
-- **3D pixelado**: la escena se dibuja a 1/3 de la resolución y se agranda sin suavizar; los personajes son sprites que cambian de dirección según la cámara.
+- **3D pixelado**: la escena se dibuja a 1/3 de la resolución y se agranda sin suavizar. Los personajes son modelos 3D de bloques con brazos y piernas animados.
 - **Cámara en primera o tercera persona**: se elige al empezar y se cambia en cualquier momento (botón «Vista» o tecla C).
-- **Controles táctiles**: joystick a la izquierda, deslizar a la derecha para mirar y botón de acción. En la PC: WASD/flechas, E/Espacio para interactuar, arrastrar con el mouse para mirar y Esc para pausa.
+- **Controles táctiles**: joystick a la izquierda, deslizar a la derecha para mirar y botón de acción. En la PC: WASD para caminar; flechas, IJKL o arrastrar con el mouse (clic izquierdo o derecho) para mirar; E/Espacio para interactuar; C para la vista y Esc para pausa.
 - **Tres capítulos jugables**:
   1. *Aldea de Brasa*: tres lámparas, un pan robado y un incrédulo.
   2. *Pozo Hondo*: un pozo seco y una reconciliación pendiente.
@@ -22,10 +22,10 @@ Las decisiones hacen crecer la **fe, la esperanza, el amor y el perdón**, y con
 ~/Juegos/herramientas/godot-lanzador.sh
 ```
 
-Importa la carpeta `LUMBRAL` y presiona F5. El APK de prueba se exporta desde Proyecto → Exportar → Android, o así:
+Importa la carpeta `LUMBRAL` (el nombre de la carpeta no importa) y presiona F5. El APK de prueba se exporta desde Proyecto → Exportar → Android, o así:
 
 ```bash
-JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64 ANDROID_HOME=~/Android/Sdk ~/Juegos/herramientas/godot --headless --path . --export-debug "Android" ../builds/Lumbral-v0.1.apk
+JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64 ANDROID_HOME=~/Android/Sdk ~/Juegos/herramientas/godot --headless --path . --export-debug "Android" ../builds/ElCamino-v0.2.apk
 ```
 
 ## Pruebas
@@ -33,12 +33,14 @@ JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64 ANDROID_HOME=~/Android/Sdk ~/Juegos
 ```bash
 python3 herramientas/validar_capitulos.py
 ~/Juegos/herramientas/godot --headless --path . res://pruebas/recorrido.tscn
+~/Juegos/herramientas/godot --headless --path . res://pruebas/camara.tscn
 ~/Juegos/herramientas/godot --path . res://pruebas/capturas.tscn
 ```
 
 - `validar_capitulos.py` revisa los JSON.
 - `recorrido.tscn` juega los 3 capítulos solo y debe terminar en `RESULTADO: TODO BIEN`.
-- `capturas.tscn` guarda imágenes en `~/.local/share/godot/app_userdata/Lumbral/capturas/`.
+- `camara.tscn` simula toque, mouse, flechas y joystick y muestra cuánto gira la cámara.
+- `capturas.tscn` guarda imágenes en `~/.local/share/godot/app_userdata/El Camino/capturas/`.
 
 ## Estructura
 
@@ -50,6 +52,7 @@ python3 herramientas/validar_capitulos.py
 | `scripts/nivel.gd` | Construye el mundo 3D a partir del mapa de texto |
 | `scripts/entidad.gd` | Personajes, lámparas, objetos, letreros, pozo y salidas |
 | `scripts/jugador.gd` | Movimiento y cámara 1ª/3ª persona |
+| `scripts/personaje_3d.gd` | Modelos 3D de bloques de los personajes y su animación |
 | `scripts/ui/` | Diálogos, HUD, controles táctiles y tema visual |
 | `assets/` | Arte pixel original (regenerable con `herramientas/generar_arte.py`) |
 

@@ -1,4 +1,4 @@
-"""Genera todo el arte pixel de Lumbral (texturas, sprites, íconos).
+"""Genera todo el arte pixel de El Camino (texturas, sprites, íconos).
 
 Uso:  python herramientas/generar_arte.py      (requiere Pillow)
 Todo es arte original generado por código: se puede regenerar o retocar luego a mano.

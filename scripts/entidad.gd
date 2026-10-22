@@ -9,7 +9,7 @@ var nivel: Nivel
 var solido := false
 var encendida := false
 
-var personaje: SpritePersonaje
+var personaje: Personaje3D
 var sprite: Sprite3D
 var simbolo: Sprite3D
 var luz: OmniLight3D
@@ -24,7 +24,7 @@ func preparar(d: Dictionary, n: Nivel) -> void:
 	add_to_group("interactuable")
 	match tipo:
 		"npc":
-			personaje = SpritePersonaje.new()
+			personaje = Personaje3D.new()
 			add_child(personaje)
 			personaje.configurar(d.get("sprite", "caminante"))
 			solido = not d.get("seguir", false)
@@ -220,4 +220,4 @@ func _mover_personaje(delta: float) -> void:
 			global_position += hacia.normalized() * minf(4.2 * delta, dist - 2.6)
 			moviendose = true
 	var mirar := hacia if dist < 6.0 else Vector3.ZERO
-	personaje.actualizar(delta, mirar, moviendose, j.camara)
+	personaje.actualizar(delta, mirar, moviendose)
