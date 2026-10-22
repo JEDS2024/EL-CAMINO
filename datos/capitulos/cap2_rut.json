@@ -11,35 +11,45 @@
  "ambiente": {
   "cielo_arriba": "#4a7ac0",
   "cielo_horizonte": "#f8e0a8",
-  "luz_ambiente": "#c0b090",
-  "energia_ambiente": 0.85,
+  "luz_ambiente": "#b0a890",
+  "energia_ambiente": 0.7,
   "niebla": "#f0e0b0",
-  "densidad_niebla": 0.008,
+  "densidad_niebla": 0.0035,
   "sol_color": "#fff2c8",
-  "sol_energia": 1.0,
+  "sol_energia": 1.2,
   "sol_rotacion": [
    -40,
    70
-  ]
+  ],
+  "particulas": "polen",
+  "montanas": "#8a9a6a",
+  "suelo_lejano": "#9aa860",
+  "nubes": 0.55,
+  "ciclo": {
+   "inicio": 7.5,
+   "fin": 18.3,
+   "minutos": 12
+  },
+  "aves": true
  },
  "mapa": [
-  "############################",
-  "#;;;;;;;;;;;;;;;;;;;;;TTTTT#",
-  "#;;;e;;;;;;;;;;;;j;;;;T;s;T#",
-  "#;;;;;;;;;;;;;;;;;;;;;T;;;T#",
-  "#;;;;;;;;f;;;;;;;;;;;;TTbTT#",
-  "#;;;;;4;;;;;;;;;;k;;;;;;;;;#",
-  "#;;;;;;;;;;;;;5;;;;;;;;;;;;#",
-  "#;;;g;;;;;;;;;;;;;;;;h;;;;;#",
-  "#;;;;;;;;;;;;;;;;;;;;;;;;;;#",
-  "#...........2..3.....w.....#",
-  "#..i.......................#",
-  "#====================......#",
-  "#.....=........=...........#",
-  "#.HHH.=..HHH...=..HHH......#",
-  "#.HHH.=..HHH1..=..HHH......#",
-  "#.....=....P...=...........#",
-  "############################"
+  "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+  "^^;;;;;;;;;;;;;;;;;;;;;;;;;;;;;FFFF^",
+  "^T;;;;e;;;;;;;;;;;;;j;;;;;;;;;;F;sF^",
+  "^;;;;;;;;;;4;;;;;;;;6;;;;;;;;;;F;;F^",
+  "^;;;;;;;;f;;;;;;;;;;;;;k;;;;;;;FbFF^",
+  "^;;;;;;;;;;;;;;;;5;;;;;;;;;;;;;;;;;^",
+  "^;;;g;;;+;;;;;;;;;;;;;;;;;h;;;;;;;;^",
+  "^;;;;;;;;;;;;;;;;;;;;;;;+;;;;;;;;;;^",
+  "^**........2..3.......w......@...*^^",
+  "^.*..i......T.............T......*.^",
+  "^=================================.^",
+  "^.....=...+....=...T.....T...@.....^",
+  "^.T...=..HHH...=..HHH.........@....^",
+  "^.....=..HHH1..=..HHH.+*...........^",
+  "^.HHH.=........=.........T....*.+..^",
+  "^.HHH.=....P...=......&....T.......^",
+  "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
  ],
  "leyenda": {
   "1": {
@@ -143,7 +153,8 @@
    },
    "aparece_si": [
     "flag:permiso_criado"
-   ]
+   ],
+   "nombre": "Espigas de cebada"
   },
   "f": {
    "tipo": "objeto",
@@ -158,7 +169,8 @@
    },
    "aparece_si": [
     "flag:permiso_criado"
-   ]
+   ],
+   "nombre": "Espigas de cebada"
   },
   "g": {
    "tipo": "objeto",
@@ -173,7 +185,8 @@
    },
    "aparece_si": [
     "flag:permiso_criado"
-   ]
+   ],
+   "nombre": "Espigas de cebada"
   },
   "h": {
    "tipo": "objeto",
@@ -188,7 +201,8 @@
    },
    "aparece_si": [
     "flag:booz_ordena"
-   ]
+   ],
+   "nombre": "Espigas de cebada"
   },
   "j": {
    "tipo": "objeto",
@@ -203,7 +217,8 @@
    },
    "aparece_si": [
     "flag:booz_ordena"
-   ]
+   ],
+   "nombre": "Espigas de cebada"
   },
   "k": {
    "tipo": "objeto",
@@ -218,7 +233,8 @@
    },
    "aparece_si": [
     "flag:booz_ordena"
-   ]
+   ],
+   "nombre": "Espigas de cebada"
   },
   "s": {
    "tipo": "objeto",
@@ -233,7 +249,8 @@
     "secreto": 1,
     "luz": 10,
     "amor": 1
-   }
+   },
+   "nombre": "Gavilla olvidada"
   },
   "w": {
    "tipo": "mecanismo",
@@ -255,6 +272,17 @@
    "tipo": "letrero",
    "dialogo": "ley_espigueo",
    "etiqueta": "La ley del espigueo"
+  },
+  "6": {
+   "tipo": "npc",
+   "nombre": "Criadas de Booz",
+   "modelo": "criada",
+   "etiqueta": "Criadas de Booz",
+   "dialogos": [
+    {
+     "id": "criadas"
+    }
+   ]
   }
  },
  "objetivos": [
@@ -262,37 +290,43 @@
    "texto": "Habla con Noemí",
    "hecho": [
     "flag:permiso_noemi"
-   ]
+   ],
+   "marca": "1"
   },
   {
    "texto": "Pide permiso al criado que cuida a los segadores",
    "hecho": [
     "flag:permiso_criado"
-   ]
+   ],
+   "marca": "2"
   },
   {
    "texto": "Habla con Booz, el dueño del campo",
    "hecho": [
     "flag:booz_ordena"
-   ]
+   ],
+   "marca": "3"
   },
   {
    "texto": "Recoge espigas detrás de los segadores (6)",
    "hecho": [
     "cont:espigas>=6"
-   ]
+   ],
+   "marca": "efghjk"
   },
   {
    "texto": "Desgrana lo que recogiste",
    "hecho": [
     "flag:efa"
-   ]
+   ],
+   "marca": "w"
   },
   {
    "texto": "Vuelve con Noemí a la ciudad",
    "hecho": [
     "flag:__nunca"
-   ]
+   ],
+   "marca": "1"
   }
  ],
  "intro": [
@@ -433,6 +467,10 @@
     "texto": "Jehová galardone tu obra, y tu remuneración sea llena por Jehová Dios de Israel, que has venido para cubrirte debajo de sus alas. (Rut 2:12)"
    },
    {
+    "quien": "Booz",
+    "texto": "Ven aquí, y come del pan, y moja tu bocado en el vinagre. (Rut 2:14)"
+   },
+   {
     "quien": "",
     "texto": "A la hora de comer, Booz le dio pan y grano tostado; y ella comió y se sació, y le sobró. (Rut 2:14)",
     "opciones": [
@@ -472,6 +510,10 @@
    {
     "quien": "Booz",
     "texto": "Jehová galardone tu obra, y tu remuneración sea llena por Jehová Dios de Israel, que has venido para cubrirte debajo de sus alas. (Rut 2:12)"
+   },
+   {
+    "quien": "Booz",
+    "texto": "Ven aquí, y come del pan, y moja tu bocado en el vinagre. (Rut 2:14)"
    },
    {
     "quien": "",
@@ -573,6 +615,57 @@
     "quien": "",
     "texto": "«Cuando siegues la mies de tu tierra, no acabarás de segar el rincón de tu campo, ni espigarás tu sementera segada; para el pobre y para el extranjero lo dejarás». (Levítico 19:9-10)"
    }
+  ],
+  "criadas": [
+   {
+    "quien": "",
+    "texto": "Booz le dijo a Rut que se quedara junto a sus criadas, y que mirara bien el campo que segaban para ir tras ellas. (Rut 2:8-9)"
+   }
   ]
- }
+ },
+ "musica": "rut",
+ "repaso": {
+  "versiculo": "Tu pueblo será mi pueblo, y tu Dios mi Dios.",
+  "cita": "Rut 1:16",
+  "preguntas": [
+   {
+    "pregunta": "¿Qué hacía Rut en el campo de Booz?",
+    "opciones": [
+     "Cuidaba ovejas",
+     "Recogía espigas detrás de los segadores",
+     "Vendía pan"
+    ],
+    "correcta": 1,
+    "explica": "Rut espigaba en el campo detrás de los segadores. (Rut 2:3)"
+   },
+   {
+    "pregunta": "¿Qué guardó Rut para Noemí?",
+    "opciones": [
+     "Lo que le sobró de la comida",
+     "Una moneda de plata",
+     "Un manto nuevo"
+    ],
+    "correcta": 0,
+    "explica": "Le dio a Noemí lo que le había sobrado después de saciarse. (Rut 2:18)"
+   },
+   {
+    "pregunta": "¿Quién fue bisnieto de Rut y Booz?",
+    "opciones": [
+     "Moisés",
+     "José",
+     "El rey David"
+    ],
+    "correcta": 2,
+    "explica": "Obed fue padre de Isaí, e Isaí fue padre de David. (Rut 4:17)"
+   }
+  ]
+ },
+ "ambiente_sonido": "campo",
+ "lugar": "Belén · el campo de Booz",
+ "aldeanos_frases": [
+  "Un segador ata gavillas de cebada.",
+  "Una mujer lleva un cántaro de agua sobre la cabeza.",
+  "Unos niños juegan cerca de las casas de Belén.",
+  "Un anciano descansa a la sombra de un olivo."
+ ]
 }

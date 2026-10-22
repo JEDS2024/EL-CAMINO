@@ -2,12 +2,38 @@
 
 Uso:  python3 herramientas/validar_capitulos.py
 Comprueba: filas del mapa del mismo largo, que exista "P", que cada letra de la leyenda
-esté en el mapa y que todos los diálogos referenciados existan.
+esté en el mapa, que se pueda llegar caminando a cada entidad y que todos los diálogos referenciados existan.
 """
 import glob, json, os, sys
 
 RAIZ = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "datos", "capitulos")
 CLAVES_DIALOGO = ("dialogo", "dialogo_frio", "dialogo_cerrado", "dialogo_listo", "dialogo_falta", "dialogo_hecho")
+
+
+PISABLES = set(".=,:_%;*bP@+?! ")
+
+
+def alcanzables(cap):
+    """Recorre el mapa desde P y devuelve qué celdas se pueden pisar."""
+    filas = cap["mapa"]
+    ley = cap.get("leyenda", {})
+    def pisable(ch):
+        if ch in ley:
+            d = ley[ch]
+            if d.get("tipo") in ("objeto", "salida"):
+                return True
+            return d.get("tipo") == "npc" and (d.get("seguir") or "aparece_si" in d)
+        return ch in PISABLES
+    inicio = next((x, z) for z, f in enumerate(filas) for x, ch in enumerate(f) if ch == "P")
+    vistos, pila = {inicio}, [inicio]
+    while pila:
+        x, z = pila.pop()
+        for dx, dz in ((1, 0), (-1, 0), (0, 1), (0, -1)):
+            n = (x + dx, z + dz)
+            if 0 <= n[1] < len(filas) and 0 <= n[0] < len(filas[n[1]]) and n not in vistos and pisable(filas[n[1]][n[0]]):
+                vistos.add(n)
+                pila.append(n)
+    return vistos
 
 
 def revisar(ruta):
@@ -31,6 +57,14 @@ def revisar(ruta):
         for o in d.get("dialogos", []):
             if o["id"] not in dialogos:
                 errores.append(f"'{letra}' usa el diálogo inexistente '{o['id']}'")
+    if not errores:
+        vistos = alcanzables(cap)
+        for z, fila in enumerate(filas):
+            for x, ch in enumerate(fila):
+                if ch in cap.get("leyenda", {}):
+                    vecinos = [(x, z), (x + 1, z), (x - 1, z), (x, z + 1), (x, z - 1)]
+                    if not any(v in vistos for v in vecinos):
+                        errores.append(f"no se puede llegar caminando a '{ch}' (columna {x}, fila {z})")
     for nombre, lineas in dialogos.items():
         for l in lineas:
             for o in l.get("opciones", []):

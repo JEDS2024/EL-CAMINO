@@ -13,6 +13,7 @@ config/icon="res://icon.svg"
 [autoload]
 
 Juego="*res://scripts/juego.gd"
+Sonido="*res://scripts/sonido.gd"
 
 [display]
 
@@ -21,6 +22,10 @@ window/size/viewport_height=720
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
 window/handheld/orientation=4
+
+[audio]
+
+general/text_to_speech=true
 
 [input_devices]
 

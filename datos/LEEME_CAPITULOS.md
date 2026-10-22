@@ -19,11 +19,15 @@ Para agregar uno nuevo:
 | `retratos` | Nombre → modelo para quien habla sin estar en el mapa (p. ej. `"Jacob": "jacob"`) |
 | `suelo` | Suelo por defecto (ver tabla de caracteres) |
 | `mirar_inicio` | Hacia dónde mira Ezra al empezar, en grados (0 = norte) |
-| `ambiente` | Colores del cielo, luz ambiente, niebla y "sol" (o luna) |
+| `ambiente` | Cielo (colores, `nubes` 0–1, `luna`, `estrellas`), luz, niebla, `montanas` y `suelo_lejano` del horizonte y `particulas` (luciernagas, polen o polvo). `"aves": true` agrega palomas volando. Con `"ciclo": {"inicio": 7.5, "fin": 18, "minutos": 12}` la hora avanza y el cielo, el sol y la luz cambian solos |
 | `mapa` | La cuadrícula del nivel; cada carácter es una celda de 2×2 metros |
 | `leyenda` | Convierte letras del mapa en personajes, lámparas, objetos, etc. |
 | `acertijos` | Grupos de lámparas que se encienden en un orden |
-| `objetivos` | Lo que se muestra arriba; aparece el primero que no esté `hecho` |
+| `objetivos` | Lo que se muestra arriba; aparece el primero que no esté `hecho`. Con `"marca": "12"` el faro apunta a la entidad más cercana con esas letras del mapa; con `"marca_acertijo": "id"` apunta a la siguiente lámpara correcta |
+| `musica` | Tema de fondo: titulo, jose, rut, david, nehemias o emaus |
+| `ambiente_sonido` | Sonido del lugar: campo, ciudad, noche o tarde |
+| `lugar` | Dónde ocurre (se muestra con el título) |
+| `repaso` | `{"versiculo", "cita", "preguntas": [{"pregunta", "opciones": [...], "correcta": 0, "explica"}]}`: se muestra al terminar el capítulo (3 preguntas = 3 estrellas) |
 | `intro`, `epilogo` | Diálogos al entrar y al terminar el capítulo |
 | `dialogos` | Todas las conversaciones, por nombre |
 | `final` | Solo en el último capítulo: el desenlace según la virtud más alta |
@@ -48,6 +52,16 @@ Para agregar uno nuevo:
 | `R` | Roca |
 | `F` | Valla de madera |
 | `A` | Tienda de campaña |
+| `^` | Cerro (borde natural, altura variable) |
+| `Y` | Palmera |
+| `&` | Vasijas |
+| `$` | Puesto de mercado |
+| `*` | Flores (decoración, se puede pisar) |
+| `@` | Oveja que pasta |
+| `\|` | Fogata con fuego y luz |
+| `?` | **Pared falsa**: parece muro pero se atraviesa (escondite) |
+| `!` | **Entrada de cueva**: parece cerro pero se atraviesa (escondite) |
+| `+` | Aldeano con apariencia al azar que camina por la zona; al hablarle, el narrador lee una de las `aldeanos_frases` del capítulo (vida diaria, nunca palabras de personajes bíblicos). Con `"estilo_aldeanos": "egipcio"` se visten como egipcios |
 | `P` | Donde empieza Ezra |
 
 Cualquier otra letra o número que pongas en la `leyenda` se vuelve una entidad.
@@ -65,7 +79,7 @@ Opciones que sirven para cualquier entidad:
   Usa el primer diálogo cuya condición `si` se cumpla. Con `"seguir": true` acompaña al protagonista (opcional: `"seguir_si"`).
   Modelos (en `scripts/personaje_3d.gd`): jose, mayordomo, juda, benjamin, ruben, simeon, levi, jacob, rut, noemi, booz, criado,
   segador, david, eliab, saul, soldado, goliat, escudero, nehemias, eliasib, sanbalat, salum, hija_salum, obrero, cleofas,
-  companero, forastero.
+  companero, forastero, egipcio, criada, tobias.
 - **lampara**: `{"tipo":"lampara","acertijo":"mesa","simbolo":"ruben","etiqueta":"Asiento de Rubén","requiere":[...],"dialogo_frio":"...","dialogo":"..."}`
   Sirve para cualquier acertijo de orden. `simbolo` es su identificador dentro del orden. Si es fe, esperanza, amor, perdon o luz, se muestra su ícono.
   `dialogo` (opcional) se muestra al encenderla en el orden correcto, por ejemplo para mostrar un pasaje.
@@ -104,5 +118,7 @@ Listas de textos, y todos se tienen que cumplir. Para negar uno, ponle `!` delan
 "sumar":{"piezas":1}, "objeto":"pan", "secreto":1, "aviso":"Texto en pantalla", "fin_capitulo":true}`
 
 `fin_capitulo` termina el capítulo cuando se cierra ese diálogo (como la victoria de David).
+
+`"minijuego": {"tipo": "honda", "exito": "id_dialogo"}` abre un minijuego al cerrar el diálogo; al ganarlo sigue con el diálogo `exito`.
 
 **Consejo:** los efectos que suben virtudes ponlos en diálogos que solo se vean una vez (controlados con flags), para que el jugador no pueda repetirlos.

@@ -5,6 +5,8 @@ extends Control
 
 const VELOCIDAD := 45.0  # letras por segundo
 
+signal linea_mostrada(quien: String)
+
 var resolver: Callable  # id -> Array de líneas
 var retratos := {}  # nombre visible -> clave del modelo 3D (Personaje3D.ASPECTO)
 
@@ -22,7 +24,11 @@ var _retrato: TextureRect
 var _vista_retrato: SubViewport
 var _modelo_retrato: Personaje3D
 var _clave_retrato := ""
+var _voz := ""  # voz del sistema en español para leer en voz alta
+var _quita_citas := RegEx.create_from_string("\\s*\\([^)]*\\d[^)]*\\)")
 var _indicador: Label
+var _cita: Label
+var _extrae_cita := RegEx.create_from_string("\\s*\\(([^)]*\\d[^)]*)\\)\\s*$")
 var _opciones: VBoxContainer
 
 
@@ -63,11 +69,18 @@ func _ready() -> void:
 	_texto.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_texto.add_theme_font_size_override("font_size", 32)
 	_texto.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_texto.add_theme_constant_override("line_spacing", 6)
+	_texto.add_theme_font_override("font", Tema.fuente_lectura())
 	col.add_child(_texto)
+	_cita = Label.new()
+	_cita.add_theme_font_size_override("font_size", 24)
+	_cita.add_theme_font_override("font", Tema.fuente_lectura())
+	_cita.add_theme_color_override("font_color", Color("e8c26a"))
+	col.add_child(_cita)
 	_indicador = Label.new()
 	_indicador.text = "toca para seguir ▸"
 	_indicador.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
-	_indicador.add_theme_font_size_override("font_size", 20)
+	_indicador.add_theme_font_size_override("font_size", 22)
 	_indicador.add_theme_color_override("font_color", Color(1, 1, 1, 0.55))
 	col.add_child(_indicador)
 
@@ -118,6 +131,8 @@ func _siguiente() -> void:
 		_indice += 1
 	if _indice >= _lineas.size():
 		visible = false
+		if Juego.leer_voz:
+			DisplayServer.tts_stop()
 		if _al_terminar.is_valid():
 			_al_terminar.call()
 		return
@@ -126,10 +141,22 @@ func _siguiente() -> void:
 
 func _mostrar(l: Dictionary) -> void:
 	Juego.aplicar(l.get("efectos", {}))
+	Sonido.efecto("dialogo", 0.5)
+	_tamanos()
 	var quien: String = l.get("quien", "")
+	linea_mostrada.emit(quien)
 	_nombre.text = quien
 	_nombre.visible = quien != ""
-	_texto.text = l.get("texto", "")
+	# la referencia bíblica final va en su propia línea, más pequeña
+	var texto: String = l.get("texto", "")
+	var m := _extrae_cita.search(texto)
+	_cita.text = ""
+	if m:
+		_cita.text = m.get_string(1)
+		texto = texto.substr(0, m.get_start()).strip_edges()
+	_cita.visible = false
+	_texto.text = texto
+	_texto.add_theme_color_override("font_color", Color("f2e2bf") if quien == "" else Color("fff8ea"))
 	_texto.visible_characters = 0
 	_letras = 0.0
 	_escribiendo = true
@@ -148,11 +175,36 @@ func _mostrar(l: Dictionary) -> void:
 		b.queue_free()
 	_esperando_opcion = false
 	_indicador.visible = false
+	_leer(quien, l.get("texto", ""))
+
+
+func _tamanos() -> void:
+	var grande := Juego.texto_grande
+	_texto.add_theme_font_size_override("font_size", 44 if grande else 35)
+	_cita.add_theme_font_size_override("font_size", 30 if grande else 24)
+	_nombre.add_theme_font_size_override("font_size", 36 if grande else 30)
+
+
+## Lee la línea con la voz del sistema (las referencias bíblicas no se leen).
+func _leer(quien: String, texto: String) -> void:
+	if not Juego.leer_voz:
+		return
+	if _voz == "":
+		var voces := DisplayServer.tts_get_voices_for_language("es")
+		if voces.is_empty():
+			return
+		_voz = voces[0]
+	DisplayServer.tts_stop()
+	var frase := _quita_citas.sub(texto, "", true)
+	if quien != "":
+		frase = quien + ": " + frase
+	DisplayServer.tts_speak(frase, _voz)
 
 
 func _terminar_escritura() -> void:
 	_escribiendo = false
 	_texto.visible_characters = -1
+	_cita.visible = _cita.text != ""
 	var l: Dictionary = _lineas[_indice]
 	var ops: Array = []
 	for op in l.get("opciones", []):
@@ -165,13 +217,16 @@ func _terminar_escritura() -> void:
 	for op in ops:
 		var b := Button.new()
 		b.text = op.get("texto", "...")
-		b.custom_minimum_size = Vector2(0, 64)
+		b.custom_minimum_size = Vector2(0, 76 if Juego.texto_grande else 64)
+		b.add_theme_font_size_override("font_size", 36 if Juego.texto_grande else 28)
+		b.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 		b.focus_mode = Control.FOCUS_NONE
 		b.pressed.connect(_elegir.bind(op))
 		_opciones.add_child(b)
 
 
 func _elegir(op: Dictionary) -> void:
+	Sonido.efecto("seleccion")
 	for b in _opciones.get_children():
 		b.queue_free()
 	_esperando_opcion = false

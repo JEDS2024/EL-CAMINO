@@ -9,6 +9,9 @@ Juego Godot 4.7 (GDScript, renderer Compatibility) para Android, orientación ho
 - Interfaz: usa `set_anchors_and_offsets_preset` o `Tema.anclar(...)`. Cambiar solo `anchor_*` deja los controles aplastados.
 - Diálogos y botones deben verse bien en 1280×720 y en celulares 20:9 (aspecto `expand`).
 
+- Pensado para niños y adultos: textos claros, guía visual activable, lectura en voz alta y repaso con preguntas. Cada pregunta nueva necesita una explicación con cita bíblica.
+- La música y los efectos se regeneran con `herramientas/generar_audio.py`, y el arte con `herramientas/generar_arte.py`. No agregues recursos con derechos de terceros.
+
 ## Antes de dar algo por terminado
 
 ```bash

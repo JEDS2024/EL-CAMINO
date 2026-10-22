@@ -12,31 +12,46 @@
   "cielo_arriba": "#3a6ab0",
   "cielo_horizonte": "#f0c890",
   "luz_ambiente": "#c8a888",
-  "energia_ambiente": 0.9,
+  "energia_ambiente": 0.75,
   "niebla": "#e8c8a0",
-  "densidad_niebla": 0.008,
+  "densidad_niebla": 0.004,
   "sol_color": "#fff0d0",
-  "sol_energia": 1.1,
+  "sol_energia": 1.25,
   "sol_rotacion": [
    -55,
    40
-  ]
+  ],
+  "particulas": "polvo",
+  "montanas": "#c8a070",
+  "suelo_lejano": "#d6bf86",
+  "nubes": 0.25,
+  "ciclo": {
+   "inicio": 11.0,
+   "fin": 16.0,
+   "minutos": 14
+  },
+  "aves": true
  },
  "mapa": [
-  "############################",
-  "#,,,,,,,,,,,,,,,,,,,TTTTTTT#",
-  "#,HHHH,,,,,,,,,,,,,,T,,s,,T#",
-  "#,HHHH,,::::::::::,,T,,,,,T#",
-  "#,HHHH,,:k:l:m:n:o:,TTTbTTT#",
-  "#,,,,,,,::::i:::::,,,,,,,,,#",
-  "#,,,,,,,:3:4:5:2:6:,,,,,,,,S",
-  "#,,,,,,,::::::::::,,,,,,,,,#",
-  "#,,T,,,,,,,,,,,,,,,,,HHH,,,#",
-  "#,,,,,,,,,1,,,,,,,,,,HHH,,,#",
-  "#,,,,,,,,,,,,,,,,,,,,,,,,T,#",
-  "#,HHH,,,,,,,P,,,,,,,,,,,,,,#",
-  "#,HHH,,,,,,,,,,,,T,,,,,,,,,#",
-  "############################"
+  "####################################",
+  "#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#",
+  "#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~#",
+  "#,Y,,,,,Y,Y,,,,,,,,,Y,,,,,,,,YY,,,,,",
+  "#,,,,,,,,,,,,,,,+,,,,,,,,,,,,,,,,,,#",
+  "#,HHHH,,::::::::::::::,,,######,,,,#",
+  "#,HHHH,,:k:l:m:n:o::::,,,#,,s,#,,,,#",
+  "#,HHHH,,::::i:::::::::,,,#,,,,#,,,,#",
+  "#,,,,,,,:3:4:5:2:6::::,,,##?###,,,,#",
+  "#,,Y,,,,::::::::::::::,,,,,,,,,,YY,#",
+  "#,,,+,,,,,,,,,=,,,,,,,,,,,,,,,,,,,,#",
+  "#,$,$,,,+,,,,,=,,,,,,,,,,,,,&,,,,,,#",
+  "#,,,8,,,,1,,,,=,,,,,+,,,,,,,,,,,,,,#",
+  "#,$,&,,,,,,,,,=,,,,,,,HHH,,,,HHH,,,#",
+  "#,,,,,,,,,,,,,=,,,,,,,HHH,,,,HHH,,,#",
+  "#,HHH,,,Y,,,,,=,,,,,,,,,,+,,,,,,,,,S",
+  "#,HHH,,,,,,,,,====================,#",
+  "#,,,,,,,,,,,,,P,,,,,Y,,,,,,Y,,Y,,,,#",
+  "####################################"
  ],
  "leyenda": {
   "1": {
@@ -246,7 +261,8 @@
     "secreto": 1,
     "luz": 10,
     "fe": 1
-   }
+   },
+   "nombre": "Gavilla del sueño de José"
   },
   "S": {
    "tipo": "salida",
@@ -255,6 +271,17 @@
     "flag:perdon_revelado"
    ],
    "dialogo_cerrado": "carros_cerrado"
+  },
+  "8": {
+   "tipo": "npc",
+   "nombre": "Mercader egipcio",
+   "modelo": "egipcio",
+   "etiqueta": "Mercader egipcio",
+   "dialogos": [
+    {
+     "id": "mercader"
+    }
+   ]
   }
  },
  "acertijos": {
@@ -281,10 +308,18 @@
    "texto": "Habla con tu mayordomo",
    "hecho": [
     "flag:banquete"
-   ]
+   ],
+   "marca": "1"
   },
   {
-   "texto": "Sienta a tus hermanos por edad, del mayor al menor (lee el registro)",
+   "texto": "Lee el registro de la familia",
+   "hecho": [
+    "flag:leyo_registro"
+   ],
+   "marca": "i"
+  },
+  {
+   "texto": "Sienta a tus hermanos por edad, del mayor al menor",
    "hecho": [
     "flag:mesa_ok"
    ]
@@ -293,19 +328,22 @@
    "texto": "Da tus órdenes al mayordomo",
    "hecho": [
     "flag:copa_hallada"
-   ]
+   ],
+   "marca": "1"
   },
   {
    "texto": "Escucha a Judá",
    "hecho": [
     "flag:perdon_revelado"
-   ]
+   ],
+   "marca": "2"
   },
   {
    "texto": "Envía los carros a buscar a tu padre (este)",
    "hecho": [
     "flag:__nunca"
-   ]
+   ],
+   "marca": "S"
   }
  ],
  "intro": [
@@ -380,7 +418,10 @@
   "registro_familia": [
    {
     "quien": "",
-    "texto": "Registro de los hijos de Jacob:"
+    "texto": "Registro de los hijos de Jacob:",
+    "efectos": {
+     "flag": "leyo_registro"
+    }
    },
    {
     "quien": "",
@@ -594,7 +635,11 @@
   "levi_antes": [
    {
     "quien": "",
-    "texto": "Leví y sus hermanos traen regalos para el gobernador: bálsamo, miel, especias y almendras. (Génesis 43:11)"
+    "texto": "Los hermanos se decían unos a otros: «Verdaderamente hemos pecado contra nuestro hermano, que vimos la angustia de su alma cuando nos rogaba, y no le escuchamos». (Génesis 42:21)"
+   },
+   {
+    "quien": "",
+    "texto": "Traen regalos para el gobernador: bálsamo, miel, especias, mirra y almendras. (Génesis 43:11)"
    }
   ],
   "benjamin_antes": [
@@ -648,6 +693,63 @@
     "quien": "",
     "texto": "Todavía no. Tus hermanos aún no saben quién eres."
    }
+  ],
+  "mercader": [
+   {
+    "quien": "",
+    "texto": "De toda la tierra venían a Egipto para comprar grano a José, porque el hambre había crecido en toda la tierra. (Génesis 41:57)"
+   },
+   {
+    "quien": "",
+    "texto": "José había guardado trigo durante siete años de abundancia, como Dios le mostró en los sueños del faraón. (Génesis 41:47-49)"
+   }
   ]
- }
+ },
+ "musica": "jose",
+ "repaso": {
+  "versiculo": "Vosotros pensasteis mal contra mí, mas Dios lo encaminó a bien.",
+  "cita": "Génesis 50:20",
+  "preguntas": [
+   {
+    "pregunta": "¿En qué orden sentó José a sus hermanos en la mesa?",
+    "opciones": [
+     "Del menor al mayor",
+     "Del mayor al menor",
+     "Como cada uno quiso"
+    ],
+    "correcta": 1,
+    "explica": "Se sentaron «el mayor conforme a su primogenitura, y el menor conforme a su menor edad». (Génesis 43:33)"
+   },
+   {
+    "pregunta": "¿En el costal de quién apareció la copa de plata?",
+    "opciones": [
+     "En el de Benjamín",
+     "En el de Rubén",
+     "En el de Judá"
+    ],
+    "correcta": 0,
+    "explica": "La copa fue hallada en el costal de Benjamín, el menor. (Génesis 44:12)"
+   },
+   {
+    "pregunta": "¿Qué dijo José sobre por qué estaba en Egipto?",
+    "opciones": [
+     "Que se había perdido en el camino",
+     "Que quería vengarse",
+     "Que Dios lo envió para preservar vida"
+    ],
+    "correcta": 2,
+    "explica": "«Para preservación de vida me envió Dios delante de vosotros». (Génesis 45:5)"
+   }
+  ]
+ },
+ "ambiente_sonido": "ciudad",
+ "lugar": "Egipto · la casa de José",
+ "aldeanos_frases": [
+  "Un egipcio carga sacos de grano hacia el granero.",
+  "Una mujer muele trigo en un molino de mano.",
+  "Los mercaderes ofrecen lino, cebollas y pescado del Nilo.",
+  "Un niño corre entre los puestos del mercado.",
+  "Llegan viajeros de otras tierras a comprar alimento."
+ ],
+ "estilo_aldeanos": "egipcio"
 }

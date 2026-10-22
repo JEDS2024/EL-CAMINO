@@ -18,3 +18,6 @@ package.json
 .agents/
 .aws/
 EL-CAMINO/
+
+# índice local de CodeGraph
+.codegraph/

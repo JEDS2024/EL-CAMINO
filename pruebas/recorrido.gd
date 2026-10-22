@@ -61,6 +61,7 @@ func _ready() -> void:
 	await _objetos()
 	_ok(Juego.contadores.get("piedras", 0) == 5, "cinco piedras lisas (17:40)")
 	await _usar(_npc("Goliat"))
+	await _honda()
 	await _seguir()
 
 	# --- 4. Nehemías (Nehemías 2–6)
@@ -99,6 +100,7 @@ func _ready() -> void:
 	await _usar(_tipo("salida"))
 	await _dialogos()
 	await _frames(3)
+	await _repaso()
 	var b := _boton_menu("Ver el final")
 	_ok(b != null, "aparece el botón del final")
 	if b:
@@ -106,6 +108,25 @@ func _ready() -> void:
 		await _dialogos()
 	_ok(_boton_menu("Volver al inicio") != null, "pantalla de fin")
 	_ok(Juego.secretos == 5, "los 5 secretos encontrados")
+
+	# --- rejugar un capítulo desde «Capítulos» no duplica virtudes ni secretos
+	var antes := Juego.virtudes.duplicate()
+	main.mostrar_titulo()
+	await _frames(3)
+	main.jugar_capitulo(2)
+	await _esperar(2.6)
+	await _dialogos()
+	_ok(not Juego.cumple("flag:saul_bendice") and Juego.contadores.get("piedras", 0) == 0, "David empieza de nuevo")
+	_ok(Juego.secretos == 4, "su secreto vuelve a estar escondido")
+	await _usar(_npc("Soldado de Israel"))
+	await _usar(_npc("Saúl"))
+	await _objetos()
+	await _usar(_npc("Goliat"))
+	await _honda()
+	await _dialogos()
+	await _frames(3)
+	await _repaso()
+	_ok(Juego.virtudes["fe"] <= antes["fe"] + 1 and Juego.secretos == 5, "rejugar no infla las virtudes")
 	print("VIRTUDES: ", Juego.virtudes, "  LUZ: ", Juego.luz, "  SECRETOS: ", Juego.secretos)
 	print("RESULTADO: ", "TODO BIEN" if fallos == 0 else "%d FALLOS" % fallos)
 	get_tree().quit(fallos)
@@ -176,6 +197,22 @@ func _usar(e: Entidad) -> void:
 	await _dialogos()
 
 
+## Minijuego de la honda: un intento fallido y luego uno bueno.
+func _honda() -> void:
+	await _frames(3)
+	var juegos: Array = main.capa_menu.find_children("*", "MinijuegoHonda", true, false)
+	_ok(juegos.size() == 1, "aparece el minijuego de la honda")
+	if juegos.is_empty():
+		return
+	var mj: MinijuegoHonda = juegos[0]
+	mj.resolver(false)
+	await _esperar(1.0)
+	_ok(not Juego.fin_pedido and mj.is_inside_tree(), "fallar permite intentar otra vez")
+	mj.resolver(true)
+	await _esperar(1.3)
+	await _dialogos()
+
+
 func _objetos() -> void:
 	for e in _entidades():
 		if e.tipo == "objeto" and e.activo and e.is_in_group("interactuable"):
@@ -189,12 +226,35 @@ func _mecanismo(flag: String) -> Entidad:
 	return null
 
 
+## Pantalla del versículo y las tres preguntas: responde bien todas.
+func _repaso() -> void:
+	var b := _boton_menu("Responder preguntas")
+	_ok(b != null, "versículo para recordar")
+	if b == null:
+		return
+	var cap := Juego.capitulo
+	b.pressed.emit()
+	await _frames(3)
+	for p in main.datos_cap.get("repaso", {}).get("preguntas", []):
+		var correcta: Button = _boton_menu(p["opciones"][int(p["correcta"])])
+		correcta.pressed.emit()
+		await _frames(2)
+		_boton_menu("Siguiente").pressed.emit()
+		await _frames(3)
+	_ok(int(Juego.estrellas.get(str(cap), 0)) == 3, "tres estrellas en el repaso")
+
+
 func _seguir() -> void:
 	await _dialogos()
 	await _frames(3)
+	await _repaso()
 	var b := _boton_menu("Seguir el camino")
 	_ok(b != null, "resumen del capítulo")
 	if b:
+		b.pressed.emit()
+		await _frames(3)
+		b = _boton_menu("Comenzar")
+		_ok(b != null, "mapa del camino")
 		b.pressed.emit()
 		await _esperar(2.6)
 		await _dialogos()

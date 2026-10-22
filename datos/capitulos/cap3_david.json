@@ -12,38 +12,49 @@
   "cielo_arriba": "#5a8ad0",
   "cielo_horizonte": "#d0e0f0",
   "luz_ambiente": "#a0a8b8",
-  "energia_ambiente": 0.85,
+  "energia_ambiente": 0.72,
   "niebla": "#c8d4e0",
-  "densidad_niebla": 0.01,
+  "densidad_niebla": 0.004,
   "sol_color": "#fff8e8",
-  "sol_energia": 1.1,
+  "sol_energia": 1.2,
   "sol_rotacion": [
    -50,
    20
-  ]
+  ],
+  "particulas": "polen",
+  "montanas": "#7a8a6a",
+  "suelo_lejano": "#6a8a4a",
+  "nubes": 0.5,
+  "ciclo": {
+   "inicio": 8.0,
+   "fin": 13.0,
+   "minutos": 14
+  },
+  "aves": true
  },
  "mapa": [
-  "############################",
-  "#....A....A....A....A......#",
-  "#..........................#",
-  "#.....A.......5G.......A...#",
-  "#..........................#",
-  "#..T......................T#",
-  "#.........................T#",
-  "#...c....d.................#",
-  "#~~~~~~~~~~~~~=~~~~~~~~~~~~#",
-  "#~~~~~~~~~~~~~=~~~~~~~~~~~~#",
-  "#......f.......g......h....#",
-  "#..........................#",
-  "#..T....................T..#",
-  "#......2...................#",
-  "#..A...A.....3......A..A...#",
-  "#..........................#",
-  "#..A...TTbTT.......4..A....#",
-  "#......T.s.T...............#",
-  "#......TTTTT.....A.........#",
-  "#..........P...............#",
-  "############################"
+  "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+  "^^^.A....A....A....A....A....A...^^^",
+  "^^........+.....|.......A.........^^",
+  "^....A........5G...........A......^^",
+  "^.............................+...^^",
+  "^..T......^^..........^^......T...^^",
+  "^........^^^^........^^^^.........^^",
+  "^..................................^",
+  "^....c.......d.....................^",
+  "^~~~~~~~~~~~~~~~=~~~~~~~~~~~~~~~~~~^",
+  "^~~~~~~~~~~~~~~~=~~~~~~~~~~~~~~~~~~^",
+  "^.......f.........g.........h......^",
+  "^.........................T........^",
+  "^..T+......^^.........^^.......T...^",
+  "^.......2.^^^^.......^^^^..........^",
+  "^..A...A....+..3....|.....A...A....^",
+  "^.........6.................+......^",
+  "^..A...^^!^^............4.....A....^",
+  "^......^.s.^.............A.........^",
+  "^......^^^^^......A................^",
+  "^.............P....................^",
+  "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
  ],
  "leyenda": {
   "2": {
@@ -142,7 +153,8 @@
     "sumar": {
      "piedras": 1
     }
-   }
+   },
+   "nombre": "Piedra lisa del arroyo"
   },
   "d": {
    "tipo": "objeto",
@@ -154,7 +166,8 @@
     "sumar": {
      "piedras": 1
     }
-   }
+   },
+   "nombre": "Piedra lisa del arroyo"
   },
   "f": {
    "tipo": "objeto",
@@ -166,7 +179,8 @@
     "sumar": {
      "piedras": 1
     }
-   }
+   },
+   "nombre": "Piedra lisa del arroyo"
   },
   "g": {
    "tipo": "objeto",
@@ -178,7 +192,8 @@
     "sumar": {
      "piedras": 1
     }
-   }
+   },
+   "nombre": "Piedra lisa del arroyo"
   },
   "h": {
    "tipo": "objeto",
@@ -190,7 +205,8 @@
     "sumar": {
      "piedras": 1
     }
-   }
+   },
+   "nombre": "Piedra lisa del arroyo"
   },
   "s": {
    "tipo": "objeto",
@@ -202,7 +218,19 @@
     "secreto": 1,
     "luz": 10,
     "esperanza": 1
-   }
+   },
+   "nombre": "Arpa de David"
+  },
+  "6": {
+   "tipo": "npc",
+   "nombre": "Soldado asustado",
+   "modelo": "soldado",
+   "etiqueta": "Soldado asustado",
+   "dialogos": [
+    {
+     "id": "soldado_miedo"
+    }
+   ]
   }
  },
  "objetivos": [
@@ -210,25 +238,29 @@
    "texto": "Pregunta a los soldados por el desafío del filisteo",
    "hecho": [
     "flag:pregunto"
-   ]
+   ],
+   "marca": "2"
   },
   {
    "texto": "Habla con el rey Saúl en el campamento",
    "hecho": [
     "flag:saul_bendice"
-   ]
+   ],
+   "marca": "4"
   },
   {
    "texto": "Escoge cinco piedras lisas del arroyo",
    "hecho": [
     "cont:piedras>=5"
-   ]
+   ],
+   "marca": "cdfgh"
   },
   {
    "texto": "Cruza el arroyo y enfrenta a Goliat",
    "hecho": [
     "flag:__nunca"
-   ]
+   ],
+   "marca": "G"
   }
  ],
  "intro": [
@@ -257,6 +289,10 @@
   {
    "quien": "",
    "texto": "Y cuando los filisteos vieron muerto a su paladín, huyeron. Los hombres de Israel se levantaron y gritaron. (1 Samuel 17:51-52)"
+  },
+  {
+   "quien": "",
+   "texto": "David tomó la espada del filisteo; y después la espada de Goliat fue guardada envuelta en un velo. (1 Samuel 17:51; 21:9)"
   },
   {
    "quien": "",
@@ -453,18 +489,12 @@
    },
    {
     "quien": "",
-    "texto": "Y David se dio prisa y corrió hacia la línea de batalla contra el filisteo. (1 Samuel 17:48)"
-   },
-   {
-    "quien": "",
-    "texto": "Y metiendo David su mano en la bolsa, tomó de allí una piedra, y la tiró con la honda, e hirió al filisteo en la frente; y la piedra quedó clavada en la frente, y cayó sobre su rostro en tierra. (1 Samuel 17:49)"
-   },
-   {
-    "quien": "",
-    "texto": "Así venció David al filisteo con honda y piedra. (1 Samuel 17:50)",
+    "texto": "Y David se dio prisa y corrió hacia la línea de batalla contra el filisteo. (1 Samuel 17:48)",
     "efectos": {
-     "luz": 25,
-     "fin_capitulo": true
+     "minijuego": {
+      "tipo": "honda",
+      "exito": "victoria"
+     }
     }
    }
   ],
@@ -483,6 +513,71 @@
     "quien": "",
     "texto": "«Cuando el espíritu malo de parte de Dios venía sobre Saúl, David tomaba el arpa y tocaba con su mano; y Saúl tenía alivio». (1 Samuel 16:23)"
    }
+  ],
+  "soldado_miedo": [
+   {
+    "quien": "",
+    "texto": "Todos los hombres de Israel que veían a aquel hombre huían de su presencia, y tenían gran temor. (1 Samuel 17:24)"
+   }
+  ],
+  "victoria": [
+   {
+    "quien": "",
+    "texto": "Y metiendo David su mano en la bolsa, tomó de allí una piedra, y la tiró con la honda, e hirió al filisteo en la frente; y la piedra quedó clavada en la frente, y cayó sobre su rostro en tierra. (1 Samuel 17:49)"
+   },
+   {
+    "quien": "",
+    "texto": "Así venció David al filisteo con honda y piedra. (1 Samuel 17:50)",
+    "efectos": {
+     "luz": 25,
+     "fin_capitulo": true
+    }
+   }
   ]
- }
+ },
+ "musica": "david",
+ "repaso": {
+  "versiculo": "Jehová no salva con espada y lanza; porque de Jehová es la batalla.",
+  "cita": "1 Samuel 17:47",
+  "preguntas": [
+   {
+    "pregunta": "¿Cuántas piedras lisas escogió David del arroyo?",
+    "opciones": [
+     "Tres",
+     "Cinco",
+     "Siete"
+    ],
+    "correcta": 1,
+    "explica": "Escogió cinco piedras lisas del arroyo. (1 Samuel 17:40)"
+   },
+   {
+    "pregunta": "¿Por qué David no usó la armadura de Saúl?",
+    "opciones": [
+     "Porque nunca la había usado",
+     "Porque era de oro",
+     "Porque Eliab se la quitó"
+    ],
+    "correcta": 0,
+    "explica": "«Yo no puedo andar con esto, porque nunca lo practiqué». (1 Samuel 17:39)"
+   },
+   {
+    "pregunta": "¿En nombre de quién fue David contra Goliat?",
+    "opciones": [
+     "Del rey Saúl",
+     "De sus hermanos",
+     "De Jehová de los ejércitos"
+    ],
+    "correcta": 2,
+    "explica": "«Yo vengo a ti en el nombre de Jehová de los ejércitos». (1 Samuel 17:45)"
+   }
+  ]
+ },
+ "ambiente_sonido": "campo",
+ "lugar": "El valle de Ela",
+ "aldeanos_frases": [
+  "Un soldado afila su espada en silencio.",
+  "Un joven cuida los asnos del campamento.",
+  "Dos soldados miran nerviosos hacia el otro monte.",
+  "Un soldado reparte pan entre sus compañeros."
+ ]
 }

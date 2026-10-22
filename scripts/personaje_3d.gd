@@ -18,12 +18,14 @@ const ASPECTO := {
 	"jacob": {"piel": "c99470", "pelo": "e8e4dc", "tunica": "6a5a4a", "manto": "4a3a2a", "barba": "efeae0",
 		"peinado": "calvo", "baston": true},
 	"levi": {"piel": "b9845a", "pelo": "2a1a12", "tunica": "4a6a5a", "barba": "2a1a12"},
+	"egipcio": {"piel": "a8714a", "pelo": "140e0a", "tunica": "f0ead8", "cinto": "3a5a9a", "tocado": "f0ead8", "tocado2": "3a5a9a"},
 	# Rut 1–2
 	"rut": {"piel": "c68b5e", "pelo": "2a1a12", "tunica": "9a5a4a", "peinado": "panuelo", "panuelo": "d9b25a"},
 	"noemi": {"piel": "c99470", "pelo": "d8d4cc", "tunica": "5a4a6a", "peinado": "panuelo", "panuelo": "3a3048", "baston": true},
 	"booz": {"piel": "b9845a", "pelo": "5a5048", "tunica": "6a3a2a", "manto": "8a2a2a", "barba": "8a8078", "turbante": "e8e0cc"},
 	"criado": {"piel": "a8714a", "pelo": "1e1610", "tunica": "8a7a5a", "barba": "1e1610"},
 	"segador": {"piel": "9c6844", "pelo": "1a120c", "tunica": "c8b88a"},
+	"criada": {"piel": "b9845a", "pelo": "2a1a12", "tunica": "8a7a5a", "peinado": "panuelo", "panuelo": "c8b88a"},
 	# 1 Samuel 17
 	"david": {"piel": "d39b70", "pelo": "9a4a24", "tunica": "a8865a", "cinto": "6b4527", "honda": true, "baston": true},
 	"eliab": {"piel": "b07a52", "pelo": "241812", "tunica": "6a5a4a", "barba": "241812", "armadura": "9a7a3a", "casco": "9a7a3a"},
@@ -38,6 +40,7 @@ const ASPECTO := {
 		"barba": "2a1a12", "turbante": "e8e0cc"},
 	"eliasib": {"piel": "c99470", "pelo": "e8e4dc", "tunica": "e8e8f0", "manto": "3a4a9a", "barba": "efeae0", "turbante": "f0f0f0"},
 	"sanbalat": {"piel": "9c6844", "pelo": "140e0a", "tunica": "5a1a2a", "manto": "2a1a1a", "barba": "140e0a", "turbante": "8a2a2a"},
+	"tobias": {"piel": "b07a52", "pelo": "1e1610", "tunica": "3a5a3a", "manto": "2a3a2a", "barba": "1e1610", "turbante": "6a8a5a"},
 	"salum": {"piel": "a8714a", "pelo": "4a4040", "tunica": "6a6a5a", "barba": "6a6058", "peinado": "calvo"},
 	"hija_salum": {"piel": "c68b5e", "pelo": "2a1a12", "tunica": "7a8a5a", "peinado": "panuelo", "panuelo": "c8a060"},
 	"obrero": {"piel": "9c6844", "pelo": "1a120c", "tunica": "8a7a6a"},
@@ -56,6 +59,15 @@ var _pierna_i: Node3D
 var _pierna_d: Node3D
 var _brazo_i: Node3D
 var _brazo_d: Node3D
+var _cabeza: Node3D
+var _amplitud := 0.0
+var _t := 0.0
+var _mirar_a = null  # punto global al que gira la cabeza (o null)
+var _vista_azar := 0.0  # giro de cabeza al mirar alrededor
+var _proximo_vistazo := 2.0
+var hablando := false
+var _gesto := ""
+var _gesto_t := 0.0
 
 
 static func material(color: String, brillo := false) -> StandardMaterial3D:
@@ -91,7 +103,42 @@ func _articulacion(pos: Vector3) -> Node3D:
 
 
 func configurar(clave: String) -> void:
-	var a: Dictionary = ASPECTO.get(clave, ASPECTO["companero"])
+	_construir(ASPECTO.get(clave, ASPECTO["companero"]))
+
+
+## Aldeano con apariencia al azar (pero siempre igual para la misma semilla).
+func configurar_aleatorio(semilla: int, estilo := "hebreo") -> void:
+	var r := RandomNumberGenerator.new()
+	r.seed = semilla
+	var pieles := ["c68b5e", "b07a52", "a8714a", "9c6844", "d39b70", "8f5a3a", "b9845a"]
+	var pelos := ["1a120c", "2a1a12", "3a2416", "140e0a", "5a3420", "d8d4cc"]
+	var telas := ["8a7a5a", "6a5a4a", "a88a6a", "5a6a7a", "7a5a3a", "9a6a4a", "6a7a5a", "b8a888", "7a4a4a", "4a5a6a"]
+	var a := {"piel": pieles[r.randi() % pieles.size()], "pelo": pelos[r.randi() % pelos.size()],
+		"tunica": telas[r.randi() % telas.size()]}
+	if r.randf() < 0.4:
+		a["manto"] = telas[r.randi() % telas.size()]
+	var mujer := r.randf() < 0.45
+	if r.randf() < 0.16:
+		a["nino"] = true
+	elif not mujer and r.randf() < 0.65:
+		a["barba"] = a["pelo"]
+	if estilo == "egipcio":
+		a["tunica"] = ["f0ead8", "e8e0c8", "d8ccb0"][r.randi() % 3]
+		if r.randf() < 0.5:
+			a["tocado"] = "f0ead8"
+			a["tocado2"] = ["3a5a9a", "a08050", "6a8a5a"][r.randi() % 3]
+		a.erase("barba")
+	elif mujer:
+		a["peinado"] = "panuelo" if r.randf() < 0.7 else "largo"
+		a["panuelo"] = ["d9b25a", "e8e0cc", "8a5a6a", "5a6a8a", "c8a060"][r.randi() % 5]
+	elif r.randf() < 0.3:
+		a["turbante"] = ["e8e0cc", "c8b88a", "8a6a4a"][r.randi() % 3]
+	if r.randf() < 0.12 and not a.has("nino"):
+		a["baston"] = true
+	_construir(a)
+
+
+func _construir(a: Dictionary) -> void:
 	var piel: String = a["piel"]
 	var pelo: String = a["pelo"]
 	var tunica: String = a["tunica"]
@@ -155,6 +202,7 @@ func configurar(clave: String) -> void:
 
 	# cabeza
 	var cabeza := _articulacion(Vector3(0, 1.32, 0))
+	_cabeza = cabeza
 	_caja(cabeza, Vector3(0.38, 0.38, 0.38), Vector3(0, 0.19, 0), piel)
 	_caja(cabeza, Vector3(0.07, 0.07, 0.02), Vector3(-0.09, 0.22, -0.19), oscuro)
 	_caja(cabeza, Vector3(0.07, 0.07, 0.02), Vector3(0.09, 0.22, -0.19), oscuro)
@@ -209,21 +257,83 @@ func configurar(clave: String) -> void:
 		_caja(cabeza, Vector3(0.04, 0.2, 0.36), Vector3(0.205, 0.3, 0.03), pelo)
 
 
-## Gira hacia `direccion` y anima piernas y brazos si se está moviendo.
+## La cabeza gira hacia ese punto (por ejemplo, el jugador). null = mirar al frente o alrededor.
+func mirar_hacia(punto) -> void:
+	_mirar_a = punto
+
+
+## Animación corta: "recoger" (se agacha), "encender" (levanta el brazo), "saludar".
+func gesto(nombre: String) -> void:
+	_gesto = nombre
+	_gesto_t = 0.0
+
+
+## Gira hacia `direccion` y anima el cuerpo: caminar, respirar, mirar, hablar y gestos.
 func actualizar(delta: float, direccion: Vector3, moviendose: bool, _camara: Camera3D = null) -> void:
+	_t += delta
 	if direccion.length_squared() > 0.001:
 		mirando = direccion.normalized()
 		var objetivo := atan2(-mirando.x, -mirando.z)
-		rotation.y = lerp_angle(rotation.y, objetivo, minf(1.0, delta * 12.0))
-	var amplitud := 0.0
-	if moviendose:
+		rotation.y = lerp_angle(rotation.y, objetivo, minf(1.0, delta * 10.0))
+	# caminar: la amplitud sube y baja suave (sin cortes al arrancar o frenar)
+	_amplitud = move_toward(_amplitud, 0.62 if moviendose else 0.0, delta * 3.5)
+	if _amplitud > 0.01:
 		_fase += delta * 9.5
-		amplitud = 0.62
 	else:
 		_fase = lerpf(_fase, roundf(_fase / PI) * PI, minf(1.0, delta * 8.0))
-	var s := sin(_fase) * amplitud
+	var s := sin(_fase) * _amplitud
+	var brazo_i := -s * 0.8
+	var brazo_d := s * 0.8
+	var cuerpo_y := absf(sin(_fase)) * 0.06 * (_amplitud / 0.62)
+	var inclinacion := 0.0
+	# respirar y cambiar el peso de pierna cuando está quieto
+	if _amplitud < 0.05:
+		cuerpo_y += sin(_t * 2.1) * 0.012
+		_cuerpo.rotation.z = sin(_t * 0.7) * 0.025
+		brazo_i += sin(_t * 2.1) * 0.04
+		brazo_d -= sin(_t * 2.1) * 0.04
+	else:
+		_cuerpo.rotation.z = lerpf(_cuerpo.rotation.z, 0.0, delta * 6.0)
+		inclinacion = 0.08 * (_amplitud / 0.62)  # se inclina un poco hacia adelante al caminar
+	# hablar: manos que acompañan las palabras y la cabeza asiente
+	var cabeza_x := 0.0
+	if hablando:
+		brazo_d = -0.5 + sin(_t * 5.0) * 0.35
+		brazo_i = -0.2 + sin(_t * 3.7 + 1.0) * 0.2
+		cabeza_x = sin(_t * 6.0) * 0.07
+	# gestos cortos
+	if _gesto != "":
+		_gesto_t += delta
+		var g := sin(clampf(_gesto_t / 0.7, 0.0, 1.0) * PI)
+		match _gesto:
+			"recoger":
+				cuerpo_y -= 0.32 * g
+				inclinacion += 0.55 * g
+				brazo_d = lerpf(brazo_d, -1.3, g)
+				brazo_i = lerpf(brazo_i, -1.1, g)
+			"encender":
+				brazo_d = lerpf(brazo_d, -2.5, g)
+			"saludar":
+				brazo_d = -2.7 + sin(_gesto_t * 14.0) * 0.3 * g
+				brazo_d = lerpf(0.0, brazo_d, g)
+		if _gesto_t > 0.7:
+			_gesto = ""
 	_pierna_i.rotation.x = s
 	_pierna_d.rotation.x = -s
-	_brazo_i.rotation.x = -s * 0.8
-	_brazo_d.rotation.x = s * 0.8
-	_cuerpo.position.y = absf(sin(_fase)) * 0.05 if moviendose else sin(Time.get_ticks_msec() * 0.002) * 0.008
+	_brazo_i.rotation.x = lerpf(_brazo_i.rotation.x, brazo_i, minf(1.0, delta * 14.0))
+	_brazo_d.rotation.x = lerpf(_brazo_d.rotation.x, brazo_d, minf(1.0, delta * 14.0))
+	_cuerpo.position.y = cuerpo_y
+	_cuerpo.rotation.x = lerpf(_cuerpo.rotation.x, inclinacion, minf(1.0, delta * 8.0))
+	# cabeza: mira a quien tiene cerca, o de vez en cuando echa un vistazo alrededor
+	var giro := 0.0
+	if _mirar_a != null:
+		var local := to_local(_mirar_a)
+		giro = clampf(atan2(-local.x, -local.z), -1.1, 1.1)
+	else:
+		_proximo_vistazo -= delta
+		if _proximo_vistazo <= 0:
+			_proximo_vistazo = randf_range(2.5, 6.0)
+			_vista_azar = randf_range(-0.6, 0.6) if randf() < 0.6 else 0.0
+		giro = _vista_azar if _amplitud < 0.05 else 0.0
+	_cabeza.rotation.y = lerp_angle(_cabeza.rotation.y, giro, minf(1.0, delta * 5.0))
+	_cabeza.rotation.x = lerpf(_cabeza.rotation.x, cabeza_x, minf(1.0, delta * 10.0))

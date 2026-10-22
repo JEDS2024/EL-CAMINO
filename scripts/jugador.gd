@@ -95,8 +95,12 @@ func _physics_process(delta: float) -> void:
 		entrada = Input.get_vector("mover_izquierda", "mover_derecha", "mover_arriba", "mover_abajo") + entrada_tactil
 		entrada = entrada.limit_length(1.0)
 	var dir := Basis(Vector3.UP, yaw) * Vector3(entrada.x, 0, entrada.y)
-	velocity.x = dir.x * VELOCIDAD
-	velocity.z = dir.z * VELOCIDAD
+	# acelera y frena con suavidad (más rápido al frenar, para que responda bien)
+	var objetivo := Vector2(dir.x, dir.z) * VELOCIDAD
+	var actual := Vector2(velocity.x, velocity.z)
+	actual = actual.move_toward(objetivo, (26.0 if objetivo.length() > 0.1 else 34.0) * delta)
+	velocity.x = actual.x
+	velocity.z = actual.y
 	if is_on_floor():
 		velocity.y = -0.5
 	else:
@@ -106,7 +110,8 @@ func _physics_process(delta: float) -> void:
 		var giro := Input.get_vector("mirar_izquierda", "mirar_derecha", "mirar_arriba", "mirar_abajo")
 		if giro != Vector2.ZERO:
 			mirar(giro * 520.0 * delta)
-	modelo.actualizar(delta, dir, dir.length() > 0.1)
+	var plano := Vector3(velocity.x, 0, velocity.z)
+	modelo.actualizar(delta, plano if plano.length() > 0.3 else Vector3.ZERO, plano.length() > 0.6)
 	# un leve parpadeo de la llama
 	candil.light_energy = 1.35 + sin(Time.get_ticks_msec() * 0.011) * 0.06
 

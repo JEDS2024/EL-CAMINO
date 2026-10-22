@@ -175,14 +175,32 @@ def piedra_oscura():
 
 
 def cebada():
-    im = ruido(hexc("b8953e"), 10)
+    # campo maduro: dorado apagado con tallos suaves (menos ruido que antes)
+    im = ruido(hexc("b89b52"), 4)
     px = im.load()
-    for _ in range(30):
+    for _ in range(14):
         x, y = R.randrange(16), R.randrange(2, 16)
-        px[x, y] = hexc("d9b85a"); px[x, y - 1] = hexc("e8cf7a")
-        if y > 2: px[x, y - 2] = hexc("f0dc8c")
-    for _ in range(6):
-        px[R.randrange(16), R.randrange(16)] = hexc("8a6a2a")
+        px[x, y] = hexc("c9ad62"); px[x, y - 1] = hexc("d4bb72")
+    for _ in range(4):
+        px[R.randrange(16), R.randrange(16)] = hexc("9a8040")
+    return im
+
+
+def ladera(arena=False):
+    # lado de un cerro: borde de pasto (o arena) arriba, tierra con piedras abajo
+    tierra, piedra = (hexc("b8945a"), hexc("9a7a48")) if arena else (hexc("7a5a3a"), hexc("8a8078"))
+    borde = hexc("d6bf86") if arena else hexc("5a8a3e")
+    im = ruido(tierra, 6)
+    px = im.load()
+    for _ in range(5):
+        x, y = R.randrange(1, 14), R.randrange(6, 14)
+        for dx in range(2):
+            px[x + dx, y] = piedra; px[x + dx, y + 1] = var(piedra, -20)
+    for x in range(16):
+        alto = 3 + (1 if (x * 7) % 5 < 2 else 0)
+        for y in range(alto):
+            px[x, y] = var(borde, R.randint(-8, 8))
+        px[x, alto] = var(tierra, -18)
     return im
 
 
@@ -218,6 +236,58 @@ def arbol():
     for _ in range(6):
         x, y = R.randrange(6, 26), R.randrange(6, 28)
         if px[x, y][3]: px[x, y] = hexc("c9a24a")  # aceitunas / frutos
+    return im
+
+
+def palmera():
+    im = lienzo(32, 56)
+    px = im.load()
+    # tronco curvo con anillos
+    for y in range(18, 56):
+        x = 15 + int(2 * ((56 - y) / 38) ** 2)
+        for dx in range(3):
+            px[x + dx, y] = hexc("8a6a42") if (y % 3) else hexc("6b4f30")
+    # hojas en abanico
+    import math
+    for ang in range(0, 360, 36):
+        a = math.radians(ang)
+        for k in range(15):
+            caida = (k / 15) ** 2 * 6
+            x = int(16 + math.cos(a) * k)
+            y = int(18 + math.sin(a) * k * 0.45 + caida)
+            for g in (0, 1):
+                if 0 <= x < 32 and 0 <= y + g < 56:
+                    px[x, y + g] = hexc("4f8a3a") if k % 3 else hexc("3a6b2c")
+    for x, y in ((15, 19), (17, 20), (16, 21)):
+        px[x, y] = hexc("8a5a2a")  # dátiles
+    return im
+
+
+def vasijas():
+    im = lienzo(24, 16)
+    px = im.load()
+    for cx, alto, color in ((6, 12, "b8673a"), (14, 15, "c8804a"), (20, 9, "a85a30")):
+        for y in range(16 - alto, 16):
+            t = (y - (16 - alto)) / alto
+            ancho = 2 + int(4 * (1 - (2 * t - 1.1) ** 2)) if t > 0.15 else 1
+            for x in range(cx - ancho, cx + ancho):
+                if 0 <= x < 24:
+                    px[x, y] = var(hexc(color), -14 if x > cx else 6)
+        px[cx - 1, 16 - alto] = px[cx, 16 - alto] = hexc("5a3020")
+    return im
+
+
+def flores():
+    im = lienzo(16, 10)
+    px = im.load()
+    for x0, color in ((2, "e8d36a"), (6, "d98bb8"), (10, "f4f4ff"), (13, "e8706a")):
+        alto = R.randint(4, 8)
+        for y in range(10 - alto, 10):
+            px[x0, y] = hexc("4f7a3a")
+        y = 10 - alto
+        for dx, dy in ((0, 0), (-1, 0), (1, 0), (0, -1)):
+            if 0 <= x0 + dx < 16 and y + dy >= 0:
+                px[x0 + dx, y + dy] = hexc(color)
     return im
 
 
@@ -327,6 +397,18 @@ FORMAS = {
         ".....XX.......",
         "....XX........",
     ],
+    "estrella": [
+        "......XX......",
+        "......XX......",
+        ".....XXXX.....",
+        "XXXXXXXXXXXXXX",
+        ".XXXXXXXXXXXX.",
+        "...XXXXXXXX...",
+        "...XXXXXXXX...",
+        "..XXXX..XXXX..",
+        "..XXX....XXX..",
+        ".XX........XX.",
+    ],
     "luz": [
         "......XX......",
         ".....XXXX.....",
@@ -340,7 +422,7 @@ FORMAS = {
         "..XXXXXXXXXX..",
     ],
 }
-COLORES_SIMB = {"fe": "f2e6b8", "esperanza": "8fd3ff", "amor": "ff6f7d", "perdon": "f4f4ff", "luz": "ffd36b"}
+COLORES_SIMB = {"estrella": "ffd36b", "fe": "f2e6b8", "esperanza": "8fd3ff", "amor": "ff6f7d", "perdon": "f4f4ff", "luz": "ffd36b"}
 
 
 def icono(nombre, color=None):
@@ -471,6 +553,38 @@ def objeto_pan():
     for x in (5, 8, 11):
         px[x, 8] = hexc("a86b30")
     return im
+
+
+# ------------------------------------------------------------------ interfaz estilo Minecraft
+def _bisel(w, h, relleno, claro, oscuro, borde=(0, 0, 0, 255), grosor=2, ruido_amp=6):
+    im = lienzo(w, h, relleno)
+    px = im.load()
+    for y in range(h):
+        for x in range(w):
+            c = var(relleno, R.randint(-ruido_amp, ruido_amp)) if ruido_amp else relleno
+            if x < grosor + 1 or y < grosor + 1:
+                c = claro
+            if x >= w - grosor - 1 or y >= h - grosor - 1:
+                c = oscuro
+            if x == 0 or y == 0 or x == w - 1 or y == h - 1:
+                c = borde
+            px[x, y] = c
+    return im
+
+
+def ui_texturas():
+    escala = 3  # cada píxel del dibujo ocupa 3x3 en pantalla
+    piezas = {
+        "boton": _bisel(20, 20, hexc("6f6f6f"), hexc("a2a2a2"), hexc("494949")),
+        "boton_encima": _bisel(20, 20, hexc("7f8cba"), hexc("b8c4ee"), hexc("4e5a86")),
+        "boton_pulsado": _bisel(20, 20, hexc("4c4c4c"), hexc("333333"), hexc("6a6a6a")),
+        "boton_apagado": _bisel(20, 20, hexc("2e2e2e"), hexc("3a3a3a"), hexc("222222"), ruido_amp=0),
+        "panel": _bisel(20, 20, (24, 20, 36, 236), (92, 80, 120, 255), (12, 8, 20, 255), ruido_amp=0),
+        "ranura": _bisel(20, 20, (60, 56, 72, 200), (28, 24, 36, 230), (140, 134, 160, 230), grosor=1, ruido_amp=0),
+        "ranura_sel": _bisel(20, 20, (80, 74, 96, 210), (255, 255, 255, 255), (255, 255, 255, 255), grosor=1, ruido_amp=0),
+    }
+    for nombre, im in piezas.items():
+        guardar(im.resize((im.width * escala, im.height * escala), Image.NEAREST), "ui", nombre + ".png")
 
 
 # ------------------------------------------------------------------ personajes
@@ -605,13 +719,16 @@ PERSONAJES = {
 
 
 def main():
-    tex = {"cebada": cebada, "tela": tela, "pasto": pasto, "camino": camino, "arena": arena, "adoquin": adoquin, "madera": madera, "muro": muro,
+    tex = {"cebada": cebada, "ladera": lambda: ladera(False), "ladera_arena": lambda: ladera(True), "tela": tela, "pasto": pasto, "camino": camino, "arena": arena, "adoquin": adoquin, "madera": madera, "muro": muro,
            "pared_casa": pared_casa, "tejado": tejado, "agua": agua, "roca": roca, "piedra_oscura": piedra_oscura}
     for n, f in tex.items():
         guardar(f(), "texturas", n + ".png")
     guardar(arbol(), "sprites", "arbol.png")
     guardar(arbusto(), "sprites", "arbusto.png")
     guardar(arbusto(True), "sprites", "arbusto_secreto.png")
+    guardar(palmera(), "sprites", "palmera.png")
+    guardar(vasijas(), "sprites", "vasijas.png")
+    guardar(flores(), "sprites", "flores.png")
     guardar(lampara(False), "sprites", "lampara_apagada.png")
     guardar(lampara(True), "sprites", "lampara_encendida.png")
     guardar(arco(False), "sprites", "arco_cerrado.png")
@@ -624,6 +741,7 @@ def main():
     for n, f in {"copa": objeto_copa, "espiga": objeto_espiga, "piedra": objeto_piedra,
                  "pergamino": objeto_pergamino, "arpa": objeto_arpa}.items():
         guardar(f(), "iconos", n + ".png")
+    ui_texturas()
     # los personajes ahora son modelos 3D (scripts/personaje_3d.gd); ya no se generan sprites
     print("arte generado en", os.path.abspath(RAIZ))
 

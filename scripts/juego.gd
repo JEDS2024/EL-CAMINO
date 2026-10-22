@@ -19,6 +19,11 @@ const RUTA_AJUSTES := "user://ajustes.cfg"
 
 var primera_persona := false
 var sensibilidad := 1.0
+var vol_musica := 0.8
+var vol_efectos := 0.9
+var leer_voz := false  # leer los diálogos en voz alta (ideal para niños)
+var texto_grande := false
+var guia := true  # faro sobre el siguiente objetivo y «!» en personajes
 var capitulo := 0
 var virtudes := {}
 var luz := 30.0
@@ -26,8 +31,15 @@ var flags := {}
 var contadores := {}
 var objetos: Array = []
 var secretos := 0
+var capitulo_max := 0  # el capítulo más avanzado desbloqueado
+var completados: Array = []
+var estrellas := {}  # índice de capítulo (texto) -> mejor resultado del repaso (0-3)
+## Lo que cada capítulo cambió (flags, virtudes, contadores...) para poder rejugarlo desde cero.
+var registro := {}
 ## Un diálogo pidió terminar el capítulo (efecto fin_capitulo); main lo atiende al cerrarlo.
 var fin_pedido := false
+## Un diálogo pidió un minijuego (efecto minijuego): {"tipo": "honda", "exito": id de diálogo}.
+var minijuego_pedido := {}
 
 
 func _ready() -> void:
@@ -43,7 +55,7 @@ func _registrar_acciones() -> void:
 		"mirar_izquierda": [KEY_LEFT, KEY_J], "mirar_derecha": [KEY_RIGHT, KEY_L],
 		"mirar_arriba": [KEY_UP, KEY_I], "mirar_abajo": [KEY_DOWN, KEY_K],
 		"interactuar": [KEY_E, KEY_SPACE, KEY_ENTER], "cambiar_vista": [KEY_C, KEY_V],
-		"pausa": [KEY_ESCAPE, KEY_P],
+		"pausa": [KEY_ESCAPE, KEY_P], "mochila": [KEY_TAB, KEY_B],
 	}
 	for accion in mapa:
 		if InputMap.has_action(accion):
@@ -63,6 +75,10 @@ func _reiniciar_estado() -> void:
 	contadores = {}
 	objetos = []
 	secretos = 0
+	capitulo_max = 0
+	completados = []
+	estrellas = {}
+	registro = {}
 
 
 func nueva_partida(usar_primera_persona: bool) -> void:
@@ -112,34 +128,100 @@ func _cumple_una(c: String) -> bool:
 	return r != negar
 
 
+func _reg() -> Dictionary:
+	var k := str(capitulo)
+	if not registro.has(k):
+		registro[k] = {"flags": [], "virtudes": {}, "contadores": {}, "objetos": [], "secretos": 0, "luz": 0.0, "inventario": {}}
+	if not registro[k].has("inventario"):
+		registro[k]["inventario"] = {}
+	return registro[k]
+
+
+## Objetos recogidos en el capítulo actual: clave -> {icono, nombre, cantidad, reliquia}.
+func inventario_capitulo() -> Dictionary:
+	return _reg()["inventario"]
+
+
+## Reliquias (secretos) encontradas en todos los capítulos.
+func reliquias() -> Array:
+	var lista := []
+	for k in registro:
+		for clave_inv in registro[k].get("inventario", {}):
+			var o: Dictionary = registro[k]["inventario"][clave_inv]
+			if o.get("reliquia", false):
+				lista.append({"icono": o.get("icono", "luz"), "nombre": o["nombre"]})
+	return lista
+
+
+## Pone una marca y la anota en el registro del capítulo actual.
+func marcar(flag: String) -> void:
+	if not flags.get(flag, false):
+		flags[flag] = true
+		_reg()["flags"].append(flag)
+
+
+## Deshace todo lo que el capítulo i había cambiado, para jugarlo otra vez.
+func reiniciar_capitulo(i: int) -> void:
+	var r: Dictionary = registro.get(str(i), {})
+	for f in r.get("flags", []):
+		flags.erase(f)
+	for v in r.get("virtudes", {}):
+		virtudes[v] -= r["virtudes"][v]
+	for c in r.get("contadores", {}):
+		contadores[c] = contadores.get(c, 0) - r["contadores"][c]
+	for o in r.get("objetos", []):
+		objetos.erase(o)
+	secretos -= int(r.get("secretos", 0))
+	luz = clampf(luz - float(r.get("luz", 0.0)), 0.0, 100.0)
+	registro.erase(str(i))
+	completados.erase(i)
+
+
 func aplicar(efectos) -> void:
 	if efectos == null or not (efectos is Dictionary):
 		return
+	var reg := _reg()
 	for clave in efectos:
 		var v = efectos[clave]
 		if clave in VIRTUDES:
 			virtudes[clave] += int(v)
+			reg["virtudes"][clave] = reg["virtudes"].get(clave, 0) + int(v)
 			if int(v) > 0:
 				aviso.emit("+%d %s" % [int(v), NOMBRE_VIRTUD[clave]], clave)
 		elif clave == "luz":
+			var antes := luz
 			luz = clampf(luz + float(v), 0.0, 100.0)
+			reg["luz"] += luz - antes
 			if float(v) > 0:
 				aviso.emit("La luz de tu candil crece", "luz")
 		elif clave == "flag":
 			for f in (v if v is Array else [v]):
-				flags[String(f)] = true
+				marcar(String(f))
 		elif clave == "quitar_flag":
 			for f in (v if v is Array else [v]):
 				flags.erase(String(f))
 		elif clave == "sumar":
 			for nombre in v:
 				contadores[nombre] = contadores.get(nombre, 0) + int(v[nombre])
+				reg["contadores"][nombre] = reg["contadores"].get(nombre, 0) + int(v[nombre])
 		elif clave == "objeto":
 			if not objetos.has(v):
 				objetos.append(v)
+				reg["objetos"].append(v)
 		elif clave == "secreto":
 			secretos += 1
+			reg["secretos"] += 1
 			aviso.emit("¡Secreto encontrado!", "luz")
+		elif clave == "recoger":
+			var inv: Dictionary = reg["inventario"]
+			# las reliquias van aparte (por su id); lo demás se agrupa por ícono
+			var clave_inv := String(v.get("clave", v.get("icono", "luz")))
+			if not inv.has(clave_inv):
+				inv[clave_inv] = {"icono": v.get("icono", "luz"), "nombre": v.get("nombre", clave_inv), "cantidad": 0,
+					"reliquia": v.get("reliquia", false)}
+			inv[clave_inv]["cantidad"] += 1
+		elif clave == "minijuego":
+			minijuego_pedido = v
 		elif clave == "fin_capitulo":
 			fin_pedido = true
 		elif clave == "aviso":
@@ -179,6 +261,8 @@ func guardar_partida() -> void:
 	cfg.set_value("partida", "contadores", contadores)
 	cfg.set_value("partida", "objetos", objetos)
 	cfg.set_value("partida", "secretos", secretos)
+	for clave in ["capitulo_max", "completados", "estrellas", "registro"]:
+		cfg.set_value("partida", clave, get(clave))
 	cfg.save(RUTA_PARTIDA)
 
 
@@ -193,6 +277,8 @@ func cargar_partida() -> bool:
 	contadores = cfg.get_value("partida", "contadores", {})
 	objetos = cfg.get_value("partida", "objetos", [])
 	secretos = cfg.get_value("partida", "secretos", 0)
+	for clave in ["capitulo_max", "completados", "estrellas", "registro"]:
+		set(clave, cfg.get_value("partida", clave, get(clave)))
 	return true
 
 
@@ -200,6 +286,8 @@ func guardar_ajustes() -> void:
 	var cfg := ConfigFile.new()
 	cfg.set_value("ajustes", "primera_persona", primera_persona)
 	cfg.set_value("ajustes", "sensibilidad", sensibilidad)
+	for clave in ["vol_musica", "vol_efectos", "leer_voz", "texto_grande", "guia"]:
+		cfg.set_value("ajustes", clave, get(clave))
 	cfg.save(RUTA_AJUSTES)
 
 
@@ -208,3 +296,5 @@ func cargar_ajustes() -> void:
 	if cfg.load(RUTA_AJUSTES) == OK:
 		primera_persona = cfg.get_value("ajustes", "primera_persona", false)
 		sensibilidad = cfg.get_value("ajustes", "sensibilidad", 1.0)
+		for clave in ["vol_musica", "vol_efectos", "leer_voz", "texto_grande", "guia"]:
+			set(clave, cfg.get_value("ajustes", clave, get(clave)))

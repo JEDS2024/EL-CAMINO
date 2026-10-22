@@ -14,36 +14,49 @@
   "luz_ambiente": "#9a7a88",
   "energia_ambiente": 0.7,
   "niebla": "#6a4a5a",
-  "densidad_niebla": 0.016,
+  "densidad_niebla": 0.01,
   "sol_color": "#ffb080",
   "sol_energia": 0.7,
   "sol_rotacion": [
    -12,
    110
-  ]
+  ],
+  "particulas": "luciernagas",
+  "montanas": "#6a4a5a",
+  "suelo_lejano": "#5a5040",
+  "nubes": 0.6,
+  "estrellas": 0.4,
+  "color_nube": "#ffc8a0",
+  "sombra_nube": "#8a5a6a",
+  "ciclo": {
+   "inicio": 17.2,
+   "fin": 20.5,
+   "minutos": 10
+  },
+  "aves": true
  },
  "mapa": [
-  "##############################",
-  "#..HHH.......=.......HHH.....#",
-  "#..HHH.......=S......HHH.....#",
-  "#............=...............#",
-  "#..T.........=.........T.....#",
-  "#............===.............#",
-  "#..R...........=..z......R...#",
-  "#..............=.............#",
-  "#.....T.......==.............#",
-  "#.............=..y...........#",
-  "#..TT.........=..........T...#",
-  "#.............====...........#",
-  "#..R..............=..........#",
-  "#...............d.=......R...#",
-  "#.................=..........#",
-  "#.................=1.........#",
-  "#.................=...g......#",
-  "#..TTbTT..........=..........#",
-  "#..T.sT...........=..........#",
-  "#..TTTT...........=2P..i.....#",
-  "##############################"
+  "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+  "^^...HHH........=S......HHH.....^^^^",
+  "^^...HHH........=.......HHH...*.^^^^",
+  "^.....&..+..|...=.............T..^^^",
+  "^..T......*.....=.....+....*.....^^^",
+  "^...............===.............^^^^",
+  "^^..R..............=..z......R...^^^",
+  "^^^................=.............^^^",
+  "^^^.....T.........==......TT.T...^^^",
+  "^^...............=..y............^^^",
+  "^^...T.T.........=.........T.....^^^",
+  "^^...............=====...........^^^",
+  "^^..R....@...........=......*....^^^",
+  "^^.....@.......d.....=......R....^^^",
+  "^^........@..........=......T....^^^",
+  "^^...................=1..........^^^",
+  "^^.....T+............=....g......^^^",
+  "^^..^!^^T............=...........^^^",
+  "^^..^s^^.....*.......=......T....^^^",
+  "^^..^^^^.............=2P..i......^^^",
+  "^^^^^^^^#########:####:#####^^^^^^^^"
  ],
  "leyenda": {
   "1": {
@@ -158,7 +171,8 @@
     "secreto": 1,
     "luz": 10,
     "esperanza": 1
-   }
+   },
+   "nombre": "Mensaje del sepulcro vacío"
   },
   "S": {
    "tipo": "salida",
@@ -190,22 +204,25 @@
  },
  "objetivos": [
   {
-   "texto": "Camina hacia Emaús con tu compañero",
+   "texto": "Camina hacia Emaús: alguien se acerca",
    "hecho": [
     "flag:explicacion"
-   ]
+   ],
+   "marca": "1"
   },
   {
    "texto": "Recuerda las Escrituras en orden: comenzando desde Moisés y siguiendo por los profetas",
    "hecho": [
     "flag:escrituras_ok"
-   ]
+   ],
+   "marca_acertijo": "escrituras"
   },
   {
    "texto": "Llega a la casa en Emaús (norte)",
    "hecho": [
     "flag:__nunca"
-   ]
+   ],
+   "marca": "S"
   }
  ],
  "retratos": {
@@ -450,5 +467,49 @@
     "texto": "Y como en Emaús, el Señor resucitado camina con los suyos, aunque a veces no lo reconozcan. (Lucas 24:15-16)"
    }
   ]
- }
+ },
+ "musica": "emaus",
+ "repaso": {
+  "versiculo": "¿No ardía nuestro corazón en nosotros, mientras nos hablaba en el camino?",
+  "cita": "Lucas 24:32",
+  "preguntas": [
+   {
+    "pregunta": "¿Cómo se llamaba uno de los dos discípulos?",
+    "opciones": [
+     "Pedro",
+     "Cleofás",
+     "Tomás"
+    ],
+    "correcta": 1,
+    "explica": "Uno de ellos se llamaba Cleofás. (Lucas 24:18)"
+   },
+   {
+    "pregunta": "¿Cuándo reconocieron a Jesús?",
+    "opciones": [
+     "Al partir el pan",
+     "Al llegar a Jerusalén",
+     "Al ver un ángel"
+    ],
+    "correcta": 0,
+    "explica": "Le reconocieron al partir el pan. (Lucas 24:30-31, 35)"
+   },
+   {
+    "pregunta": "¿Desde dónde comenzó a explicarles las Escrituras?",
+    "opciones": [
+     "Desde los Salmos",
+     "Desde Isaías",
+     "Desde Moisés"
+    ],
+    "correcta": 2,
+    "explica": "«Comenzando desde Moisés, y siguiendo por todos los profetas». (Lucas 24:27)"
+   }
+  ]
+ },
+ "ambiente_sonido": "tarde",
+ "lugar": "El camino de Jerusalén a Emaús",
+ "aldeanos_frases": [
+  "Un pastor guía sus ovejas de regreso al redil.",
+  "Un viajero se apresura antes de que caiga la noche.",
+  "Una familia enciende el fuego para la cena."
+ ]
 }

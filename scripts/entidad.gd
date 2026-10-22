@@ -24,6 +24,9 @@ var etiqueta: Label3D
 var activo := true
 ## main la marca cada cuadro cuando es lo que el jugador va a usar
 var resaltada := false
+var marcada := false  # el faro la señala (entonces no hace falta el «!»)
+var letra := ""  # carácter del mapa que la creó (lo usa la guía de objetivos)
+var aviso: Label3D  # «!» cuando un personaje tiene algo nuevo que decir
 var _t := 0.0
 
 
@@ -36,8 +39,11 @@ func preparar(d: Dictionary, n: Nivel) -> void:
 		"npc":
 			personaje = Personaje3D.new()
 			add_child(personaje)
-			personaje.configurar(d.get("modelo", d.get("sprite", "caminante")))
-			solido = not d.get("seguir", false) and not d.has("aparece_si")
+			if d.get("aldeano", false):
+				personaje.configurar_aleatorio(int(position.x * 131 + position.z * 17), d.get("estilo", "hebreo"))
+			else:
+				personaje.configurar(d.get("modelo", d.get("sprite", "caminante")))
+			solido = not d.get("seguir", false) and not d.has("aparece_si") and not d.get("aldeano", false)
 		"lampara":
 			_pedestal(0.5)
 			sprite = _sprite("lampara_apagada", 0.09, 0.5)
@@ -84,14 +90,34 @@ func preparar(d: Dictionary, n: Nivel) -> void:
 		etiqueta = Label3D.new()
 		etiqueta.text = d["etiqueta"]
 		etiqueta.billboard = BaseMaterial3D.BILLBOARD_ENABLED
-		etiqueta.pixel_size = 0.004
-		etiqueta.font_size = 40
-		etiqueta.outline_size = 12
+		etiqueta.pixel_size = 0.0045
+		etiqueta.font_size = 48
+		etiqueta.outline_size = 18
+		etiqueta.outline_modulate = Color(0.06, 0.04, 0.12)
 		etiqueta.modulate = Color("fff3dc")
-		etiqueta.position.y = 2.75 if tipo == "npc" else 2.3
+		etiqueta.position.y = 2.35 if tipo == "npc" else 2.0
 		etiqueta.visible = false
 		add_child(etiqueta)
+	if tipo == "npc" and not def.get("dialogos", []).is_empty():
+		aviso = Label3D.new()
+		aviso.text = "!"
+		aviso.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+		aviso.font_size = 96
+		aviso.outline_size = 18
+		aviso.pixel_size = 0.006
+		aviso.modulate = Color("ffd36b")
+		aviso.position.y = 2.95
+		aviso.visible = false
+		add_child(aviso)
 	_revisar_aparicion()
+
+
+## El diálogo que diría este personaje ahora mismo.
+func dialogo_actual() -> String:
+	for opcion in def.get("dialogos", []):
+		if Juego.cumple(opcion.get("si", [])):
+			return opcion["id"]
+	return ""
 
 
 func _revisar_aparicion() -> void:
@@ -254,6 +280,10 @@ func texto_accion() -> String:
 func interactuar(main: Node) -> void:
 	match tipo:
 		"npc":
+			if def.get("aldeano", false):
+				var frases: Array = nivel.datos.get("aldeanos_frases", ["Alguien del lugar sigue con sus tareas."])
+				main.decir(frases[randi() % frases.size()])
+				return
 			for opcion in def.get("dialogos", []):
 				if Juego.cumple(opcion.get("si", [])):
 					main.iniciar_dialogo(opcion["id"], self)
@@ -267,13 +297,20 @@ func interactuar(main: Node) -> void:
 				main.iniciar_dialogo(def.get("dialogo_frio", ""))
 			else:
 				fijar_encendida(true)
+				Sonido.efecto("lampara")
+				nivel.chispas(global_position + Vector3(0, 1.9, 0), Color("ffbf60"), 24)
 				nivel.lampara_encendida(self)
 		"objeto":
 			var efectos: Dictionary = def.get("efectos", {}).duplicate()
+			efectos["recoger"] = {"icono": def.get("icono", "luz"), "nombre": def.get("nombre", def.get("etiqueta", "Objeto")),
+				"reliquia": efectos.has("secreto"),
+				"clave": String(def.get("id", "")) if efectos.has("secreto") else String(def.get("icono", "luz"))}
 			if def.has("id"):
 				var previas = efectos.get("flag", [])
 				efectos["flag"] = (previas if previas is Array else [previas]) + ["tomado_" + String(def["id"])]
 			Juego.aplicar(efectos)
+			Sonido.efecto("hallazgo")
+			nivel.chispas(global_position + Vector3(0, 0.9, 0), Color(def.get("color_luz", "#ffe08a")), 36)
 			main.iniciar_dialogo(def.get("dialogo", ""))
 			remove_from_group("interactuable")
 			var t := create_tween()
@@ -285,6 +322,8 @@ func interactuar(main: Node) -> void:
 				main.iniciar_dialogo(def.get("dialogo_hecho", ""))
 			elif Juego.cumple(def.get("requiere", [])):
 				Juego.aplicar(def.get("efectos", {}))
+				Sonido.efecto("mecanismo")
+				nivel.chispas(global_position + Vector3(0, 1.0, 0), Color("e8dcc0"), 50)
 				_mostrar_mecanismo(true)
 				var nuevo: Node3D = agua if agua else reparado
 				nuevo.scale = Vector3(0.1, 0.1, 0.1)
@@ -303,12 +342,18 @@ func _process(delta: float) -> void:
 	_t += delta
 	if int(_t * 4) != int((_t - delta) * 4):
 		_revisar_aparicion()
+		if aviso:
+			aviso.visible = Juego.guia and activo and not marcada and not Juego.flags.get("visto_" + dialogo_actual(), false)
+	if aviso and aviso.visible:
+		aviso.position.y = 2.95 + sin(_t * 4.0) * 0.1
 	if not activo:
 		return
 	if simbolo:
 		simbolo.position.y += sin(_t * 2.5) * 0.002
 	if tipo == "salida" and int(_t * 4) % 4 == 0:
 		_actualizar_salida()
+	if tipo == "lampara" and encendida:
+		luz.light_energy = 2.1 + sin(_t * 13.0) * 0.12 + sin(_t * 7.3) * 0.1
 	if personaje:
 		_mover_personaje(delta)
 	if etiqueta:
@@ -326,6 +371,9 @@ func _actualizar_etiqueta() -> void:
 	etiqueta.visible = (resaltada or cerca) and d_camara > 3.0
 
 
+var _vel_seguir := 0.0
+
+
 func _mover_personaje(delta: float) -> void:
 	var j := nivel.jugador
 	if j == null:
@@ -333,12 +381,53 @@ func _mover_personaje(delta: float) -> void:
 	var hacia := j.global_position - global_position
 	hacia.y = 0
 	var dist := hacia.length()
-	var moviendose := false
+	var cabeza_jugador := j.global_position + Vector3(0, 1.5, 0)
+	personaje.mirar_hacia(cabeza_jugador if dist < 7.0 else null)
+	personaje.hablando = nivel.main.hablando_con == def.get("nombre", "@")
+	# los acompañantes siguen al jugador acelerando y frenando suave, mirando hacia donde caminan
 	if def.get("seguir", false) and Juego.cumple(def.get("seguir_si", [])):
-		if dist > 14.0:
-			global_position = j.global_position - hacia.normalized() * 2.0
-		elif dist > 2.6:
-			global_position += hacia.normalized() * minf(4.2 * delta, dist - 2.6)
-			moviendose = true
-	var mirar := hacia if dist < 6.0 else Vector3.ZERO
-	personaje.actualizar(delta, mirar, moviendose)
+		if dist > 16.0:
+			global_position = j.global_position - hacia.normalized() * 2.5
+			_vel_seguir = 0.0
+		else:
+			var deseada := clampf((dist - 2.6) * 1.6, 0.0, 5.0)
+			_vel_seguir = move_toward(_vel_seguir, deseada, delta * 8.0)
+			if _vel_seguir > 0.05:
+				global_position += hacia.normalized() * _vel_seguir * delta
+				personaje.actualizar(delta, hacia, true)
+				return
+	if def.get("aldeano", false) and dist > 3.0 and not personaje.hablando:
+		var paso := _vagar(delta)
+		if paso != Vector3.ZERO:
+			personaje.actualizar(delta, paso, true)
+			return
+	# quieto: solo gira el cuerpo si estás muy cerca y a un costado (la cabeza ya te mira)
+	var girar := hacia if dist < 3.2 else Vector3.ZERO
+	personaje.actualizar(delta, girar, false)
+
+
+var _origen_vagar = null
+var _destino_vagar := Vector3.ZERO
+var _pausa_vagar := 0.0
+
+
+## Los aldeanos caminan despacio entre lugares libres cercanos a donde empezaron.
+func _vagar(delta: float) -> Vector3:
+	if _origen_vagar == null:
+		_origen_vagar = global_position
+		_destino_vagar = global_position
+	var hacia := _destino_vagar - global_position
+	hacia.y = 0
+	if hacia.length() > 0.15:
+		var paso := hacia.normalized() * minf(1.3 * delta, hacia.length())
+		global_position += paso
+		return paso
+	_pausa_vagar -= delta
+	if _pausa_vagar <= 0:
+		_pausa_vagar = randf_range(2.0, 6.0)
+		for intento in 6:
+			var candidato: Vector3 = _origen_vagar + Vector3(randf_range(-6, 6), 0, randf_range(-6, 6))
+			if nivel.libre(candidato) and nivel.libre(global_position.lerp(candidato, 0.5)):
+				_destino_vagar = candidato
+				break
+	return Vector3.ZERO

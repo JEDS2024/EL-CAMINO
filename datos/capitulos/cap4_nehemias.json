@@ -20,29 +20,38 @@
   "sol_rotacion": [
    -60,
    -30
-  ]
+  ],
+  "particulas": "luciernagas",
+  "montanas": "#1c2038",
+  "suelo_lejano": "#1a1c2a",
+  "nubes": 0.3,
+  "luna": true,
+  "estrellas": 1.0,
+  "color_nube": "#4a5070",
+  "sombra_nube": "#20243a",
+  "aves": false
  },
  "mapa": [
-  "##############################",
-  "#....................5.......#",
-  "#..T.....................T...#",
-  "#..###x########S#######y###..#",
-  "#..#sB%%%%%%%%%%%%%%%%%%%%#..#",
-  "#..#bHHH%%%%%%%%%%%HHH%%%%#..#",
-  "#..#%HHH%%%::::::%%HHH%%%%#..#",
-  "#..#%%%%%%%::2:::%%%%%%%%%#..#",
-  "#..#%%%%%%%::::::%%%%%%%%%#..#",
-  "#..z%%%%4%%%%%%%%%%%%%%i%%#..#",
-  "#..#%%%%%%%%%%%%%%%%%%%%%%#..#",
-  "#..#%HHH%%%%%%%%%%%36HHH%%#..#",
-  "#..#%HHH%%%%P%%%%%%%%HHH%%#..#",
-  "#..#%%%%%%%%%%%%%%%%%%%%%%#..#",
-  "#..####:#############:#####..#",
-  "#.......l...............n....#",
-  "#......R.....m.......R.....o.#",
-  "#..T.......................q.#",
-  "#............................#",
-  "##############################"
+  "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+  "^.......................5.7.......^^",
+  "^..T...........................T..^^",
+  "^..#####x##########S#######y####..^^",
+  "^..#s#%%%%%%%%%%%%%%%%%%%%%%%%%#..^^",
+  "^..#?HHH%%%%%%%%%%%%+%%%%%HHH%%#..^^",
+  "^..#%HHH%%%%%::::::::%%%%%HHH%%#..^^",
+  "^..#%%%%%%%%%::::2:::%%%%%%%%%%#..^^",
+  "^..#%%%%%%%%%::::::::%+%%%%%%%%#..^^",
+  "^..z%%%%4%%%%%%%%%%%%%%%%%%i%%%#..^^",
+  "^..#%%%%%%+%%%%%%%|%%%%%%%%%%%%#..^^",
+  "^..#%HHH%%%%%%%%%%%%%%%36HHH%%%#..^^",
+  "^..#%HHH%%%%%P%%%%%%%%%%%HHH%%%#..^^",
+  "^..#%%%%%%%%%%%%+%%%%%%%%%%%%%%#..^^",
+  "^..#####:##############:########..^^",
+  "^.........l...............n.......^^",
+  "^.......R.....m.........R.....o...^^",
+  "^..T..........................q...^^",
+  "^.................................^^",
+  "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
  ],
  "leyenda": {
   "2": {
@@ -248,7 +257,8 @@
     "secreto": 1,
     "luz": 10,
     "fe": 1
-   }
+   },
+   "nombre": "Cartas del rey Artajerjes"
   },
   "S": {
    "tipo": "salida",
@@ -258,6 +268,23 @@
    ],
    "dialogo_cerrado": "muro_incompleto",
    "suelo": ":"
+  },
+  "7": {
+   "tipo": "npc",
+   "nombre": "Tobías",
+   "modelo": "tobias",
+   "etiqueta": "Tobías",
+   "dialogos": [
+    {
+     "si": [
+      "flag:edificar"
+     ],
+     "id": "tobias_burla"
+    },
+    {
+     "id": "tobias_antes"
+    }
+   ]
   }
  },
  "acertijos": {
@@ -281,52 +308,70 @@
  },
  "objetivos": [
   {
-   "texto": "Lee tus notas y sal de noche a inspeccionar los muros, en orden",
+   "texto": "Lee tus notas de la inspección",
+   "hecho": [
+    "flag:leyo_notas"
+   ],
+   "marca": "i"
+  },
+  {
+   "texto": "Sal de noche a inspeccionar los muros, en orden",
    "hecho": [
     "flag:inspeccion_ok"
-   ]
+   ],
+   "marca_acertijo": "inspeccion"
   },
   {
    "texto": "Reúne al pueblo en el templo (habla con Eliasib)",
    "hecho": [
     "flag:edificar"
-   ]
+   ],
+   "marca": "2"
   },
   {
    "texto": "Repara el tramo norte del muro",
    "hecho": [
     "flag:tramo_norte"
-   ]
+   ],
+   "marca": "x"
   },
   {
    "texto": "Responde a Sanbalat (al norte, fuera del muro)",
    "hecho": [
     "flag:respondio"
-   ]
+   ],
+   "marca": "5"
   },
   {
    "texto": "Anima a los obreros a seguir con la guardia",
    "hecho": [
     "flag:guardia"
-   ]
+   ],
+   "marca": "4"
   },
   {
    "texto": "Repara los tramos este y oeste",
    "hecho": [
     "cont:tramos>=3"
-   ]
+   ],
+   "marca": "yz"
   },
   {
    "texto": "Dedica el muro en la Puerta de las Ovejas",
    "hecho": [
     "flag:__nunca"
-   ]
+   ],
+   "marca": "S"
   }
  ],
  "intro": [
   {
    "quien": "",
    "texto": "Nehemías era copero del rey Artajerjes en Susa. Supo que el muro de Jerusalén estaba derribado y sus puertas quemadas a fuego, y lloró, ayunó y oró. (Nehemías 1:3-4, 11)"
+  },
+  {
+   "quien": "Nehemías",
+   "texto": "Te ruego, oh Jehová, esté ahora atento tu oído a la oración de tu siervo... concede ahora buen éxito a tu siervo. (Nehemías 1:11)"
   },
   {
    "quien": "",
@@ -355,7 +400,10 @@
   "notas_nehemias": [
    {
     "quien": "",
-    "texto": "Tus notas de la inspección nocturna:"
+    "texto": "Tus notas de la inspección nocturna:",
+    "efectos": {
+     "flag": "leyo_notas"
+    }
    },
    {
     "quien": "",
@@ -555,6 +603,67 @@
     "quien": "",
     "texto": "Todavía hay brechas en el muro. La dedicación tendrá que esperar."
    }
+  ],
+  "tobias_antes": [
+   {
+    "quien": "",
+    "texto": "Tobías el amonita está junto a Sanbalat. A ambos les disgusta que alguien venga a procurar el bien de Israel. (Nehemías 2:10)"
+   }
+  ],
+  "tobias_burla": [
+   {
+    "quien": "Tobías",
+    "texto": "Aun lo que ellos edifican, si subiere una zorra derribará su muro de piedra. (Nehemías 4:3)"
+   },
+   {
+    "quien": "",
+    "texto": "Pero Nehemías oró: «Oye, oh Dios nuestro, que somos objeto de su menosprecio». Y siguieron edificando. (Nehemías 4:4, 6)"
+   }
   ]
- }
+ },
+ "musica": "nehemias",
+ "repaso": {
+  "versiculo": "El Dios de los cielos, él nos prosperará.",
+  "cita": "Nehemías 2:20",
+  "preguntas": [
+   {
+    "pregunta": "¿Cuándo salió Nehemías a inspeccionar los muros?",
+    "opciones": [
+     "De noche",
+     "Al mediodía",
+     "Durante una fiesta"
+    ],
+    "correcta": 0,
+    "explica": "«Salí de noche por la puerta del Valle». (Nehemías 2:13)"
+   },
+   {
+    "pregunta": "¿Cómo trabajaban mientras los amenazaban?",
+    "opciones": [
+     "Dejaron de trabajar",
+     "Con una mano trabajaban y en la otra tenían la espada",
+     "Solo trabajaban los sacerdotes"
+    ],
+    "correcta": 1,
+    "explica": "«Con una mano trabajaban en la obra, y en la otra tenían la espada». (Nehemías 4:17)"
+   },
+   {
+    "pregunta": "¿En cuántos días se terminó el muro?",
+    "opciones": [
+     "En siete días",
+     "En cien días",
+     "En cincuenta y dos días"
+    ],
+    "correcta": 2,
+    "explica": "Fue terminado el muro en cincuenta y dos días. (Nehemías 6:15)"
+   }
+  ]
+ },
+ "ambiente_sonido": "noche",
+ "lugar": "Jerusalén, de noche",
+ "aldeanos_frases": [
+  "Una familia carga piedras para el muro.",
+  "Un hombre vigila con una lanza en la mano.",
+  "Unos niños llevan agua a los trabajadores.",
+  "Una mujer reza en voz baja mientras trabaja."
+ ]
 }
