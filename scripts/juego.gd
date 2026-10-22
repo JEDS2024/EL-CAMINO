@@ -8,9 +8,11 @@ signal aviso(texto: String, icono: String)
 const VIRTUDES := ["fe", "esperanza", "amor", "perdon"]
 const NOMBRE_VIRTUD := {"fe": "Fe", "esperanza": "Esperanza", "amor": "Amor", "perdon": "Perdón"}
 const CAPITULOS := [
-	"res://datos/capitulos/cap1_aldea_brasa.json",
-	"res://datos/capitulos/cap2_pozo_hondo.json",
-	"res://datos/capitulos/cap3_peniel.json",
+	"res://datos/capitulos/cap1_jose.json",
+	"res://datos/capitulos/cap2_rut.json",
+	"res://datos/capitulos/cap3_david.json",
+	"res://datos/capitulos/cap4_nehemias.json",
+	"res://datos/capitulos/cap5_emaus.json",
 ]
 const RUTA_PARTIDA := "user://partida.cfg"
 const RUTA_AJUSTES := "user://ajustes.cfg"
@@ -24,6 +26,8 @@ var flags := {}
 var contadores := {}
 var objetos: Array = []
 var secretos := 0
+## Un diálogo pidió terminar el capítulo (efecto fin_capitulo); main lo atiende al cerrarlo.
+var fin_pedido := false
 
 
 func _ready() -> void:
@@ -136,6 +140,8 @@ func aplicar(efectos) -> void:
 		elif clave == "secreto":
 			secretos += 1
 			aviso.emit("¡Secreto encontrado!", "luz")
+		elif clave == "fin_capitulo":
+			fin_pedido = true
 		elif clave == "aviso":
 			aviso.emit(String(v), "")
 	estado_cambiado.emit()

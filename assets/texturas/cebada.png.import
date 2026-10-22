@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cmba3n62k52aa"
-path="res://.godot/imported/pj_marta.png-da9feb27c62921d84aab7945f601d4b9.ctex"
+uid="uid://bn0o1mnlo7dwf"
+path="res://.godot/imported/cebada.png-606a3886647a5a93e9242ecee57bcf45.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/pj_marta.png"
-dest_files=["res://.godot/imported/pj_marta.png-da9feb27c62921d84aab7945f601d4b9.ctex"]
+source_file="res://assets/texturas/cebada.png"
+dest_files=["res://.godot/imported/cebada.png-606a3886647a5a93e9242ecee57bcf45.ctex"]
 
 [params]
 

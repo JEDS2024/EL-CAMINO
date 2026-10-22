@@ -174,6 +174,29 @@ def piedra_oscura():
     return im
 
 
+def cebada():
+    im = ruido(hexc("b8953e"), 10)
+    px = im.load()
+    for _ in range(30):
+        x, y = R.randrange(16), R.randrange(2, 16)
+        px[x, y] = hexc("d9b85a"); px[x, y - 1] = hexc("e8cf7a")
+        if y > 2: px[x, y - 2] = hexc("f0dc8c")
+    for _ in range(6):
+        px[R.randrange(16), R.randrange(16)] = hexc("8a6a2a")
+    return im
+
+
+def tela():
+    im = lienzo(16, 16)
+    px = im.load()
+    for y in range(16):
+        for x in range(16):
+            franja = (x // 4) % 2
+            base = hexc("6a4a3a") if franja else hexc("a88a6a")
+            px[x, y] = var(base, R.randint(-6, 6))
+    return im
+
+
 # ------------------------------------------------------------------ sprites de decorado
 def arbol():
     im = lienzo(32, 48)
@@ -340,6 +363,75 @@ def icono(nombre, color=None):
                     if 0 <= x + dx < 16 and 0 <= y + dy < 16 and bp[x + dx, y + dy][3] and bp[x + dx, y + dy][:3] != (30, 22, 40):
                         px[x, y] = hexc("1e1628")
                         break
+    return im
+
+
+def objeto_copa():  # copa de plata (Génesis 44:2)
+    im = lienzo(16, 16)
+    px = im.load()
+    plata, sombra, brillo = hexc("c8ccd8"), hexc("8a90a0"), hexc("ffffff")
+    for y in range(3, 8):
+        for x in range(4 + (y - 3) // 2, 12 - (y - 3) // 2):
+            px[x, y] = plata if x < 9 else sombra
+    for y in range(8, 12):
+        px[7, y] = plata; px[8, y] = sombra
+    for x in range(5, 11):
+        px[x, 12] = plata if x < 8 else sombra
+    px[5, 4] = brillo
+    return im
+
+
+def objeto_espiga():  # espigas de cebada (Rut 2)
+    im = lienzo(16, 16)
+    px = im.load()
+    for y in range(6, 15):
+        px[8, y] = hexc("8a7a3a")
+    for y in range(1, 8):
+        for dx in (-1, 1):
+            if y % 2 == 0:
+                px[8 + dx, y] = hexc("e8cf7a"); px[8 + 2 * dx, y + 1] = hexc("c9a84a")
+        px[8, y] = hexc("f0dc8c")
+    return im
+
+
+def objeto_piedra():  # piedra lisa del arroyo (1 Samuel 17:40)
+    im = lienzo(16, 16)
+    px = im.load()
+    for y in range(16):
+        for x in range(16):
+            d = ((x - 7.5) / 5.5) ** 2 + ((y - 8.5) / 4.2) ** 2
+            if d < 1:
+                px[x, y] = hexc("b8b2a8") if (x + y) < 15 else hexc("8a847a")
+    px[5, 6] = px[6, 6] = hexc("e8e4dc")
+    return im
+
+
+def objeto_pergamino():  # rollo de las Escrituras
+    im = lienzo(16, 16)
+    px = im.load()
+    for y in range(3, 13):
+        for x in range(4, 12):
+            px[x, y] = hexc("e8dcb8")
+        px[3, y] = px[12, y] = hexc("8a5a34")
+    for y in (5, 7, 9):
+        for x in range(5, 11):
+            px[x, y] = hexc("6a5a4a") if x % 3 else hexc("e8dcb8")
+    return im
+
+
+def objeto_arpa():  # arpa de David (1 Samuel 16:23)
+    im = lienzo(16, 16)
+    px = im.load()
+    madera = hexc("a86b30")
+    for y in range(2, 15):
+        px[3, y] = madera
+    for x in range(3, 13):
+        px[x, 2] = madera
+    for k in range(10):
+        px[12 - k // 2, 3 + k] = madera
+    for x in (5, 7, 9):
+        for y in range(3, 3 + (x - 2)):
+            px[x, y] = hexc("f0dc8c")
     return im
 
 
@@ -513,7 +605,7 @@ PERSONAJES = {
 
 
 def main():
-    tex = {"pasto": pasto, "camino": camino, "arena": arena, "adoquin": adoquin, "madera": madera, "muro": muro,
+    tex = {"cebada": cebada, "tela": tela, "pasto": pasto, "camino": camino, "arena": arena, "adoquin": adoquin, "madera": madera, "muro": muro,
            "pared_casa": pared_casa, "tejado": tejado, "agua": agua, "roca": roca, "piedra_oscura": piedra_oscura}
     for n, f in tex.items():
         guardar(f(), "texturas", n + ".png")
@@ -529,8 +621,10 @@ def main():
     guardar(objeto_hilo(), "iconos", "hilo.png")
     guardar(objeto_pieza(), "iconos", "pieza.png")
     guardar(objeto_pan(), "iconos", "pan.png")
-    for n, p in PERSONAJES.items():
-        guardar(personaje(p), "sprites", "pj_" + n + ".png")
+    for n, f in {"copa": objeto_copa, "espiga": objeto_espiga, "piedra": objeto_piedra,
+                 "pergamino": objeto_pergamino, "arpa": objeto_arpa}.items():
+        guardar(f(), "iconos", n + ".png")
+    # los personajes ahora son modelos 3D (scripts/personaje_3d.gd); ya no se generan sprites
     print("arte generado en", os.path.abspath(RAIZ))
 
 

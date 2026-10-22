@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://k2lhc8puwlcq"
-path="res://.godot/imported/pj_ezra.png-a9e66f8d103527b35d5d459ff63c8abe.ctex"
+uid="uid://fqjbjoij4h78"
+path="res://.godot/imported/tela.png-c89b3e33e3e392ef8b8967fb538c01da.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/pj_ezra.png"
-dest_files=["res://.godot/imported/pj_ezra.png-a9e66f8d103527b35d5d459ff63c8abe.ctex"]
+source_file="res://assets/texturas/tela.png"
+dest_files=["res://.godot/imported/tela.png-c89b3e33e3e392ef8b8967fb538c01da.ctex"]
 
 [params]
 

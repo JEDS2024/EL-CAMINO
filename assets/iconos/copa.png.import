@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cpt1emck5vnwo"
-path="res://.godot/imported/pj_tomas.png-65f34ef3cb60e411141532e378153549.ctex"
+uid="uid://blddh2h0dvrvw"
+path="res://.godot/imported/copa.png-01a9098523a06cbaf2b2fa3f7acdd5e9.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/pj_tomas.png"
-dest_files=["res://.godot/imported/pj_tomas.png-65f34ef3cb60e411141532e378153549.ctex"]
+source_file="res://assets/iconos/copa.png"
+dest_files=["res://.godot/imported/copa.png-01a9098523a06cbaf2b2fa3f7acdd5e9.ctex"]
 
 [params]
 

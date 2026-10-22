@@ -1,6 +1,6 @@
 class_name Jugador
 extends CharacterBody3D
-## Ezra, el protagonista. Se mueve relativo a la cámara y puede verse en primera o
+## El protagonista del capítulo. Se mueve relativo a la cámara y puede verse en primera o
 ## tercera persona. Lleva un candil cuya luz crece con las buenas decisiones.
 
 const VELOCIDAD := 4.6
@@ -11,6 +11,7 @@ const DISTANCIA_3P := 3.6
 var yaw := 0.0
 var pitch := -0.3
 var bloqueado := false
+var clave_modelo := "david"
 var entrada_tactil := Vector2.ZERO
 
 var pivote: Node3D
@@ -31,7 +32,7 @@ func _ready() -> void:
 
 	modelo = Personaje3D.new()
 	add_child(modelo)
-	modelo.configurar("ezra")
+	modelo.configurar(clave_modelo)
 
 	pivote = Node3D.new()
 	add_child(pivote)

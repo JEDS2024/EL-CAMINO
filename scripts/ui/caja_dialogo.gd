@@ -6,7 +6,7 @@ extends Control
 const VELOCIDAD := 45.0  # letras por segundo
 
 var resolver: Callable  # id -> Array de líneas
-var retratos := {}  # nombre visible -> clave de sprite
+var retratos := {}  # nombre visible -> clave del modelo 3D (Personaje3D.ASPECTO)
 
 var _lineas: Array = []
 var _indice := -1
@@ -19,6 +19,9 @@ var _panel: PanelContainer
 var _nombre: Label
 var _texto: Label
 var _retrato: TextureRect
+var _vista_retrato: SubViewport
+var _modelo_retrato: Personaje3D
+var _clave_retrato := ""
 var _indicador: Label
 var _opciones: VBoxContainer
 
@@ -41,8 +44,10 @@ func _ready() -> void:
 	var fila := HBoxContainer.new()
 	fila.add_theme_constant_override("separation", 18)
 	_panel.add_child(fila)
+	_crear_estudio_retrato()
 	_retrato = TextureRect.new()
-	_retrato.custom_minimum_size = Vector2(110, 165)
+	_retrato.texture = _vista_retrato.get_texture()
+	_retrato.custom_minimum_size = Vector2(130, 165)
 	_retrato.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	_retrato.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 	_retrato.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
@@ -71,6 +76,32 @@ func _ready() -> void:
 	_opciones.alignment = BoxContainer.ALIGNMENT_END
 	_opciones.add_theme_constant_override("separation", 12)
 	add_child(_opciones)
+
+
+## Pequeño "estudio" 3D a baja resolución donde posa quien habla; se ve pixelado como el juego.
+func _crear_estudio_retrato() -> void:
+	_vista_retrato = SubViewport.new()
+	_vista_retrato.size = Vector2i(52, 66)
+	_vista_retrato.own_world_3d = true
+	_vista_retrato.transparent_bg = true
+	add_child(_vista_retrato)
+	var cam := Camera3D.new()
+	cam.fov = 30.0
+	cam.position = Vector3(0, 1.55, -1.7)
+	_vista_retrato.add_child(cam)
+	cam.look_at(Vector3(0, 1.35, 0), Vector3.UP)
+	var luz := DirectionalLight3D.new()
+	luz.rotation_degrees = Vector3(-30, 160, 0)
+	luz.light_energy = 1.1
+	_vista_retrato.add_child(luz)
+	var env := Environment.new()
+	env.background_mode = Environment.BG_CLEAR_COLOR
+	env.ambient_light_source = Environment.AMBIENT_SOURCE_COLOR
+	env.ambient_light_color = Color("b0a8c8")
+	env.ambient_light_energy = 0.7
+	var we := WorldEnvironment.new()
+	we.environment = env
+	_vista_retrato.add_child(we)
 
 
 func iniciar(lineas: Array, al_terminar: Callable) -> void:
@@ -104,11 +135,15 @@ func _mostrar(l: Dictionary) -> void:
 	_escribiendo = true
 	var clave: String = l.get("retrato", retratos.get(quien, ""))
 	_retrato.visible = clave != ""
-	if clave != "":
-		var at := AtlasTexture.new()
-		at.atlas = load("res://assets/sprites/pj_%s.png" % clave)
-		at.region = Rect2(0, 0, 16, 24)
-		_retrato.texture = at
+	if clave != "" and clave != _clave_retrato:
+		_clave_retrato = clave
+		if _modelo_retrato:
+			_modelo_retrato.queue_free()
+		_modelo_retrato = Personaje3D.new()
+		_vista_retrato.add_child(_modelo_retrato)
+		_modelo_retrato.configurar(clave)
+		_modelo_retrato.scale = Vector3.ONE  # todos los retratos al mismo tamaño
+		_modelo_retrato.rotation.y = 0.35
 	for b in _opciones.get_children():
 		b.queue_free()
 	_esperando_opcion = false
@@ -164,6 +199,8 @@ func _gui_input(ev: InputEvent) -> void:
 
 
 func _process(delta: float) -> void:
+	if visible and _modelo_retrato:
+		_modelo_retrato.actualizar(delta, Vector3.ZERO, false)
 	if not _escribiendo:
 		return
 	_letras += delta * VELOCIDAD

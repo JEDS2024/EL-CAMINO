@@ -107,15 +107,18 @@ func _cargar_nivel(i: int) -> void:
 	vista.add_child(nivel)
 	nivel.construir(datos_cap, self)
 	jugador = Jugador.new()
+	var prota: Dictionary = datos_cap.get("protagonista", {"nombre": "", "modelo": "david"})
+	jugador.clave_modelo = prota.get("modelo", "david")
 	nivel.add_child(jugador)
 	jugador.position = nivel.inicio + Vector3(0, 0.2, 0)
 	jugador.yaw = deg_to_rad(float(datos_cap.get("mirar_inicio", 0)))
 	nivel.jugador = jugador
-	var retratos := {"Ezra": "ezra"}
+	var retratos := {String(prota.get("nombre", "")): jugador.clave_modelo}
+	retratos.merge(datos_cap.get("retratos", {}))
 	for clave in datos_cap.get("leyenda", {}):
 		var def: Dictionary = datos_cap["leyenda"][clave]
 		if def.get("tipo", "") == "npc":
-			retratos[def.get("nombre", "")] = def.get("sprite", "")
+			retratos[def.get("nombre", "")] = def.get("modelo", def.get("sprite", ""))
 	dialogo.retratos = retratos
 
 
@@ -161,6 +164,10 @@ func iniciar_dialogo(id: String, _entidad: Entidad = null) -> void:
 	_abrir_dialogo(lineas)
 
 
+func mostrar_lineas(lineas: Array) -> void:
+	_abrir_dialogo(lineas)
+
+
 func decir(texto: String) -> void:
 	_abrir_dialogo([{"quien": "", "texto": texto}])
 
@@ -181,7 +188,10 @@ func _abrir_dialogo(lineas: Array, despues: Callable = Callable()) -> void:
 			tactil.visible = true
 		Juego.guardar_partida()
 		if despues.is_valid():
-			despues.call())
+			despues.call()
+		elif Juego.fin_pedido and en_juego:
+			Juego.fin_pedido = false
+			terminar_capitulo())
 
 
 # ------------------------------------------------------------------ bucle
@@ -191,6 +201,8 @@ func _process(delta: float) -> void:
 		return
 	if not en_juego or dialogo.visible or jugador == null:
 		return
+	if _objetivo_entidad and is_instance_valid(_objetivo_entidad):
+		_objetivo_entidad.resaltada = false
 	_objetivo_entidad = null
 	var mejor := DISTANCIA_INTERACCION
 	for e in get_tree().get_nodes_in_group("interactuable"):
@@ -198,6 +210,8 @@ func _process(delta: float) -> void:
 		if d < mejor:
 			mejor = d
 			_objetivo_entidad = e
+	if _objetivo_entidad:
+		_objetivo_entidad.resaltada = true
 	hud.fijar_accion(_objetivo_entidad.texto_accion() if _objetivo_entidad else "")
 	_reloj -= delta
 	if _reloj <= 0:
@@ -290,7 +304,7 @@ func mostrar_titulo() -> void:
 	jugador.pitch = -0.35
 	var col := _pantalla(0.45)
 	_texto(col, "EL CAMINO", 120, Color("ffd36b"))
-	_texto(col, "Una aventura de fe, esperanza, amor y perdón", 30, Color(1, 1, 1, 0.85))
+	_texto(col, "Historias de la Biblia · fe, esperanza, amor y perdón", 30, Color(1, 1, 1, 0.85))
 	col.add_child(Control.new())
 	if Juego.hay_partida():
 		_boton(col, "Continuar", func():
@@ -302,10 +316,10 @@ func mostrar_titulo() -> void:
 func _elegir_vista() -> void:
 	var col := _pantalla(0.6)
 	_texto(col, "¿Cómo quieres recorrer el camino?", 46, Color("ffd36b"))
-	_boton(col, "Primera persona — ver con los ojos de Ezra", func():
+	_boton(col, "Primera persona — ver con los ojos del protagonista", func():
 		Juego.nueva_partida(true)
 		iniciar_capitulo(0))
-	_boton(col, "Tercera persona — ver a Ezra en el mundo", func():
+	_boton(col, "Tercera persona — ver al protagonista en el mundo", func():
 		Juego.nueva_partida(false)
 		iniciar_capitulo(0))
 	_texto(col, "Puedes cambiarlo cuando quieras con el botón «Vista».", 24, Color(1, 1, 1, 0.7))

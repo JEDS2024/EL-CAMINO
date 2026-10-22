@@ -1,0 +1,653 @@
+{
+ "id": "cap1_jose",
+ "titulo": "José perdona a sus hermanos",
+ "subtitulo": "Génesis 43 – 45",
+ "protagonista": {
+  "nombre": "José",
+  "modelo": "jose"
+ },
+ "suelo": ",",
+ "mirar_inicio": 0,
+ "ambiente": {
+  "cielo_arriba": "#3a6ab0",
+  "cielo_horizonte": "#f0c890",
+  "luz_ambiente": "#c8a888",
+  "energia_ambiente": 0.9,
+  "niebla": "#e8c8a0",
+  "densidad_niebla": 0.008,
+  "sol_color": "#fff0d0",
+  "sol_energia": 1.1,
+  "sol_rotacion": [
+   -55,
+   40
+  ]
+ },
+ "mapa": [
+  "############################",
+  "#,,,,,,,,,,,,,,,,,,,TTTTTTT#",
+  "#,HHHH,,,,,,,,,,,,,,T,,s,,T#",
+  "#,HHHH,,::::::::::,,T,,,,,T#",
+  "#,HHHH,,:k:l:m:n:o:,TTTbTTT#",
+  "#,,,,,,,::::i:::::,,,,,,,,,#",
+  "#,,,,,,,:3:4:5:2:6:,,,,,,,,S",
+  "#,,,,,,,::::::::::,,,,,,,,,#",
+  "#,,T,,,,,,,,,,,,,,,,,HHH,,,#",
+  "#,,,,,,,,,1,,,,,,,,,,HHH,,,#",
+  "#,,,,,,,,,,,,,,,,,,,,,,,,T,#",
+  "#,HHH,,,,,,,P,,,,,,,,,,,,,,#",
+  "#,HHH,,,,,,,,,,,,T,,,,,,,,,#",
+  "############################"
+ ],
+ "leyenda": {
+  "1": {
+   "tipo": "npc",
+   "nombre": "Mayordomo",
+   "modelo": "mayordomo",
+   "etiqueta": "Mayordomo",
+   "dialogos": [
+    {
+     "si": [
+      "flag:copa_hallada"
+     ],
+     "id": "mayordomo_despues"
+    },
+    {
+     "si": [
+      "flag:mesa_ok"
+     ],
+     "id": "mayordomo_copa"
+    },
+    {
+     "si": [
+      "flag:banquete"
+     ],
+     "id": "mayordomo_espera"
+    },
+    {
+     "id": "mayordomo_inicio"
+    }
+   ]
+  },
+  "2": {
+   "tipo": "npc",
+   "nombre": "Judá",
+   "modelo": "juda",
+   "etiqueta": "Judá",
+   "dialogos": [
+    {
+     "si": [
+      "flag:perdon_revelado"
+     ],
+     "id": "hermano_despues"
+    },
+    {
+     "si": [
+      "flag:copa_hallada"
+     ],
+     "id": "juda_suplica"
+    },
+    {
+     "id": "juda_antes"
+    }
+   ],
+   "suelo": ":"
+  },
+  "3": {
+   "tipo": "npc",
+   "nombre": "Rubén",
+   "modelo": "ruben",
+   "etiqueta": "Rubén",
+   "dialogos": [
+    {
+     "si": [
+      "flag:perdon_revelado"
+     ],
+     "id": "hermano_despues"
+    },
+    {
+     "id": "ruben_antes"
+    }
+   ],
+   "suelo": ":"
+  },
+  "4": {
+   "tipo": "npc",
+   "nombre": "Simeón",
+   "modelo": "simeon",
+   "etiqueta": "Simeón",
+   "dialogos": [
+    {
+     "si": [
+      "flag:perdon_revelado"
+     ],
+     "id": "hermano_despues"
+    },
+    {
+     "id": "simeon_antes"
+    }
+   ],
+   "suelo": ":"
+  },
+  "5": {
+   "tipo": "npc",
+   "nombre": "Leví",
+   "modelo": "levi",
+   "etiqueta": "Leví",
+   "dialogos": [
+    {
+     "si": [
+      "flag:perdon_revelado"
+     ],
+     "id": "hermano_despues"
+    },
+    {
+     "id": "levi_antes"
+    }
+   ],
+   "suelo": ":"
+  },
+  "6": {
+   "tipo": "npc",
+   "nombre": "Benjamín",
+   "modelo": "benjamin",
+   "etiqueta": "Benjamín",
+   "dialogos": [
+    {
+     "si": [
+      "flag:perdon_revelado"
+     ],
+     "id": "benjamin_despues"
+    },
+    {
+     "si": [
+      "flag:vio_benjamin"
+     ],
+     "id": "benjamin_otra_vez"
+    },
+    {
+     "id": "benjamin_antes"
+    }
+   ],
+   "suelo": ":"
+  },
+  "k": {
+   "tipo": "lampara",
+   "acertijo": "mesa",
+   "simbolo": "ruben",
+   "etiqueta": "Asiento de Rubén",
+   "accion": "Sentar",
+   "suelo": ":",
+   "requiere": [
+    "flag:banquete"
+   ],
+   "dialogo_frio": "asiento_antes"
+  },
+  "l": {
+   "tipo": "lampara",
+   "acertijo": "mesa",
+   "simbolo": "simeon",
+   "etiqueta": "Asiento de Simeón",
+   "accion": "Sentar",
+   "suelo": ":",
+   "requiere": [
+    "flag:banquete"
+   ],
+   "dialogo_frio": "asiento_antes"
+  },
+  "m": {
+   "tipo": "lampara",
+   "acertijo": "mesa",
+   "simbolo": "levi",
+   "etiqueta": "Asiento de Leví",
+   "accion": "Sentar",
+   "suelo": ":",
+   "requiere": [
+    "flag:banquete"
+   ],
+   "dialogo_frio": "asiento_antes"
+  },
+  "n": {
+   "tipo": "lampara",
+   "acertijo": "mesa",
+   "simbolo": "juda",
+   "etiqueta": "Asiento de Judá",
+   "accion": "Sentar",
+   "suelo": ":",
+   "requiere": [
+    "flag:banquete"
+   ],
+   "dialogo_frio": "asiento_antes"
+  },
+  "o": {
+   "tipo": "lampara",
+   "acertijo": "mesa",
+   "simbolo": "benjamin",
+   "etiqueta": "Asiento de Benjamín",
+   "accion": "Sentar",
+   "suelo": ":",
+   "requiere": [
+    "flag:banquete"
+   ],
+   "dialogo_frio": "asiento_antes"
+  },
+  "i": {
+   "tipo": "letrero",
+   "dialogo": "registro_familia",
+   "etiqueta": "Registro de la familia",
+   "suelo": ":"
+  },
+  "s": {
+   "tipo": "objeto",
+   "id": "gavilla",
+   "icono": "espiga",
+   "color_luz": "#ffe08a",
+   "dialogo": "hallazgo_gavilla",
+   "efectos": {
+    "secreto": 1,
+    "luz": 10,
+    "fe": 1
+   }
+  },
+  "S": {
+   "tipo": "salida",
+   "accion": "Enviar los carros",
+   "requiere": [
+    "flag:perdon_revelado"
+   ],
+   "dialogo_cerrado": "carros_cerrado"
+  }
+ },
+ "acertijos": {
+  "mesa": {
+   "orden": [
+    "ruben",
+    "simeon",
+    "levi",
+    "juda",
+    "benjamin"
+   ],
+   "en_orden": true,
+   "al_resolver": {
+    "flag": "mesa_ok",
+    "luz": 15,
+    "amor": 1
+   },
+   "dialogo_exito": "mesa_exito",
+   "dialogo_fallo": "mesa_fallo"
+  }
+ },
+ "objetivos": [
+  {
+   "texto": "Habla con tu mayordomo",
+   "hecho": [
+    "flag:banquete"
+   ]
+  },
+  {
+   "texto": "Sienta a tus hermanos por edad, del mayor al menor (lee el registro)",
+   "hecho": [
+    "flag:mesa_ok"
+   ]
+  },
+  {
+   "texto": "Da tus órdenes al mayordomo",
+   "hecho": [
+    "flag:copa_hallada"
+   ]
+  },
+  {
+   "texto": "Escucha a Judá",
+   "hecho": [
+    "flag:perdon_revelado"
+   ]
+  },
+  {
+   "texto": "Envía los carros a buscar a tu padre (este)",
+   "hecho": [
+    "flag:__nunca"
+   ]
+  }
+ ],
+ "intro": [
+  {
+   "quien": "",
+   "texto": "Hubo hambre en toda la tierra, pero en Egipto había pan. (Génesis 41:54)"
+  },
+  {
+   "quien": "",
+   "texto": "Años atrás, sus hermanos vendieron a José como esclavo. Ahora él gobierna Egipto. (Génesis 37:28; 41:41)"
+  },
+  {
+   "quien": "",
+   "texto": "Sus hermanos han vuelto a comprar alimento, y esta vez traen a Benjamín, el menor. No saben que el gobernador es José. (Génesis 43:15)"
+  },
+  {
+   "quien": "",
+   "texto": "Cuando José vio a Benjamín con ellos, mandó preparar una comida en su casa. (Génesis 43:16)"
+  }
+ ],
+ "epilogo": [
+  {
+   "quien": "",
+   "texto": "Los hijos de Israel volvieron a Canaán con los carros que José les dio. (Génesis 45:21-25)"
+  },
+  {
+   "quien": "",
+   "texto": "Le dijeron a Jacob: «José vive aún, y él es señor en toda la tierra de Egipto». (Génesis 45:26)"
+  },
+  {
+   "quien": "Jacob",
+   "texto": "Basta; José mi hijo vive todavía: iré, y le veré antes que yo muera. (Génesis 45:28)"
+  },
+  {
+   "quien": "",
+   "texto": "Años después, José les diría a sus hermanos: «Vosotros pensasteis mal contra mí, mas Dios lo encaminó a bien». (Génesis 50:20)"
+  }
+ ],
+ "retratos": {
+  "Jacob": "jacob"
+ },
+ "dialogos": {
+  "mayordomo_inicio": [
+   {
+    "quien": "José",
+    "texto": "Lleva a casa a esos hombres, y degüella víctima y adereza; porque estos hombres comerán conmigo al mediodía. (Génesis 43:16)"
+   },
+   {
+    "quien": "",
+    "texto": "Y el mayordomo hizo como José dijo. (Génesis 43:17)",
+    "efectos": {
+     "flag": "banquete"
+    }
+   },
+   {
+    "quien": "",
+    "texto": "Cuando sirvan la comida, José sentará a sus hermanos en orden, del mayor al menor. (Génesis 43:33)"
+   }
+  ],
+  "mayordomo_espera": [
+   {
+    "quien": "",
+    "texto": "La comida está servida. Falta sentar a tus hermanos en sus lugares. (Génesis 43:31-33)"
+   }
+  ],
+  "asiento_antes": [
+   {
+    "quien": "",
+    "texto": "Todavía no es hora de la comida. Habla primero con tu mayordomo."
+   }
+  ],
+  "registro_familia": [
+   {
+    "quien": "",
+    "texto": "Registro de los hijos de Jacob:"
+   },
+   {
+    "quien": "",
+    "texto": "Lea dio a luz a Rubén, el primogénito; después a Simeón, después a Leví y después a Judá. (Génesis 29:32-35)"
+   },
+   {
+    "quien": "",
+    "texto": "Raquel dio a luz a José y, por último, a Benjamín, el menor de todos. (Génesis 30:24; 35:18)"
+   }
+  ],
+  "mesa_fallo": [
+   {
+    "quien": "",
+    "texto": "Los hermanos se miran confundidos. Ese no es su orden."
+   },
+   {
+    "quien": "",
+    "texto": "Relee el registro: del mayor al menor."
+   }
+  ],
+  "mesa_exito": [
+   {
+    "quien": "",
+    "texto": "Y se sentaron delante de él, el mayor conforme a su primogenitura, y el menor conforme a su menor edad; y estaban aquellos hombres atónitos mirándose el uno al otro. (Génesis 43:33)"
+   },
+   {
+    "quien": "",
+    "texto": "La porción de Benjamín era cinco veces mayor que la de cualquiera de ellos. Y bebieron y se alegraron con él. (Génesis 43:34)"
+   }
+  ],
+  "mayordomo_copa": [
+   {
+    "quien": "",
+    "texto": "José quiere saber si sus hermanos han cambiado: ¿abandonarán a Benjamín como lo abandonaron a él?",
+    "opciones": [
+     {
+      "texto": "Probar sus corazones, como hizo José.",
+      "efectos": {
+       "fe": 1
+      }
+     },
+     {
+      "texto": "Revelarles ahora mismo quién eres.",
+      "siguiente": "mayordomo_paciencia"
+     }
+    ]
+   },
+   {
+    "quien": "José",
+    "texto": "Llena de alimento los costales de estos hombres, cuanto pudieren llevar... y pondrás mi copa, la copa de plata, en la boca del costal del menor. (Génesis 44:1-2)"
+   },
+   {
+    "quien": "",
+    "texto": "Al amanecer, los hermanos se fueron. El mayordomo los alcanzó y buscó comenzando por el mayor y acabando en el menor; y la copa fue hallada en el costal de Benjamín. (Génesis 44:3-12)"
+   },
+   {
+    "quien": "",
+    "texto": "Entonces ellos rasgaron sus vestidos, cargaron sus asnos y volvieron a la ciudad. ¡Ninguno abandonó a Benjamín! (Génesis 44:13)",
+    "efectos": {
+     "flag": "copa_hallada"
+    }
+   }
+  ],
+  "mayordomo_paciencia": [
+   {
+    "quien": "",
+    "texto": "José todavía no se dio a conocer: primero quiso ver si sus hermanos protegerían a Benjamín. (Génesis 44)"
+   },
+   {
+    "quien": "José",
+    "texto": "Llena de alimento los costales de estos hombres, cuanto pudieren llevar... y pondrás mi copa, la copa de plata, en la boca del costal del menor. (Génesis 44:1-2)"
+   },
+   {
+    "quien": "",
+    "texto": "Al amanecer, los hermanos se fueron. El mayordomo los alcanzó y buscó comenzando por el mayor y acabando en el menor; y la copa fue hallada en el costal de Benjamín. (Génesis 44:3-12)"
+   },
+   {
+    "quien": "",
+    "texto": "Entonces ellos rasgaron sus vestidos, cargaron sus asnos y volvieron a la ciudad. ¡Ninguno abandonó a Benjamín! (Génesis 44:13)",
+    "efectos": {
+     "flag": "copa_hallada"
+    }
+   }
+  ],
+  "mayordomo_despues": [
+   {
+    "quien": "",
+    "texto": "Vino Judá con sus hermanos a casa de José, y se postraron delante de él en tierra. (Génesis 44:14)"
+   }
+  ],
+  "juda_antes": [
+   {
+    "quien": "",
+    "texto": "Judá habla en voz baja con sus hermanos. Se inclinan ante ti, sin reconocerte. (Génesis 43:26-28)"
+   }
+  ],
+  "juda_suplica": [
+   {
+    "quien": "Judá",
+    "texto": "¿Qué diremos a mi señor? ¿qué hablaremos? ¿o con qué nos justificaremos? Dios ha hallado la maldad de tus siervos. (Génesis 44:16)"
+   },
+   {
+    "quien": "Judá",
+    "texto": "Nuestro padre ya perdió a un hijo. Si vuelvo sin el joven, morirá de tristeza. (Génesis 44:27-31)"
+   },
+   {
+    "quien": "Judá",
+    "texto": "Te ruego, pues, que quede ahora tu siervo en lugar del joven por siervo de mi señor, y que el joven vaya con sus hermanos. (Génesis 44:33)",
+    "opciones": [
+     {
+      "texto": "Darte a conocer: tus hermanos han cambiado.",
+      "efectos": {
+       "perdon": 2,
+       "amor": 1
+      }
+     },
+     {
+      "texto": "Hacerles sentir lo que tú sentiste.",
+      "siguiente": "jose_conmovido"
+     }
+    ]
+   },
+   {
+    "quien": "José",
+    "texto": "Haced salir de delante de mí a todos. (Génesis 45:1)"
+   },
+   {
+    "quien": "",
+    "texto": "Y José se dio a conocer a sus hermanos, y lloró a gritos. (Génesis 45:1-2)"
+   },
+   {
+    "quien": "José",
+    "texto": "Yo soy José: ¿vive aún mi padre? (Génesis 45:3)"
+   },
+   {
+    "quien": "",
+    "texto": "Sus hermanos no podían responderle, porque estaban turbados delante de él. (Génesis 45:3)"
+   },
+   {
+    "quien": "José",
+    "texto": "Yo soy José vuestro hermano, el que vendisteis para Egipto. Ahora pues, no os entristezcáis, ni os pese de haberme vendido acá; que para preservación de vida me envió Dios delante de vosotros. (Génesis 45:4-5)"
+   },
+   {
+    "quien": "José",
+    "texto": "Así pues, no me enviasteis vosotros acá, sino Dios. Daos prisa, id a mi padre y decidle: Ven a mí, no te detengas. (Génesis 45:8-9)"
+   },
+   {
+    "quien": "",
+    "texto": "Y se echó sobre el cuello de Benjamín su hermano y lloró; y besó a todos sus hermanos, y lloró sobre ellos. Después sus hermanos hablaron con él. (Génesis 45:14-15)",
+    "efectos": {
+     "flag": "perdon_revelado",
+     "luz": 20
+    }
+   }
+  ],
+  "jose_conmovido": [
+   {
+    "quien": "",
+    "texto": "Pero José no podía ya contenerse delante de todos los que estaban con él. (Génesis 45:1)"
+   },
+   {
+    "quien": "José",
+    "texto": "Haced salir de delante de mí a todos. (Génesis 45:1)"
+   },
+   {
+    "quien": "",
+    "texto": "Y José se dio a conocer a sus hermanos, y lloró a gritos. (Génesis 45:1-2)"
+   },
+   {
+    "quien": "José",
+    "texto": "Yo soy José: ¿vive aún mi padre? (Génesis 45:3)"
+   },
+   {
+    "quien": "",
+    "texto": "Sus hermanos no podían responderle, porque estaban turbados delante de él. (Génesis 45:3)"
+   },
+   {
+    "quien": "José",
+    "texto": "Yo soy José vuestro hermano, el que vendisteis para Egipto. Ahora pues, no os entristezcáis, ni os pese de haberme vendido acá; que para preservación de vida me envió Dios delante de vosotros. (Génesis 45:4-5)"
+   },
+   {
+    "quien": "José",
+    "texto": "Así pues, no me enviasteis vosotros acá, sino Dios. Daos prisa, id a mi padre y decidle: Ven a mí, no te detengas. (Génesis 45:8-9)"
+   },
+   {
+    "quien": "",
+    "texto": "Y se echó sobre el cuello de Benjamín su hermano y lloró; y besó a todos sus hermanos, y lloró sobre ellos. Después sus hermanos hablaron con él. (Génesis 45:14-15)",
+    "efectos": {
+     "flag": "perdon_revelado",
+     "luz": 20,
+     "perdon": 1
+    }
+   }
+  ],
+  "ruben_antes": [
+   {
+    "quien": "Rubén",
+    "texto": "¿No os hablé yo y dije: No pequéis contra el joven; y no escuchasteis? (Génesis 42:22)"
+   },
+   {
+    "quien": "",
+    "texto": "Rubén no sabe que tú entiendes su lengua; entre ustedes hay un intérprete. (Génesis 42:23)"
+   }
+  ],
+  "simeon_antes": [
+   {
+    "quien": "",
+    "texto": "Simeón estuvo preso en Egipto hasta que sus hermanos volvieron con Benjamín. El mayordomo lo sacó y se lo devolvió. (Génesis 42:24; 43:23)"
+   }
+  ],
+  "levi_antes": [
+   {
+    "quien": "",
+    "texto": "Leví y sus hermanos traen regalos para el gobernador: bálsamo, miel, especias y almendras. (Génesis 43:11)"
+   }
+  ],
+  "benjamin_antes": [
+   {
+    "quien": "José",
+    "texto": "¿Es este vuestro hermano menor, de quien me hablasteis? Dios tenga misericordia de ti, hijo mío. (Génesis 43:29)"
+   },
+   {
+    "quien": "",
+    "texto": "José se conmovió profundamente por su hermano, buscó dónde llorar, entró en su cámara y lloró allí. (Génesis 43:30)",
+    "efectos": {
+     "flag": "vio_benjamin",
+     "amor": 1
+    }
+   }
+  ],
+  "benjamin_otra_vez": [
+   {
+    "quien": "",
+    "texto": "Benjamín, el hijo de tu misma madre, Raquel. Hace más de veinte años que no lo veías."
+   }
+  ],
+  "benjamin_despues": [
+   {
+    "quien": "",
+    "texto": "Benjamín llora abrazado a ti. (Génesis 45:14)"
+   }
+  ],
+  "hermano_despues": [
+   {
+    "quien": "",
+    "texto": "Tu hermano te mira con lágrimas. Ya no hay miedo entre ustedes. (Génesis 45:15)"
+   }
+  ],
+  "hallazgo_gavilla": [
+   {
+    "quien": "",
+    "texto": "En el granero encuentras una gavilla de trigo, y recuerdas el sueño de tu juventud:"
+   },
+   {
+    "quien": "",
+    "texto": "«Mi gavilla se levantaba y estaba derecha, y vuestras gavillas estaban alrededor y se inclinaban a la mía». (Génesis 37:7)"
+   },
+   {
+    "quien": "",
+    "texto": "Ese sueño se cumplió cuando tus hermanos se inclinaron ante ti, rostro a tierra. (Génesis 42:6)"
+   }
+  ],
+  "carros_cerrado": [
+   {
+    "quien": "",
+    "texto": "Todavía no. Tus hermanos aún no saben quién eres."
+   }
+  ]
+ }
+}

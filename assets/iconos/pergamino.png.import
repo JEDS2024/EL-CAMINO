@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cppkkbulsixx3"
-path="res://.godot/imported/pj_abuela.png-51ebb73e2cfe43729f419b08781ffc7a.ctex"
+uid="uid://dtleiax24nn3f"
+path="res://.godot/imported/pergamino.png-0b28e3dc3c14ae00bf03327e50d80224.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/pj_abuela.png"
-dest_files=["res://.godot/imported/pj_abuela.png-51ebb73e2cfe43729f419b08781ffc7a.ctex"]
+source_file="res://assets/iconos/pergamino.png"
+dest_files=["res://.godot/imported/pergamino.png-0b28e3dc3c14ae00bf03327e50d80224.ctex"]
 
 [params]
 

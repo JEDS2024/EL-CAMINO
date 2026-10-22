@@ -1,0 +1,578 @@
+{
+ "id": "cap2_rut",
+ "titulo": "Rut en el campo de Booz",
+ "subtitulo": "Rut 1 – 2",
+ "protagonista": {
+  "nombre": "Rut",
+  "modelo": "rut"
+ },
+ "suelo": ".",
+ "mirar_inicio": 0,
+ "ambiente": {
+  "cielo_arriba": "#4a7ac0",
+  "cielo_horizonte": "#f8e0a8",
+  "luz_ambiente": "#c0b090",
+  "energia_ambiente": 0.85,
+  "niebla": "#f0e0b0",
+  "densidad_niebla": 0.008,
+  "sol_color": "#fff2c8",
+  "sol_energia": 1.0,
+  "sol_rotacion": [
+   -40,
+   70
+  ]
+ },
+ "mapa": [
+  "############################",
+  "#;;;;;;;;;;;;;;;;;;;;;TTTTT#",
+  "#;;;e;;;;;;;;;;;;j;;;;T;s;T#",
+  "#;;;;;;;;;;;;;;;;;;;;;T;;;T#",
+  "#;;;;;;;;f;;;;;;;;;;;;TTbTT#",
+  "#;;;;;4;;;;;;;;;;k;;;;;;;;;#",
+  "#;;;;;;;;;;;;;5;;;;;;;;;;;;#",
+  "#;;;g;;;;;;;;;;;;;;;;h;;;;;#",
+  "#;;;;;;;;;;;;;;;;;;;;;;;;;;#",
+  "#...........2..3.....w.....#",
+  "#..i.......................#",
+  "#====================......#",
+  "#.....=........=...........#",
+  "#.HHH.=..HHH...=..HHH......#",
+  "#.HHH.=..HHH1..=..HHH......#",
+  "#.....=....P...=...........#",
+  "############################"
+ ],
+ "leyenda": {
+  "1": {
+   "tipo": "npc",
+   "nombre": "Noemí",
+   "modelo": "noemi",
+   "etiqueta": "Noemí",
+   "dialogos": [
+    {
+     "si": [
+      "flag:efa"
+     ],
+     "id": "noemi_regreso"
+    },
+    {
+     "si": [
+      "flag:permiso_noemi"
+     ],
+     "id": "noemi_espera"
+    },
+    {
+     "id": "noemi_inicio"
+    }
+   ]
+  },
+  "2": {
+   "tipo": "npc",
+   "nombre": "Criado de los segadores",
+   "modelo": "criado",
+   "etiqueta": "Criado de los segadores",
+   "dialogos": [
+    {
+     "si": [
+      "flag:permiso_criado"
+     ],
+     "id": "criado_despues"
+    },
+    {
+     "si": [
+      "flag:permiso_noemi"
+     ],
+     "id": "criado_permiso"
+    },
+    {
+     "id": "criado_antes"
+    }
+   ]
+  },
+  "3": {
+   "tipo": "npc",
+   "nombre": "Booz",
+   "modelo": "booz",
+   "etiqueta": "Booz",
+   "dialogos": [
+    {
+     "si": [
+      "flag:booz_ordena"
+     ],
+     "id": "booz_despues"
+    },
+    {
+     "id": "booz_encuentro"
+    }
+   ],
+   "aparece_si": [
+    "flag:permiso_criado"
+   ]
+  },
+  "4": {
+   "tipo": "npc",
+   "nombre": "Segador",
+   "modelo": "segador",
+   "etiqueta": "Segador",
+   "dialogos": [
+    {
+     "id": "segador"
+    }
+   ]
+  },
+  "5": {
+   "tipo": "npc",
+   "nombre": "Segador",
+   "modelo": "segador",
+   "etiqueta": "Segador",
+   "dialogos": [
+    {
+     "id": "segador"
+    }
+   ]
+  },
+  "e": {
+   "tipo": "objeto",
+   "id": "espiga1",
+   "icono": "espiga",
+   "color_luz": "#ffe08a",
+   "dialogo": "espiga",
+   "efectos": {
+    "sumar": {
+     "espigas": 1
+    }
+   },
+   "aparece_si": [
+    "flag:permiso_criado"
+   ]
+  },
+  "f": {
+   "tipo": "objeto",
+   "id": "espiga2",
+   "icono": "espiga",
+   "color_luz": "#ffe08a",
+   "dialogo": "espiga",
+   "efectos": {
+    "sumar": {
+     "espigas": 1
+    }
+   },
+   "aparece_si": [
+    "flag:permiso_criado"
+   ]
+  },
+  "g": {
+   "tipo": "objeto",
+   "id": "espiga3",
+   "icono": "espiga",
+   "color_luz": "#ffe08a",
+   "dialogo": "espiga",
+   "efectos": {
+    "sumar": {
+     "espigas": 1
+    }
+   },
+   "aparece_si": [
+    "flag:permiso_criado"
+   ]
+  },
+  "h": {
+   "tipo": "objeto",
+   "id": "espiga4",
+   "icono": "espiga",
+   "color_luz": "#ffe08a",
+   "dialogo": "espiga_manojo",
+   "efectos": {
+    "sumar": {
+     "espigas": 1
+    }
+   },
+   "aparece_si": [
+    "flag:booz_ordena"
+   ]
+  },
+  "j": {
+   "tipo": "objeto",
+   "id": "espiga5",
+   "icono": "espiga",
+   "color_luz": "#ffe08a",
+   "dialogo": "espiga_manojo",
+   "efectos": {
+    "sumar": {
+     "espigas": 1
+    }
+   },
+   "aparece_si": [
+    "flag:booz_ordena"
+   ]
+  },
+  "k": {
+   "tipo": "objeto",
+   "id": "espiga6",
+   "icono": "espiga",
+   "color_luz": "#ffe08a",
+   "dialogo": "espiga_manojo",
+   "efectos": {
+    "sumar": {
+     "espigas": 1
+    }
+   },
+   "aparece_si": [
+    "flag:booz_ordena"
+   ]
+  },
+  "s": {
+   "tipo": "objeto",
+   "id": "gavilla_olvidada",
+   "icono": "espiga",
+   "color_luz": "#ffe08a",
+   "dialogo": "hallazgo_gavilla_olvidada",
+   "efectos": {
+    "sumar": {
+     "espigas": 1
+    },
+    "secreto": 1,
+    "luz": 10,
+    "amor": 1
+   }
+  },
+  "w": {
+   "tipo": "mecanismo",
+   "modelo": "monton",
+   "accion": "Desgranar",
+   "requiere": [
+    "cont:espigas>=6"
+   ],
+   "flag_activo": "efa",
+   "efectos": {
+    "flag": "efa",
+    "luz": 15
+   },
+   "dialogo_listo": "desgranar_listo",
+   "dialogo_falta": "desgranar_falta",
+   "dialogo_hecho": "desgranar_hecho"
+  },
+  "i": {
+   "tipo": "letrero",
+   "dialogo": "ley_espigueo",
+   "etiqueta": "La ley del espigueo"
+  }
+ },
+ "objetivos": [
+  {
+   "texto": "Habla con Noemí",
+   "hecho": [
+    "flag:permiso_noemi"
+   ]
+  },
+  {
+   "texto": "Pide permiso al criado que cuida a los segadores",
+   "hecho": [
+    "flag:permiso_criado"
+   ]
+  },
+  {
+   "texto": "Habla con Booz, el dueño del campo",
+   "hecho": [
+    "flag:booz_ordena"
+   ]
+  },
+  {
+   "texto": "Recoge espigas detrás de los segadores (6)",
+   "hecho": [
+    "cont:espigas>=6"
+   ]
+  },
+  {
+   "texto": "Desgrana lo que recogiste",
+   "hecho": [
+    "flag:efa"
+   ]
+  },
+  {
+   "texto": "Vuelve con Noemí a la ciudad",
+   "hecho": [
+    "flag:__nunca"
+   ]
+  }
+ ],
+ "intro": [
+  {
+   "quien": "",
+   "texto": "Noemí perdió a su esposo y a sus dos hijos en Moab. Decidió volver a Belén, y le pidió a su nuera Rut que se quedara con su pueblo. (Rut 1:3-15)"
+  },
+  {
+   "quien": "Rut",
+   "texto": "No me ruegues que te deje, y que me aparte de ti: porque a dondequiera que tú fueres, iré yo; y dondequiera que vivieres, viviré. Tu pueblo será mi pueblo, y tu Dios mi Dios. (Rut 1:16)"
+  },
+  {
+   "quien": "",
+   "texto": "Y llegaron a Belén en el comienzo de la siega de la cebada. (Rut 1:22)"
+  }
+ ],
+ "epilogo": [
+  {
+   "quien": "",
+   "texto": "Booz tomó a Rut por esposa, y el Señor le dio un hijo: Obed. (Rut 4:13)"
+  },
+  {
+   "quien": "",
+   "texto": "Las mujeres le decían a Noemí: «tu nuera, que te ama, es de más valor para ti que siete hijos». (Rut 4:15)"
+  },
+  {
+   "quien": "",
+   "texto": "Obed fue padre de Isaí, e Isaí fue padre de David. (Rut 4:17)"
+  }
+ ],
+ "dialogos": {
+  "noemi_inicio": [
+   {
+    "quien": "Rut",
+    "texto": "Te ruego que me dejes ir al campo, y cogeré espigas en pos de aquel a cuyos ojos hallare gracia. (Rut 2:2)"
+   },
+   {
+    "quien": "Noemí",
+    "texto": "Ve, hija mía. (Rut 2:2)",
+    "efectos": {
+     "flag": "permiso_noemi"
+    }
+   }
+  ],
+  "noemi_espera": [
+   {
+    "quien": "Noemí",
+    "texto": "Ve, hija mía. Que el Señor te guíe al campo correcto."
+   }
+  ],
+  "noemi_regreso": [
+   {
+    "quien": "",
+    "texto": "Rut llevó la cebada a la ciudad, y también le dio a Noemí lo que le había sobrado de la comida. (Rut 2:18)"
+   },
+   {
+    "quien": "Noemí",
+    "texto": "¿Dónde has espigado hoy? ¿y dónde has trabajado? Bendito sea el que te ha reconocido. (Rut 2:19)"
+   },
+   {
+    "quien": "Rut",
+    "texto": "El nombre del varón con quien hoy he trabajado es Booz. (Rut 2:19)"
+   },
+   {
+    "quien": "Noemí",
+    "texto": "Sea él bendito de Jehová, pues que no ha rehusado a los vivos la benevolencia que tuvo para con los finados. Nuestro pariente es aquel varón, y de nuestros redentores es. (Rut 2:20)",
+    "efectos": {
+     "fin_capitulo": true
+    }
+   }
+  ],
+  "criado_antes": [
+   {
+    "quien": "",
+    "texto": "Este criado está a cargo de los segadores. Primero habla con Noemí antes de salir a espigar. (Rut 2:2)"
+   }
+  ],
+  "criado_permiso": [
+   {
+    "quien": "Rut",
+    "texto": "Ruégote que me dejes coger y juntar tras los segadores entre las gavillas. (Rut 2:7)"
+   },
+   {
+    "quien": "",
+    "texto": "El criado le permitió espigar. Más tarde le diría a Booz: «Es la joven moabita que volvió con Noemí». (Rut 2:6-7)",
+    "efectos": {
+     "flag": "permiso_criado"
+    }
+   },
+   {
+    "quien": "",
+    "texto": "En ese momento, Booz llega de Belén al campo. (Rut 2:4)"
+   }
+  ],
+  "criado_despues": [
+   {
+    "quien": "",
+    "texto": "El criado le contó a Booz que Rut trabajó desde la mañana, casi sin descansar. (Rut 2:7)"
+   }
+  ],
+  "segador": [
+   {
+    "quien": "",
+    "texto": "Los segadores trabajan sin parar. Cuando Booz los saludó, respondieron: «Jehová te bendiga». (Rut 2:4)"
+   }
+  ],
+  "booz_encuentro": [
+   {
+    "quien": "",
+    "texto": "Booz saludó a los segadores: «Jehová sea con vosotros». Y ellos respondieron: «Jehová te bendiga». (Rut 2:4)"
+   },
+   {
+    "quien": "Booz",
+    "texto": "Oye, hija mía, no vayas a espigar a otro campo, ni pases de aquí; y aquí estarás con mis criadas. Y cuando tengas sed, ve a los vasos, y bebe del agua que sacan los criados. (Rut 2:8-9)",
+    "opciones": [
+     {
+      "texto": "Inclinarte y preguntar por qué te muestra favor.",
+      "efectos": {
+       "fe": 1
+      }
+     },
+     {
+      "texto": "Darle las gracias en silencio.",
+      "siguiente": "booz_silencio"
+     }
+    ]
+   },
+   {
+    "quien": "Rut",
+    "texto": "¿Por qué he hallado gracia en tus ojos para que tú me reconozcas, siendo yo extranjera? (Rut 2:10)"
+   },
+   {
+    "quien": "Booz",
+    "texto": "Por cierto se me ha declarado todo lo que has hecho con tu suegra después de la muerte de tu marido. (Rut 2:11)"
+   },
+   {
+    "quien": "Booz",
+    "texto": "Jehová galardone tu obra, y tu remuneración sea llena por Jehová Dios de Israel, que has venido para cubrirte debajo de sus alas. (Rut 2:12)"
+   },
+   {
+    "quien": "",
+    "texto": "A la hora de comer, Booz le dio pan y grano tostado; y ella comió y se sació, y le sobró. (Rut 2:14)",
+    "opciones": [
+     {
+      "texto": "Guardar lo que sobró para Noemí.",
+      "efectos": {
+       "amor": 2
+      }
+     },
+     {
+      "texto": "Seguir trabajando enseguida.",
+      "siguiente": "rut_guarda"
+     }
+    ]
+   },
+   {
+    "quien": "Booz",
+    "texto": "Coja también espigas entre las gavillas, y no la avergoncéis; antes echaréis a sabiendas de los manojos, y la dejaréis que los coja. (Rut 2:15-16)",
+    "efectos": {
+     "flag": "booz_ordena"
+    }
+   }
+  ],
+  "booz_silencio": [
+   {
+    "quien": "",
+    "texto": "Pero Rut se inclinó rostro a tierra y le preguntó: (Rut 2:10)"
+   },
+   {
+    "quien": "Rut",
+    "texto": "¿Por qué he hallado gracia en tus ojos para que tú me reconozcas, siendo yo extranjera? (Rut 2:10)"
+   },
+   {
+    "quien": "Booz",
+    "texto": "Por cierto se me ha declarado todo lo que has hecho con tu suegra después de la muerte de tu marido. (Rut 2:11)"
+   },
+   {
+    "quien": "Booz",
+    "texto": "Jehová galardone tu obra, y tu remuneración sea llena por Jehová Dios de Israel, que has venido para cubrirte debajo de sus alas. (Rut 2:12)"
+   },
+   {
+    "quien": "",
+    "texto": "A la hora de comer, Booz le dio pan y grano tostado; y ella comió y se sació, y le sobró. Rut lo guardó para Noemí. (Rut 2:14, 18)",
+    "efectos": {
+     "amor": 1
+    }
+   },
+   {
+    "quien": "Booz",
+    "texto": "Coja también espigas entre las gavillas, y no la avergoncéis; antes echaréis a sabiendas de los manojos, y la dejaréis que los coja. (Rut 2:15-16)",
+    "efectos": {
+     "flag": "booz_ordena"
+    }
+   }
+  ],
+  "rut_guarda": [
+   {
+    "quien": "",
+    "texto": "Antes de volver al trabajo, Rut guardó lo que le sobró para llevárselo a Noemí. (Rut 2:18)",
+    "efectos": {
+     "amor": 1
+    }
+   },
+   {
+    "quien": "Booz",
+    "texto": "Coja también espigas entre las gavillas, y no la avergoncéis; antes echaréis a sabiendas de los manojos, y la dejaréis que los coja. (Rut 2:15-16)",
+    "efectos": {
+     "flag": "booz_ordena"
+    }
+   }
+  ],
+  "booz_despues": [
+   {
+    "quien": "Booz",
+    "texto": "Bebe del agua que sacan los criados cuando tengas sed, hija mía. (Rut 2:9)"
+   }
+  ],
+  "espiga": [
+   {
+    "quien": "",
+    "texto": "Recoges un puñado de espigas que quedaron detrás de los segadores."
+   }
+  ],
+  "espiga_manojo": [
+   {
+    "quien": "",
+    "texto": "Encuentras un manojo que los segadores dejaron caer a propósito, como ordenó Booz. (Rut 2:16)"
+   }
+  ],
+  "hallazgo_gavilla_olvidada": [
+   {
+    "quien": "",
+    "texto": "Escondida en un rincón del campo hay una gavilla olvidada."
+   },
+   {
+    "quien": "",
+    "texto": "«Cuando siegues tu mies en tu campo, y olvides alguna gavilla en el campo, no volverás a tomarla: para el extranjero, para el huérfano, y para la viuda será». (Deuteronomio 24:19)"
+   },
+   {
+    "quien": "",
+    "texto": "Rut era extranjera y viuda. Dios ya había pensado en ella."
+   }
+  ],
+  "desgranar_falta": [
+   {
+    "quien": "",
+    "texto": "Todavía tienes pocas espigas. Sigue espigando detrás de los segadores.",
+    "si": [
+     "!flag:booz_ordena"
+    ]
+   },
+   {
+    "quien": "",
+    "texto": "Busca los manojos que los segadores dejaron caer para ti.",
+    "si": [
+     "flag:booz_ordena"
+    ]
+   }
+  ],
+  "desgranar_listo": [
+   {
+    "quien": "",
+    "texto": "Espigó, pues, en el campo hasta la tarde, y desgranó lo que había recogido, y fue como un efa de cebada. (Rut 2:17)"
+   }
+  ],
+  "desgranar_hecho": [
+   {
+    "quien": "",
+    "texto": "Un efa de cebada: comida para muchos días. Llévasela a Noemí."
+   }
+  ],
+  "ley_espigueo": [
+   {
+    "quien": "",
+    "texto": "La ley de Moisés decía:"
+   },
+   {
+    "quien": "",
+    "texto": "«Cuando siegues la mies de tu tierra, no acabarás de segar el rincón de tu campo, ni espigarás tu sementera segada; para el pobre y para el extranjero lo dejarás». (Levítico 19:9-10)"
+   }
+  ]
+ }
+}

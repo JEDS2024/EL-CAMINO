@@ -16,45 +16,86 @@ func _ready() -> void:
 	await _esperar(2.5)
 	await _dialogos()
 
-	# --- capítulo 1
-	await _usar(_npc("Simeón"))
-	_ok(Juego.cumple("flag:hablo_simeon"), "habló con Simeón")
+	# --- 1. José (Génesis 43–45)
+	await _usar(_lampara("ruben"))
+	_ok(not _lampara("ruben").encendida, "los asientos esperan a que hables con el mayordomo")
+	await _usar(_npc("Mayordomo"))
 	await _usar(_tipo("letrero"))
-	await _usar(_lampara("esperanza"))  # orden equivocado a propósito
-	_ok(not Juego.cumple("flag:lamparas_ok"), "el orden equivocado no resuelve")
-	for s in ["fe", "esperanza", "amor"]:
+	await _usar(_lampara("benjamin"))  # orden equivocado a propósito
+	_ok(not Juego.cumple("flag:mesa_ok"), "sentar al menor primero no resuelve")
+	for s in ["ruben", "simeon", "levi", "juda", "benjamin"]:
 		await _usar(_lampara(s))
-	_ok(Juego.cumple("flag:lamparas_ok"), "lámparas de la plaza encendidas")
-	await _usar(_npc("Marta"))
-	await _usar(_npc("Lía"))
-	await _usar(_npc("Marta"))
-	_ok(Juego.cumple("flag:pan_resuelto"), "historia del pan resuelta")
-	await _usar(_npc("Tomás"))
-	await _usar(_tipo("objeto"))
-	_ok(Juego.objetos.has("hilo1"), "secreto del hilo encontrado")
-	await _salir()
+	_ok(Juego.cumple("flag:mesa_ok"), "hermanos sentados por edad (Gén 43:33)")
+	await _usar(_npc("Benjamín"))
+	await _usar(_npc("Mayordomo"))
+	_ok(Juego.cumple("flag:copa_hallada"), "la copa aparece en el costal de Benjamín")
+	await _usar(_npc("Judá"))
+	_ok(Juego.cumple("flag:perdon_revelado"), "José se da a conocer y perdona")
+	await _objetos()
+	await _usar(_tipo("salida"))
+	await _seguir()
 
-	# --- capítulo 2
-	_ok(Juego.capitulo == 1, "pasó al capítulo 2")
+	# --- 2. Rut (Rut 1–2)
+	_ok(Juego.capitulo == 1, "pasó a Rut")
 	await _usar(_npc("Noemí"))
-	await _usar(_npc("Abuela Ana"))
-	await _usar(_tipo("objeto"))
-	await _usar(_npc("Jared"))
-	_ok(Juego.contadores.get("piezas", 0) == 3, "tres piedras del brocal")
+	await _usar(_npc("Criado de los segadores"))
+	await _esperar(0.5)
+	_ok(_npc("Booz").activo, "Booz llega al campo")
+	await _usar(_npc("Booz"))
+	await _esperar(0.5)
+	await _objetos()
+	_ok(Juego.contadores.get("espigas", 0) >= 6, "espigas recogidas")
 	await _usar(_tipo("mecanismo"))
-	_ok(Juego.cumple("flag:pozo_reparado"), "pozo reparado")
-	await _salir()
+	_ok(Juego.cumple("flag:efa"), "un efa de cebada (Rut 2:17)")
+	await _usar(_npc("Noemí"))
+	await _seguir()
 
-	# --- capítulo 3
-	_ok(Juego.capitulo == 2, "pasó al capítulo 3")
-	await _usar(_lampara("fe"))
-	_ok(not Juego.cumple("flag:lamparas_peniel"), "las lámparas no prenden sin hablar con Asaf")
-	await _usar(_npc("Asaf"))
+	# --- 3. David (1 Samuel 17)
+	_ok(Juego.capitulo == 2, "pasó a David")
+	await _usar(_npc("Goliat"))
+	_ok(not Juego.fin_pedido and Juego.capitulo == 2, "Goliat solo desafía si no estás listo")
+	await _usar(_npc("Soldado de Israel"))
+	await _usar(_npc("Eliab"))
+	await _usar(_npc("Saúl"))
+	_ok(Juego.cumple("flag:saul_bendice"), "Saúl: «Ve, y Jehová sea contigo»")
+	await _objetos()
+	_ok(Juego.contadores.get("piedras", 0) == 5, "cinco piedras lisas (17:40)")
+	await _usar(_npc("Goliat"))
+	await _seguir()
+
+	# --- 4. Nehemías (Nehemías 2–6)
+	_ok(Juego.capitulo == 3, "pasó a Nehemías")
 	await _usar(_tipo("letrero"))
-	for s in ["perdon", "amor", "esperanza", "fe"]:
+	await _usar(_lampara("dragon"))  # orden equivocado a propósito
+	_ok(not Juego.cumple("flag:inspeccion_ok"), "la ruta empieza en la puerta del Valle")
+	for s in ["valle", "dragon", "muladar", "fuente", "estanque"]:
 		await _usar(_lampara(s))
-	_ok(Juego.cumple("flag:lamparas_peniel"), "lámparas de Peniel encendidas")
-	await _usar(_tipo("objeto"))
+	_ok(Juego.cumple("flag:inspeccion_ok"), "inspección nocturna (Neh 2:13-15)")
+	await _usar(_npc("Eliasib"))
+	await _usar(_mecanismo("tramo_este"))
+	_ok(not Juego.cumple("flag:tramo_este"), "sin guardia los obreros tienen miedo")
+	await _usar(_mecanismo("tramo_norte"))
+	await _usar(_npc("Sanbalat"))
+	await _usar(_npc("Obrero"))
+	await _usar(_mecanismo("tramo_este"))
+	await _usar(_mecanismo("tramo_oeste"))
+	_ok(Juego.contadores.get("tramos", 0) == 3, "muro reparado")
+	await _usar(_npc("Salum"))
+	await _objetos()
+	await _usar(_tipo("salida"))
+	await _seguir()
+
+	# --- 5. Emaús (Lucas 24)
+	_ok(Juego.capitulo == 4, "pasó a Emaús")
+	await _usar(_lampara("genesis"))
+	_ok(not _lampara("genesis").encendida, "las Escrituras esperan al forastero")
+	await _usar(_npc("Forastero"))
+	await _usar(_lampara("isaias"))  # orden equivocado a propósito
+	_ok(not Juego.cumple("flag:escrituras_ok"), "comenzando desde Moisés")
+	for s in ["genesis", "deuteronomio", "isaias", "zacarias"]:
+		await _usar(_lampara(s))
+	_ok(Juego.cumple("flag:escrituras_ok"), "Escrituras en orden (Lc 24:27)")
+	await _objetos()
 	await _usar(_tipo("salida"))
 	await _dialogos()
 	await _frames(3)
@@ -64,6 +105,7 @@ func _ready() -> void:
 		b.pressed.emit()
 		await _dialogos()
 	_ok(_boton_menu("Volver al inicio") != null, "pantalla de fin")
+	_ok(Juego.secretos == 5, "los 5 secretos encontrados")
 	print("VIRTUDES: ", Juego.virtudes, "  LUZ: ", Juego.luz, "  SECRETOS: ", Juego.secretos)
 	print("RESULTADO: ", "TODO BIEN" if fallos == 0 else "%d FALLOS" % fallos)
 	get_tree().quit(fallos)
@@ -134,8 +176,20 @@ func _usar(e: Entidad) -> void:
 	await _dialogos()
 
 
-func _salir() -> void:
-	await _usar(_tipo("salida"))
+func _objetos() -> void:
+	for e in _entidades():
+		if e.tipo == "objeto" and e.activo and e.is_in_group("interactuable"):
+			await _usar(e)
+
+
+func _mecanismo(flag: String) -> Entidad:
+	for e in _entidades():
+		if e.tipo == "mecanismo" and e.def.get("flag_activo", "") == flag:
+			return e
+	return null
+
+
+func _seguir() -> void:
 	await _dialogos()
 	await _frames(3)
 	var b := _boton_menu("Seguir el camino")

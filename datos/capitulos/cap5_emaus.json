@@ -1,0 +1,454 @@
+{
+ "id": "cap5_emaus",
+ "titulo": "El camino a Emaús",
+ "subtitulo": "Lucas 24:13 – 35",
+ "protagonista": {
+  "nombre": "Cleofás",
+  "modelo": "cleofas"
+ },
+ "suelo": ".",
+ "mirar_inicio": 0,
+ "ambiente": {
+  "cielo_arriba": "#2a2a6a",
+  "cielo_horizonte": "#e8906a",
+  "luz_ambiente": "#9a7a88",
+  "energia_ambiente": 0.7,
+  "niebla": "#6a4a5a",
+  "densidad_niebla": 0.016,
+  "sol_color": "#ffb080",
+  "sol_energia": 0.7,
+  "sol_rotacion": [
+   -12,
+   110
+  ]
+ },
+ "mapa": [
+  "##############################",
+  "#..HHH.......=.......HHH.....#",
+  "#..HHH.......=S......HHH.....#",
+  "#............=...............#",
+  "#..T.........=.........T.....#",
+  "#............===.............#",
+  "#..R...........=..z......R...#",
+  "#..............=.............#",
+  "#.....T.......==.............#",
+  "#.............=..y...........#",
+  "#..TT.........=..........T...#",
+  "#.............====...........#",
+  "#..R..............=..........#",
+  "#...............d.=......R...#",
+  "#.................=..........#",
+  "#.................=1.........#",
+  "#.................=...g......#",
+  "#..TTbTT..........=..........#",
+  "#..T.sT...........=..........#",
+  "#..TTTT...........=2P..i.....#",
+  "##############################"
+ ],
+ "leyenda": {
+  "1": {
+   "tipo": "npc",
+   "nombre": "Forastero",
+   "modelo": "forastero",
+   "etiqueta": "Forastero",
+   "dialogos": [
+    {
+     "si": [
+      "flag:escrituras_ok"
+     ],
+     "id": "forastero_llegando"
+    },
+    {
+     "si": [
+      "flag:explicacion"
+     ],
+     "id": "forastero_camino"
+    },
+    {
+     "id": "forastero_encuentro"
+    }
+   ],
+   "seguir": true,
+   "seguir_si": [
+    "flag:explicacion"
+   ]
+  },
+  "2": {
+   "tipo": "npc",
+   "nombre": "Compañero",
+   "modelo": "companero",
+   "etiqueta": "Compañero",
+   "dialogos": [
+    {
+     "si": [
+      "flag:explicacion"
+     ],
+     "id": "companero_despues"
+    },
+    {
+     "id": "companero_antes"
+    }
+   ],
+   "seguir": true
+  },
+  "g": {
+   "tipo": "lampara",
+   "acertijo": "escrituras",
+   "simbolo": "genesis",
+   "etiqueta": "Moisés: Génesis",
+   "icono": "luz",
+   "accion": "Recordar",
+   "requiere": [
+    "flag:explicacion"
+   ],
+   "dialogo_frio": "piedra_fria",
+   "dialogo": "texto_genesis"
+  },
+  "d": {
+   "tipo": "lampara",
+   "acertijo": "escrituras",
+   "simbolo": "deuteronomio",
+   "etiqueta": "Moisés: Deuteronomio",
+   "icono": "luz",
+   "accion": "Recordar",
+   "requiere": [
+    "flag:explicacion"
+   ],
+   "dialogo_frio": "piedra_fria",
+   "dialogo": "texto_deuteronomio"
+  },
+  "y": {
+   "tipo": "lampara",
+   "acertijo": "escrituras",
+   "simbolo": "isaias",
+   "etiqueta": "Profetas: Isaías",
+   "icono": "luz",
+   "accion": "Recordar",
+   "requiere": [
+    "flag:explicacion"
+   ],
+   "dialogo_frio": "piedra_fria",
+   "dialogo": "texto_isaias"
+  },
+  "z": {
+   "tipo": "lampara",
+   "acertijo": "escrituras",
+   "simbolo": "zacarias",
+   "etiqueta": "Profetas: Zacarías",
+   "icono": "luz",
+   "accion": "Recordar",
+   "requiere": [
+    "flag:explicacion"
+   ],
+   "dialogo_frio": "piedra_fria",
+   "dialogo": "texto_zacarias"
+  },
+  "i": {
+   "tipo": "letrero",
+   "dialogo": "hito_camino",
+   "etiqueta": "Camino a Emaús"
+  },
+  "s": {
+   "tipo": "objeto",
+   "id": "mensaje_sepulcro",
+   "icono": "pergamino",
+   "color_luz": "#fff0c0",
+   "dialogo": "hallazgo_mensaje",
+   "efectos": {
+    "secreto": 1,
+    "luz": 10,
+    "esperanza": 1
+   }
+  },
+  "S": {
+   "tipo": "salida",
+   "accion": "Entrar a la casa",
+   "requiere": [
+    "flag:escrituras_ok"
+   ],
+   "dialogo_cerrado": "casa_cerrada"
+  }
+ },
+ "acertijos": {
+  "escrituras": {
+   "orden": [
+    "genesis",
+    "deuteronomio",
+    "isaias",
+    "zacarias"
+   ],
+   "en_orden": true,
+   "al_resolver": {
+    "flag": "escrituras_ok",
+    "luz": 25,
+    "fe": 1,
+    "esperanza": 1
+   },
+   "dialogo_exito": "escrituras_exito",
+   "dialogo_fallo": "escrituras_fallo"
+  }
+ },
+ "objetivos": [
+  {
+   "texto": "Camina hacia Emaús con tu compañero",
+   "hecho": [
+    "flag:explicacion"
+   ]
+  },
+  {
+   "texto": "Recuerda las Escrituras en orden: comenzando desde Moisés y siguiendo por los profetas",
+   "hecho": [
+    "flag:escrituras_ok"
+   ]
+  },
+  {
+   "texto": "Llega a la casa en Emaús (norte)",
+   "hecho": [
+    "flag:__nunca"
+   ]
+  }
+ ],
+ "retratos": {
+  "Jesús": "forastero",
+  "Los once": "companero"
+ },
+ "intro": [
+  {
+   "quien": "",
+   "texto": "Es el primer día de la semana. Dos discípulos van a una aldea llamada Emaús, a sesenta estadios de Jerusalén. (Lucas 24:13)"
+  },
+  {
+   "quien": "",
+   "texto": "Van hablando entre sí de todas las cosas que habían acontecido. (Lucas 24:14)"
+  },
+  {
+   "quien": "",
+   "texto": "Tu compañero camina cabizbajo a tu lado."
+  }
+ ],
+ "epilogo": [
+  {
+   "quien": "",
+   "texto": "Llegaron a la aldea adonde iban, y él hizo como que iba más lejos. (Lucas 24:28)"
+  },
+  {
+   "quien": "Cleofás",
+   "texto": "Quédate con nosotros, porque se hace tarde, y el día ya ha declinado. (Lucas 24:29)"
+  },
+  {
+   "quien": "",
+   "texto": "Y entró a quedarse con ellos. Estando sentado con ellos a la mesa, tomó el pan y lo bendijo, lo partió, y les dio. (Lucas 24:29-30)"
+  },
+  {
+   "quien": "",
+   "texto": "Entonces les fueron abiertos los ojos, y le reconocieron: ¡era Jesús! Mas él se desapareció de su vista. (Lucas 24:31)"
+  },
+  {
+   "quien": "Cleofás",
+   "texto": "¿No ardía nuestro corazón en nosotros, mientras nos hablaba en el camino, y cuando nos abría las Escrituras? (Lucas 24:32)"
+  },
+  {
+   "quien": "",
+   "texto": "Y levantándose en la misma hora, volvieron a Jerusalén, y hallaron a los once reunidos. (Lucas 24:33)"
+  },
+  {
+   "quien": "Los once",
+   "texto": "Ha resucitado el Señor verdaderamente, y ha aparecido a Simón. (Lucas 24:34)"
+  },
+  {
+   "quien": "",
+   "texto": "Entonces ellos contaron las cosas que les habían acontecido en el camino, y cómo le habían reconocido al partir el pan. (Lucas 24:35)"
+  }
+ ],
+ "dialogos": {
+  "companero_antes": [
+   {
+    "quien": "",
+    "texto": "Tu compañero está triste. Ambos esperaban que Jesús fuera el que había de redimir a Israel. (Lucas 24:21)"
+   }
+  ],
+  "companero_despues": [
+   {
+    "quien": "",
+    "texto": "Tu compañero escucha al forastero con toda atención."
+   }
+  ],
+  "forastero_encuentro": [
+   {
+    "quien": "",
+    "texto": "Mientras hablaban, Jesús mismo se acercó y caminaba con ellos; pero sus ojos estaban velados para que no le conociesen. (Lucas 24:15-16)"
+   },
+   {
+    "quien": "Forastero",
+    "texto": "¿Qué pláticas son estas que tenéis entre vosotros mientras camináis, y por qué estáis tristes? (Lucas 24:17)"
+   },
+   {
+    "quien": "Cleofás",
+    "texto": "¿Eres tú el único forastero en Jerusalén que no has sabido las cosas que en ella han acontecido en estos días? (Lucas 24:18)"
+   },
+   {
+    "quien": "Forastero",
+    "texto": "¿Qué cosas? (Lucas 24:19)",
+    "opciones": [
+     {
+      "texto": "Contarle todo con sinceridad.",
+      "efectos": {
+       "esperanza": 1
+      }
+     },
+     {
+      "texto": "Contarle, aunque te cuesta hablar de ello.",
+      "efectos": {
+       "fe": 1
+      }
+     }
+    ]
+   },
+   {
+    "quien": "Cleofás",
+    "texto": "De Jesús nazareno, que fue varón profeta, poderoso en obra y en palabra delante de Dios y de todo el pueblo; y cómo le entregaron los principales sacerdotes y nuestros gobernantes a sentencia de muerte, y le crucificaron. (Lucas 24:19-20)"
+   },
+   {
+    "quien": "Cleofás",
+    "texto": "Pero nosotros esperábamos que él era el que había de redimir a Israel. (Lucas 24:21)"
+   },
+   {
+    "quien": "Cleofás",
+    "texto": "Aunque también nos han asombrado unas mujeres de entre nosotros: fueron al sepulcro y no hallaron su cuerpo, y dijeron que vieron ángeles, los cuales dijeron que él vive. (Lucas 24:22-23)"
+   },
+   {
+    "quien": "Forastero",
+    "texto": "¡Oh insensatos, y tardos de corazón para creer todo lo que los profetas han dicho! ¿No era necesario que el Cristo padeciera estas cosas, y que entrara en su gloria? (Lucas 24:25-26)"
+   },
+   {
+    "quien": "",
+    "texto": "Y comenzando desde Moisés, y siguiendo por todos los profetas, les declaraba en todas las Escrituras lo que de él decían. (Lucas 24:27)",
+    "efectos": {
+     "flag": "explicacion"
+    }
+   },
+   {
+    "quien": "",
+    "texto": "Mientras caminan, recuerda esos pasajes en orden: primero los libros de Moisés (Génesis, luego Deuteronomio), después los profetas (Isaías, luego Zacarías)."
+   }
+  ],
+  "forastero_camino": [
+   {
+    "quien": "",
+    "texto": "El forastero sigue hablándoles de las Escrituras mientras caminan. (Lucas 24:27)"
+   }
+  ],
+  "forastero_llegando": [
+   {
+    "quien": "",
+    "texto": "Ya se ve la aldea de Emaús. El día está declinando. (Lucas 24:28-29)"
+   }
+  ],
+  "piedra_fria": [
+   {
+    "quien": "",
+    "texto": "Todavía caminan en silencio. Primero hablen con el forastero que se les acerca."
+   }
+  ],
+  "texto_genesis": [
+   {
+    "quien": "",
+    "texto": "«Pondré enemistad entre ti y la mujer, y entre tu simiente y la simiente suya; esta te herirá en la cabeza, y tú le herirás en el calcañar». (Génesis 3:15)"
+   }
+  ],
+  "texto_deuteronomio": [
+   {
+    "quien": "",
+    "texto": "«Profeta de en medio de ti, de tus hermanos, como yo, te levantará Jehová tu Dios; a él oiréis». (Deuteronomio 18:15)"
+   }
+  ],
+  "texto_isaias": [
+   {
+    "quien": "",
+    "texto": "«Mas él herido fue por nuestras rebeliones, molido por nuestros pecados; el castigo de nuestra paz fue sobre él, y por su llaga fuimos nosotros curados». (Isaías 53:5)"
+   }
+  ],
+  "texto_zacarias": [
+   {
+    "quien": "",
+    "texto": "«Alégrate mucho, hija de Sion; da voces de júbilo, hija de Jerusalén; he aquí tu rey vendrá a ti, justo y salvador, humilde, y cabalgando sobre un asno». (Zacarías 9:9)"
+   }
+  ],
+  "escrituras_fallo": [
+   {
+    "quien": "",
+    "texto": "Pierdes el hilo de la explicación."
+   },
+   {
+    "quien": "",
+    "texto": "Recuerda: comenzando desde Moisés (Génesis, luego Deuteronomio) y siguiendo por los profetas (Isaías, luego Zacarías). (Lucas 24:27)"
+   }
+  ],
+  "escrituras_exito": [
+   {
+    "quien": "",
+    "texto": "Todo lo que habían vivido empieza a tener sentido. Ya se ve la aldea de Emaús. (Lucas 24:28)"
+   }
+  ],
+  "hito_camino": [
+   {
+    "quien": "",
+    "texto": "Camino de Jerusalén a Emaús: sesenta estadios. (Lucas 24:13)"
+   }
+  ],
+  "hallazgo_mensaje": [
+   {
+    "quien": "",
+    "texto": "Recuerdas lo que las mujeres contaron esa mañana, lo que los ángeles les dijeron en el sepulcro:"
+   },
+   {
+    "quien": "",
+    "texto": "«¿Por qué buscáis entre los muertos al que vive? No está aquí, sino que ha resucitado. Acordaos de lo que os habló, cuando aún estaba en Galilea». (Lucas 24:5-6)"
+   }
+  ],
+  "casa_cerrada": [
+   {
+    "quien": "",
+    "texto": "Todavía están lejos. El forastero sigue explicándoles las Escrituras por el camino."
+   }
+  ]
+ },
+ "final": {
+  "antes": [
+   {
+    "quien": "",
+    "texto": "Cinco historias de la Biblia, un mismo camino: Dios obrando en personas reales."
+   }
+  ],
+  "fe": [
+   {
+    "quien": "",
+    "texto": "Como David, aprendiste que «de Jehová es la batalla». (1 Samuel 17:47)"
+   }
+  ],
+  "esperanza": [
+   {
+    "quien": "",
+    "texto": "Como Nehemías, viste que lo derribado puede levantarse: «El Dios de los cielos, él nos prosperará». (Nehemías 2:20)"
+   }
+  ],
+  "amor": [
+   {
+    "quien": "",
+    "texto": "Como Rut, elegiste quedarte y servir: «Tu pueblo será mi pueblo, y tu Dios mi Dios». (Rut 1:16)"
+   }
+  ],
+  "perdon": [
+   {
+    "quien": "",
+    "texto": "Como José, entendiste que Dios puede encaminar a bien lo que otros pensaron para mal. (Génesis 50:20)"
+   }
+  ],
+  "despues": [
+   {
+    "quien": "",
+    "texto": "Y como en Emaús, el Señor resucitado camina con los suyos, aunque a veces no lo reconozcan. (Lucas 24:15-16)"
+   }
+  ]
+ }
+}

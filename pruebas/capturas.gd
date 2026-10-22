@@ -12,7 +12,9 @@ func _ready() -> void:
 	await _esperar(1.5)
 	await _foto("00_titulo")
 	Juego.nueva_partida(false)
-	for cap in 3:
+	Juego.flags["permiso_criado"] = true  # para que Booz ya esté en el campo
+	var retratados := ["Judá", "Booz", "Goliat", "Eliasib", "Forastero"]
+	for cap in Juego.CAPITULOS.size():
 		Juego.flags["intro_vista_%d" % cap] = true
 		main.iniciar_capitulo(cap)
 		await _esperar(1.0)
@@ -27,10 +29,11 @@ func _ready() -> void:
 		main.jugador.aplicar_vista(false, false)
 		var npc: Entidad = null
 		for e in main.nivel.entidades:
-			if e.tipo == "npc" and not e.def.get("seguir", false):
+			if e.tipo == "npc" and e.def.get("nombre", "") == retratados[cap]:
 				npc = e
 				break
-		main.jugador.global_position = npc.global_position + Vector3(0, 0.2, 3.0)
+		var lejos := 6.0 if retratados[cap] == "Goliat" else 3.0
+		main.jugador.global_position = npc.global_position + Vector3(0, 0.2, lejos)
 		main.jugador.yaw = 0.0
 		await _esperar(0.5)
 		npc.interactuar(main)

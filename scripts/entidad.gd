@@ -1,7 +1,11 @@
 class_name Entidad
 extends Node3D
 ## Todo lo que se puede tocar en el mundo: personajes (npc), lámparas, letreros,
-## objetos, mecanismos (como el pozo) y salidas. Su comportamiento viene del JSON.
+## objetos, mecanismos (pozo, brecha del muro, montón) y salidas. Su comportamiento viene del JSON.
+## Opcionales para cualquier entidad: "aparece_si" (condiciones para existir), "etiqueta" (nombre
+## flotante) y "accion" (texto del botón).
+
+const ICONOS_LAMPARA := ["fe", "esperanza", "amor", "perdon", "luz"]
 
 var tipo := ""
 var def: Dictionary = {}
@@ -14,6 +18,12 @@ var sprite: Sprite3D
 var simbolo: Sprite3D
 var luz: OmniLight3D
 var agua: MeshInstance3D
+var reparado: Node3D
+var roto: Node3D
+var etiqueta: Label3D
+var activo := true
+## main la marca cada cuadro cuando es lo que el jugador va a usar
+var resaltada := false
 var _t := 0.0
 
 
@@ -26,12 +36,14 @@ func preparar(d: Dictionary, n: Nivel) -> void:
 		"npc":
 			personaje = Personaje3D.new()
 			add_child(personaje)
-			personaje.configurar(d.get("sprite", "caminante"))
-			solido = not d.get("seguir", false)
+			personaje.configurar(d.get("modelo", d.get("sprite", "caminante")))
+			solido = not d.get("seguir", false) and not d.has("aparece_si")
 		"lampara":
 			_pedestal(0.5)
 			sprite = _sprite("lampara_apagada", 0.09, 0.5)
-			simbolo = _sprite_icono(d.get("simbolo", "luz"), 3.2)
+			var icono: String = d.get("icono", d.get("simbolo", "luz"))
+			if icono in ICONOS_LAMPARA:
+				simbolo = _sprite_icono(icono, 3.2)
 			luz = OmniLight3D.new()
 			luz.light_color = Color("ffbf60")
 			luz.light_energy = 2.2
@@ -54,7 +66,10 @@ func preparar(d: Dictionary, n: Nivel) -> void:
 			luz.position.y = 0.9
 			add_child(luz)
 		"mecanismo":
-			_crear_pozo()
+			match d.get("modelo", "pozo"):
+				"brecha": _crear_brecha()
+				"monton": _crear_monton()
+				_: _crear_pozo()
 			solido = true
 		"salida":
 			sprite = _sprite("arco_cerrado", 0.13, 0.0)
@@ -65,6 +80,32 @@ func preparar(d: Dictionary, n: Nivel) -> void:
 			luz.position.y = 2.0
 			add_child(luz)
 			_actualizar_salida()
+	if d.has("etiqueta"):
+		etiqueta = Label3D.new()
+		etiqueta.text = d["etiqueta"]
+		etiqueta.billboard = BaseMaterial3D.BILLBOARD_ENABLED
+		etiqueta.pixel_size = 0.004
+		etiqueta.font_size = 40
+		etiqueta.outline_size = 12
+		etiqueta.modulate = Color("fff3dc")
+		etiqueta.position.y = 2.75 if tipo == "npc" else 2.3
+		etiqueta.visible = false
+		add_child(etiqueta)
+	_revisar_aparicion()
+
+
+func _revisar_aparicion() -> void:
+	if not def.has("aparece_si"):
+		return
+	var ahora := Juego.cumple(def["aparece_si"])
+	if ahora == activo and is_inside_tree():
+		return
+	activo = ahora
+	visible = ahora
+	if ahora:
+		add_to_group("interactuable")
+	else:
+		remove_from_group("interactuable")
 
 
 # ------------------------------------------------------------------ visuales
@@ -124,6 +165,66 @@ func _crear_pozo() -> void:
 	add_child(agua)
 
 
+func _crear_brecha() -> void:
+	# escombros mientras está roto; un tramo de muro nuevo cuando se repara
+	roto = Node3D.new()
+	add_child(roto)
+	var r := RandomNumberGenerator.new()
+	r.seed = int(position.x * 13 + position.z * 7)
+	for i in 6:
+		var mi := MeshInstance3D.new()
+		var caja := BoxMesh.new()
+		var t := r.randf_range(0.35, 0.7)
+		caja.size = Vector3(t, t * 0.7, t)
+		mi.mesh = caja
+		mi.material_override = Nivel.material("muro")
+		mi.position = Vector3(r.randf_range(-0.7, 0.7), t * 0.35, r.randf_range(-0.7, 0.7))
+		mi.rotation.y = r.randf() * TAU
+		roto.add_child(mi)
+	reparado = MeshInstance3D.new()
+	var muro := BoxMesh.new()
+	muro.size = Vector3(2.0, 3.2, 2.0)
+	reparado.mesh = muro
+	reparado.material_override = Nivel.material("muro")
+	reparado.position.y = 1.6
+	add_child(reparado)
+	_mostrar_mecanismo(Juego.cumple("flag:" + String(def.get("flag_activo", ""))))
+
+
+func _crear_monton() -> void:
+	# montón de gavillas: crece cuando el mecanismo se completa
+	roto = Node3D.new()
+	add_child(roto)
+	reparado = Node3D.new()
+	add_child(reparado)
+	for i in 3:
+		var mi := MeshInstance3D.new()
+		var caja := BoxMesh.new()
+		caja.size = Vector3(0.5, 0.25, 0.5)
+		mi.mesh = caja
+		mi.material_override = Personaje3D.material("d9b25a")
+		mi.position = Vector3(-0.4 + i * 0.4, 0.13, 0)
+		roto.add_child(mi)
+	for i in 3:
+		var mi := MeshInstance3D.new()
+		var caja := BoxMesh.new()
+		caja.size = Vector3(0.6, 0.7, 0.6)
+		mi.mesh = caja
+		mi.material_override = Personaje3D.material("cfa95a")
+		mi.position = Vector3(-0.5 + i * 0.5, 0.35, 0.1 * i)
+		reparado.add_child(mi)
+	_mostrar_mecanismo(Juego.cumple("flag:" + String(def.get("flag_activo", ""))))
+
+
+func _mostrar_mecanismo(listo: bool) -> void:
+	if reparado:
+		reparado.visible = listo
+	if roto:
+		roto.visible = not listo
+	if agua:
+		agua.visible = listo
+
+
 func fijar_encendida(si: bool) -> void:
 	encendida = si
 	sprite.texture = load("res://assets/sprites/%s.png" % ("lampara_encendida" if si else "lampara_apagada"))
@@ -138,6 +239,8 @@ func _actualizar_salida() -> void:
 
 # ------------------------------------------------------------------ interacción
 func texto_accion() -> String:
+	if def.has("accion"):
+		return def["accion"]
 	match tipo:
 		"npc": return "Hablar"
 		"lampara": return "Encender"
@@ -182,9 +285,10 @@ func interactuar(main: Node) -> void:
 				main.iniciar_dialogo(def.get("dialogo_hecho", ""))
 			elif Juego.cumple(def.get("requiere", [])):
 				Juego.aplicar(def.get("efectos", {}))
-				agua.visible = true
-				agua.scale = Vector3(0.1, 1, 0.1)
-				create_tween().tween_property(agua, "scale", Vector3.ONE, 1.2)
+				_mostrar_mecanismo(true)
+				var nuevo: Node3D = agua if agua else reparado
+				nuevo.scale = Vector3(0.1, 0.1, 0.1)
+				create_tween().tween_property(nuevo, "scale", Vector3.ONE, 1.2)
 				main.iniciar_dialogo(def.get("dialogo_listo", ""))
 			else:
 				main.iniciar_dialogo(def.get("dialogo_falta", ""))
@@ -197,12 +301,29 @@ func interactuar(main: Node) -> void:
 
 func _process(delta: float) -> void:
 	_t += delta
+	if int(_t * 4) != int((_t - delta) * 4):
+		_revisar_aparicion()
+	if not activo:
+		return
 	if simbolo:
 		simbolo.position.y += sin(_t * 2.5) * 0.002
 	if tipo == "salida" and int(_t * 4) % 4 == 0:
 		_actualizar_salida()
 	if personaje:
 		_mover_personaje(delta)
+	if etiqueta:
+		_actualizar_etiqueta()
+
+
+func _actualizar_etiqueta() -> void:
+	# el nombre se ve al estar cerca de un personaje o al apuntar a un objeto; nunca pegado a la cámara
+	var j := nivel.jugador
+	if j == null:
+		return
+	var d := Vector2(j.global_position.x - global_position.x, j.global_position.z - global_position.z).length()
+	var cerca := tipo == "npc" and d < 7.0
+	var d_camara := etiqueta.global_position.distance_to(j.camara.global_position)
+	etiqueta.visible = (resaltada or cerca) and d_camara > 3.0
 
 
 func _mover_personaje(delta: float) -> void:

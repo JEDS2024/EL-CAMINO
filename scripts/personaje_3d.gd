@@ -3,18 +3,48 @@ extends Node3D
 ## Personaje 3D hecho de bloques (estilo voxel). Piernas y brazos articulados que se
 ## animan al caminar. El frente del modelo mira hacia -Z, como las cámaras de Godot.
 
+## Aspecto de cada personaje. Opciones: piel, pelo, tunica, manto, cinto, barba, peinado
+## (corto, largo, calvo, panuelo), panuelo, capucha, turbante, tocado/tocado2 (egipcio), collar,
+## armadura, casco, escudo, lanza, honda, baston, candil, nino, escala.
 const ASPECTO := {
-	"ezra": {"piel": "c68b5e", "pelo": "3a2416", "tunica": "b5643a", "manto": "7a3b28", "cinto": "e0b04a", "peinado": "corto"},
-	"caminante": {"piel": "b07a52", "pelo": "2b1d14", "tunica": "8a8a92", "manto": "5e5d6b", "capucha": true,
-		"candil": true, "barba": "3a2a1e"},
-	"marta": {"piel": "d39b70", "pelo": "5a3420", "tunica": "6a7fb0", "delantal": true, "peinado": "panuelo", "panuelo": "d9b25a"},
-	"simeon": {"piel": "c99470", "pelo": "e8e4dc", "tunica": "5d6b4a", "barba": "efeae0", "peinado": "calvo", "baston": true},
-	"tomas": {"piel": "a8714a", "pelo": "1e1610", "tunica": "7b4f8f", "peinado": "corto", "barba": "1e1610"},
-	"lia": {"piel": "c68b5e", "pelo": "2a1a12", "tunica": "d0796a", "peinado": "largo", "nino": true},
-	"noemi": {"piel": "b9845a", "pelo": "1a120c", "tunica": "3f8f86", "peinado": "panuelo", "panuelo": "e8e0cc"},
-	"jared": {"piel": "9c6844", "pelo": "241812", "tunica": "5a4a3a", "manto": "3a3028", "peinado": "corto", "barba": "241812"},
-	"abuela": {"piel": "c99470", "pelo": "d8d4cc", "tunica": "7a5a8a", "peinado": "panuelo", "panuelo": "5a4a6a", "baston": true},
-	"vigia": {"piel": "8f5a3a", "pelo": "140e0a", "tunica": "3a4a6a", "manto": "2a3048", "peinado": "corto"},
+	# Génesis 43–45
+	"jose": {"piel": "b9845a", "pelo": "1a120c", "tunica": "e8e2d0", "cinto": "d9a830", "collar": "d9a830",
+		"tocado": "e8e2d0", "tocado2": "3a5a9a"},
+	"mayordomo": {"piel": "a8714a", "pelo": "140e0a", "tunica": "f0ead8", "cinto": "8a6a3a", "tocado": "f0ead8", "tocado2": "a08050"},
+	"juda": {"piel": "a8714a", "pelo": "2a1a12", "tunica": "8a5a3a", "manto": "6a4a2a", "barba": "2a1a12"},
+	"benjamin": {"piel": "c68b5e", "pelo": "3a2416", "tunica": "5a7a9a", "barba": "3a2416"},
+	"ruben": {"piel": "b07a52", "pelo": "241812", "tunica": "7a6a4a", "manto": "4a3a2a", "barba": "241812"},
+	"simeon": {"piel": "9c6844", "pelo": "1a120c", "tunica": "6a4a6a", "barba": "1a120c"},
+	"jacob": {"piel": "c99470", "pelo": "e8e4dc", "tunica": "6a5a4a", "manto": "4a3a2a", "barba": "efeae0",
+		"peinado": "calvo", "baston": true},
+	"levi": {"piel": "b9845a", "pelo": "2a1a12", "tunica": "4a6a5a", "barba": "2a1a12"},
+	# Rut 1–2
+	"rut": {"piel": "c68b5e", "pelo": "2a1a12", "tunica": "9a5a4a", "peinado": "panuelo", "panuelo": "d9b25a"},
+	"noemi": {"piel": "c99470", "pelo": "d8d4cc", "tunica": "5a4a6a", "peinado": "panuelo", "panuelo": "3a3048", "baston": true},
+	"booz": {"piel": "b9845a", "pelo": "5a5048", "tunica": "6a3a2a", "manto": "8a2a2a", "barba": "8a8078", "turbante": "e8e0cc"},
+	"criado": {"piel": "a8714a", "pelo": "1e1610", "tunica": "8a7a5a", "barba": "1e1610"},
+	"segador": {"piel": "9c6844", "pelo": "1a120c", "tunica": "c8b88a"},
+	# 1 Samuel 17
+	"david": {"piel": "d39b70", "pelo": "9a4a24", "tunica": "a8865a", "cinto": "6b4527", "honda": true, "baston": true},
+	"eliab": {"piel": "b07a52", "pelo": "241812", "tunica": "6a5a4a", "barba": "241812", "armadura": "9a7a3a", "casco": "9a7a3a"},
+	"saul": {"piel": "b9845a", "pelo": "1e1610", "tunica": "4a3a6a", "manto": "7a1a2a", "barba": "1e1610",
+		"armadura": "a07a3a", "casco": "a07a3a", "escala": 1.12},
+	"soldado": {"piel": "a8714a", "pelo": "1a120c", "tunica": "5a5a4a", "barba": "1a120c", "casco": "8a6a3a"},
+	"goliat": {"piel": "a07050", "pelo": "140e0a", "tunica": "5a3a2a", "barba": "140e0a", "armadura": "b08a40",
+		"casco": "b08a40", "lanza": true, "escala": 1.75},
+	"escudero": {"piel": "9c6844", "pelo": "140e0a", "tunica": "5a3a2a", "casco": "8a6a3a", "escudo": "8a6a3a"},
+	# Nehemías 2–6
+	"nehemias": {"piel": "b9845a", "pelo": "2a1a12", "tunica": "3a4a8a", "manto": "2a3058", "cinto": "d9a830",
+		"barba": "2a1a12", "turbante": "e8e0cc"},
+	"eliasib": {"piel": "c99470", "pelo": "e8e4dc", "tunica": "e8e8f0", "manto": "3a4a9a", "barba": "efeae0", "turbante": "f0f0f0"},
+	"sanbalat": {"piel": "9c6844", "pelo": "140e0a", "tunica": "5a1a2a", "manto": "2a1a1a", "barba": "140e0a", "turbante": "8a2a2a"},
+	"salum": {"piel": "a8714a", "pelo": "4a4040", "tunica": "6a6a5a", "barba": "6a6058", "peinado": "calvo"},
+	"hija_salum": {"piel": "c68b5e", "pelo": "2a1a12", "tunica": "7a8a5a", "peinado": "panuelo", "panuelo": "c8a060"},
+	"obrero": {"piel": "9c6844", "pelo": "1a120c", "tunica": "8a7a6a"},
+	# Lucas 24
+	"cleofas": {"piel": "b07a52", "pelo": "3a2416", "tunica": "7a5a3a", "manto": "5a4030", "barba": "3a2416"},
+	"companero": {"piel": "c68b5e", "pelo": "1e1610", "tunica": "5a6a7a", "barba": "1e1610"},
+	"forastero": {"piel": "b07a52", "pelo": "2b1d14", "tunica": "d8d0c0", "manto": "7a6a5a", "capucha": true, "barba": "2b1d14"},
 }
 
 static var _materiales := {}
@@ -61,7 +91,7 @@ func _articulacion(pos: Vector3) -> Node3D:
 
 
 func configurar(clave: String) -> void:
-	var a: Dictionary = ASPECTO.get(clave, ASPECTO["caminante"])
+	var a: Dictionary = ASPECTO.get(clave, ASPECTO["companero"])
 	var piel: String = a["piel"]
 	var pelo: String = a["pelo"]
 	var tunica: String = a["tunica"]
@@ -72,6 +102,8 @@ func configurar(clave: String) -> void:
 	add_child(_cuerpo)
 	if a.get("nino", false):
 		scale = Vector3.ONE * 0.72
+	if a.has("escala"):
+		scale = Vector3.ONE * float(a["escala"])
 
 	# piernas (giran desde la cadera)
 	_pierna_i = _articulacion(Vector3(-0.11, 0.72, 0))
@@ -87,6 +119,13 @@ func configurar(clave: String) -> void:
 		_caja(_cuerpo, Vector3(0.36, 0.42, 0.02), Vector3(0, 0.8, -0.17), "e8e0cc")
 	if a.has("manto"):
 		_caja(_cuerpo, Vector3(0.56, 0.86, 0.06), Vector3(0, 0.92, 0.18), a["manto"])
+	if a.has("armadura"):  # cota y grebas de bronce (1 Samuel 17:5-6)
+		_caja(_cuerpo, Vector3(0.56, 0.46, 0.38), Vector3(0, 1.08, 0), a["armadura"])
+		_caja(_pierna_i, Vector3(0.2, 0.3, 0.22), Vector3(0, -0.5, 0), a["armadura"])
+		_caja(_pierna_d, Vector3(0.2, 0.3, 0.22), Vector3(0, -0.5, 0), a["armadura"])
+	if a.has("collar"):  # collar de oro sobre ropa de lino (Génesis 41:42)
+		_caja(_cuerpo, Vector3(0.44, 0.1, 0.36), Vector3(0, 1.28, 0), a["collar"])
+		_caja(_cuerpo, Vector3(0.3, 0.12, 0.03), Vector3(0, 1.2, -0.17), a["collar"])
 
 	# brazos (giran desde el hombro)
 	_brazo_i = _articulacion(Vector3(-0.33, 1.27, 0))
@@ -105,6 +144,14 @@ func configurar(clave: String) -> void:
 		_brazo_d.add_child(luz)
 	if a.get("baston", false):
 		_caja(_brazo_i, Vector3(0.06, 1.55, 0.06), Vector3(-0.02, -0.55, -0.12), "7a5230")
+	if a.get("honda", false):
+		_caja(_brazo_d, Vector3(0.03, 0.34, 0.03), Vector3(0.02, -0.8, -0.04), "5a3a22")
+		_caja(_brazo_d, Vector3(0.09, 0.07, 0.06), Vector3(0.02, -0.98, -0.04), "7a5230")
+	if a.get("lanza", false):  # el asta como un rodillo de telar, punta de hierro (1 Samuel 17:7)
+		_caja(_brazo_d, Vector3(0.09, 2.6, 0.09), Vector3(0, -0.2, -0.12), "6b4527")
+		_caja(_brazo_d, Vector3(0.13, 0.32, 0.05), Vector3(0, 1.22, -0.12), "8a8f9a")
+	if a.has("escudo"):
+		_caja(_brazo_i, Vector3(0.08, 0.8, 0.6), Vector3(-0.08, -0.45, -0.1), a["escudo"])
 
 	# cabeza
 	var cabeza := _articulacion(Vector3(0, 1.32, 0))
@@ -119,7 +166,25 @@ func configurar(clave: String) -> void:
 		_caja(cabeza, Vector3(0.12, 0.03, 0.02), Vector3(0, 0.08, -0.19), "7a3a30")
 
 	var peinado: String = a.get("peinado", "corto")
-	if a.get("capucha", false):
+	if a.has("casco"):
+		_caja(cabeza, Vector3(0.44, 0.2, 0.44), Vector3(0, 0.36, 0.01), a["casco"])
+		_caja(cabeza, Vector3(0.44, 0.26, 0.06), Vector3(0, 0.2, 0.21), a["casco"])
+		_caja(cabeza, Vector3(0.08, 0.12, 0.3), Vector3(0, 0.5, 0.02), Color(a["casco"]).darkened(0.3).to_html(false))
+	elif a.has("tocado"):  # tocado egipcio a rayas que cae sobre los hombros
+		var t1: String = a["tocado"]
+		var t2: String = a.get("tocado2", t1)
+		_caja(cabeza, Vector3(0.44, 0.12, 0.44), Vector3(0, 0.41, 0.01), t1)
+		_caja(cabeza, Vector3(0.44, 0.5, 0.06), Vector3(0, 0.18, 0.21), t1)
+		for lado in [-1, 1]:
+			_caja(cabeza, Vector3(0.06, 0.55, 0.16), Vector3(lado * 0.22, 0.1, -0.08), t1)
+			_caja(cabeza, Vector3(0.065, 0.05, 0.165), Vector3(lado * 0.22, 0.2, -0.08), t2)
+			_caja(cabeza, Vector3(0.065, 0.05, 0.165), Vector3(lado * 0.22, 0.02, -0.08), t2)
+		_caja(cabeza, Vector3(0.45, 0.04, 0.45), Vector3(0, 0.36, 0.01), t2)
+	elif a.has("turbante"):
+		_caja(cabeza, Vector3(0.46, 0.18, 0.46), Vector3(0, 0.44, 0.01), a["turbante"])
+		_caja(cabeza, Vector3(0.48, 0.05, 0.48), Vector3(0, 0.37, 0.01), Color(a["turbante"]).darkened(0.2).to_html(false))
+		_caja(cabeza, Vector3(0.41, 0.2, 0.07), Vector3(0, 0.25, 0.2), pelo)
+	elif a.get("capucha", false):
 		var m: String = a["manto"]
 		_caja(cabeza, Vector3(0.46, 0.08, 0.46), Vector3(0, 0.42, 0.01), m)
 		_caja(cabeza, Vector3(0.46, 0.44, 0.06), Vector3(0, 0.2, 0.22), m)

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dsxlxao8vemt8"
-path="res://.godot/imported/pj_simeon.png-07e4e276a4490b186689a68a6d685823.ctex"
+uid="uid://q7dvvq5tetaq"
+path="res://.godot/imported/espiga.png-9a66b2c886acdf75efc9dd254d6f5583.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/pj_simeon.png"
-dest_files=["res://.godot/imported/pj_simeon.png-07e4e276a4490b186689a68a6d685823.ctex"]
+source_file="res://assets/iconos/espiga.png"
+dest_files=["res://.godot/imported/espiga.png-9a66b2c886acdf75efc9dd254d6f5583.ctex"]
 
 [params]
 

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://delxtyu7x7l45"
-path="res://.godot/imported/pj_noemi.png-c7cc0f2f4c9ccf4a783e5791397becdd.ctex"
+uid="uid://fbxpcb02cxwi"
+path="res://.godot/imported/piedra.png-56bc58d6e58c29a296efda567ba6f4dd.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/pj_noemi.png"
-dest_files=["res://.godot/imported/pj_noemi.png-c7cc0f2f4c9ccf4a783e5791397becdd.ctex"]
+source_file="res://assets/iconos/piedra.png"
+dest_files=["res://.godot/imported/piedra.png-56bc58d6e58c29a296efda567ba6f4dd.ctex"]
 
 [params]
 

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://d26wg8pr10oag"
-path="res://.godot/imported/pj_vigia.png-4011c0b2111bcd9f5d64e23551758f54.ctex"
+uid="uid://dm845yhn3c6mp"
+path="res://.godot/imported/arpa.png-b904b423effab17436f70595f429a9f8.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/sprites/pj_vigia.png"
-dest_files=["res://.godot/imported/pj_vigia.png-4011c0b2111bcd9f5d64e23551758f54.ctex"]
+source_file="res://assets/iconos/arpa.png"
+dest_files=["res://.godot/imported/arpa.png-b904b423effab17436f70595f429a9f8.ctex"]
 
 [params]
 

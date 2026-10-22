@@ -6,7 +6,8 @@ extends Node3D
 
 const C := 2.0  # tamaño de cada celda en metros
 
-const SUELOS := {".": "pasto", "=": "camino", ",": "arena", ":": "adoquin", "_": "madera", "%": "piedra_oscura"}
+const SUELOS := {".": "pasto", "=": "camino", ",": "arena", ":": "adoquin", "_": "madera", "%": "piedra_oscura",
+	";": "cebada"}
 
 var datos: Dictionary
 var main: Node
@@ -80,6 +81,11 @@ func _celda(ch: String, x: int, z: int, suelo_def: String) -> void:
 			_suelo(x, z, suelo_def)
 			_caja(p - Vector3(0.8, 0, 0.8), p + Vector3(0.8, 1.3, 0.8), "roca", "roca")
 			_solidos[Vector2i(x, z)] = 1.3
+		"A":  # tienda de campaña
+			_suelo(x, z, suelo_def)
+			_caja(p - Vector3(0.9, 0, 0.9), p + Vector3(0.9, 1.6, 0.9), "tela", "tela")
+			_caja(p - Vector3(0.6, -1.6, 0.6), p + Vector3(0.6, 2.2, 0.6), "tela", "tela")
+			_solidos[Vector2i(x, z)] = 2.2
 		"F":
 			_suelo(x, z, suelo_def)
 			_caja(p - Vector3(C / 2, 0, 0.12), p + Vector3(C / 2, 0.9, 0.12), "madera", "madera")
@@ -269,9 +275,13 @@ func lampara_encendida(e: Entidad) -> void:
 				otra.fijar_encendida(false)
 		main.iniciar_dialogo(ac.get("dialogo_fallo", ""))
 		return
+	# cada lámpara puede tener su propio texto al encenderse bien (p. ej. un pasaje bíblico)
+	var dialogos: Dictionary = datos.get("dialogos", {})
+	var lineas: Array = dialogos.get(e.def.get("dialogo", ""), []).duplicate()
 	if lista.size() == orden.size():
 		Juego.aplicar(ac.get("al_resolver", {}))
-		main.iniciar_dialogo(ac.get("dialogo_exito", ""))
+		lineas += dialogos.get(ac.get("dialogo_exito", ""), [])
+	main.mostrar_lineas(lineas)
 
 
 func acertijo_resuelto(id: String) -> bool:
