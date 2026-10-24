@@ -87,6 +87,7 @@ func preparar(d: Dictionary, n: Nivel) -> void:
 			for i in mini(2, especies.size()):
 				var animal := Oveja.new()
 				animal.configurar(String(especies[i]))
+				animal.radio_paseo = 0.6  # las parejas esperan juntas junto a su punto de recepción
 				animal.position = Vector3(-0.55 if i == 0 else 0.55, 0, 0)
 				add_child(animal)
 				animales.append(animal)
@@ -429,7 +430,7 @@ func _actualizar_etiqueta() -> void:
 	if j == null:
 		return
 	var d := Vector2(j.global_position.x - global_position.x, j.global_position.z - global_position.z).length()
-	var cerca := tipo == "npc" and d < 7.0
+	var cerca := tipo in ["npc", "pareja"] and d < 7.0
 	var d_camara := etiqueta.global_position.distance_to(j.camara.global_position)
 	etiqueta.visible = (resaltada or cerca) and d_camara > 3.0
 

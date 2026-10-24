@@ -9,6 +9,7 @@ signal mirar(delta: Vector2)
 const RADIO := 95.0
 
 var excluir: Array[Control] = []
+var acciones_tactiles := {}  # Control -> Callable: permite saltar con otro dedo en el joystick
 var _idx_joy := -1
 var _idx_mirar := -1
 var _origen := Vector2.ZERO
@@ -39,6 +40,11 @@ func _input(ev: InputEvent) -> void:
 		return
 	if ev is InputEventScreenTouch:
 		if ev.pressed:
+			for boton in (acciones_tactiles if DisplayServer.is_touchscreen_available() else {}):
+				if boton.is_visible_in_tree() and boton.get_global_rect().has_point(ev.position):
+					acciones_tactiles[boton].call()
+					get_viewport().set_input_as_handled()
+					return
 			if _sobre_boton(ev.position):
 				return
 			if _en_zona_joystick(ev.position) and _idx_joy == -1:

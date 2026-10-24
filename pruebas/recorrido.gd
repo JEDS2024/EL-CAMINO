@@ -51,13 +51,19 @@ func _ready() -> void:
 	_ok(Juego.cumple("flag:arca_lista"), "la brea termina el arca")
 	await _objetos()
 	_ok(Juego.contadores.get("alimento", 0) == 4, "se reúnen cuatro raciones")
+	var parejas_visibles := 0
+	for e in main.nivel.entidades:
+		if is_instance_valid(e) and e.tipo == "pareja" and e.activo and e.is_visible_in_tree():
+			if e.global_position.z > 28.0 and e.animales.size() == 2 and e.etiqueta != null:
+				parejas_visibles += 1
+	_ok(parejas_visibles == 4, "las cuatro parejas esperan visibles delante del arca, con nombre")
 	var parejas_noe: Array[Entidad] = []
 	for _i in 4:
 		var pareja := _tipo("pareja")
 		parejas_noe.append(pareja)
 		await _usar(pareja)
 	_ok(Juego.contadores.get("parejas", 0) == 4, "las cuatro parejas se reciben")
-	await _esperar(8.0)
+	await _esperar(12.0)
 	var desaparecieron := true
 	for pareja_noe in parejas_noe:
 		if is_instance_valid(pareja_noe):

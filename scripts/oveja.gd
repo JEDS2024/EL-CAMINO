@@ -3,6 +3,7 @@ extends Node3D
 ## Animal voxel sencillo que vaga alrededor de su origen o camina a un destino.
 
 var especie := "oveja"
+var radio_paseo := 2.5
 var _origen := Vector3.ZERO
 var _destino := Vector3.ZERO
 var _espera := 0.0
@@ -73,8 +74,10 @@ func _process(delta: float) -> void:
 	hacia.y = 0
 	if hacia.length() > 0.1:
 		var avance := hacia.normalized() * minf(_velocidad * delta, hacia.length())
-		global_position += avance
-		rotation.y = lerp_angle(rotation.y, atan2(-hacia.x, -hacia.z), delta * 4.0)
+		rotation.y = lerp_angle(rotation.y, atan2(-hacia.x, -hacia.z), minf(1.0, delta * 4.0))
+		# Girar antes de avanzar evita marchar de espaldas al cambiar de rumbo.
+		var alineacion := maxf(0.0, (-global_basis.z).dot(hacia.normalized()))
+		global_position += avance * alineacion
 		_cabeza.position.y = 0.78 + sin(_t * 8.0) * 0.02
 		for i in _patas.size():
 			_patas[i].rotation.x = sin(_t * 9.0 + float(i % 2) * PI) * 0.22
@@ -85,4 +88,4 @@ func _process(delta: float) -> void:
 		_espera -= delta
 		if _espera <= 0:
 			_espera = _azar.randf_range(2.0, 6.0)
-			_destino = _origen + Vector3(_azar.randf_range(-2.5, 2.5), 0, _azar.randf_range(-2.5, 2.5))
+			_destino = _origen + Vector3(_azar.randf_range(-radio_paseo, radio_paseo), 0, _azar.randf_range(-radio_paseo, radio_paseo))

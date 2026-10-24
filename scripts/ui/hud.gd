@@ -9,6 +9,8 @@ signal pedir_vista
 signal pedir_pausa
 signal pedir_mochila
 signal pedir_ayuda
+signal pedir_salto
+signal cambiar_agachado(valor: bool)
 signal pedir_picar
 signal pedir_poner
 signal elegir_casilla(i: int)
@@ -16,6 +18,8 @@ signal elegir_casilla(i: int)
 const CASILLAS := 9
 const TAM_CASILLA := 62
 
+var boton_salto: Button
+var boton_agachar: Button
 var boton_accion: Button
 var boton_vista: Button
 var boton_pausa: Button
@@ -225,6 +229,15 @@ func _ready() -> void:
 		b.add_theme_font_size_override("font_size", 26)
 		b.visible = false
 
+	boton_salto = _boton("Saltar", Vector2(96, 76))
+	_esquina_abajo(boton_salto, -240, -380, -144, -304)
+	boton_salto.pressed.connect(func(): pedir_salto.emit())
+	boton_agachar = _boton("Agachar", Vector2(96, 76))
+	_esquina_abajo(boton_agachar, -136, -380, -40, -304)
+	boton_agachar.toggle_mode = true
+	boton_agachar.toggled.connect(func(valor: bool): cambiar_agachado.emit(valor))
+	for b in [boton_salto, boton_agachar]:
+		b.add_theme_font_size_override("font_size", 22)
 	Juego.estado_cambiado.connect(actualizar)
 	actualizar()
 

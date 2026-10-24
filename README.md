@@ -8,7 +8,7 @@ pero nunca cambian lo que la Biblia cuenta.
 
 - **3D pixelado**: la escena se dibuja a 1/3 de la resolución y se agranda sin suavizar. Los personajes son modelos 3D de bloques con brazos y piernas animados.
 - **Cámara en primera o tercera persona**: se elige al empezar y se cambia en cualquier momento (botón «Vista» o tecla C).
-- **Controles táctiles**: joystick a la izquierda, deslizar a la derecha para mirar y botón de acción. En la PC: WASD para caminar; flechas, IJKL o arrastrar con el mouse (clic izquierdo o derecho) para mirar; E/Espacio para interactuar; Tab o B para la mochila; C para la vista y Esc para pausa.
+- **Controles táctiles**: joystick a la izquierda, deslizar a la derecha para mirar y botones de acción, Saltar y Agachar (tocar otra vez para levantarse). En la PC: WASD para caminar; flechas, IJKL o arrastrar con el mouse (clic izquierdo o derecho) para mirar; E o Enter para interactuar; Espacio para saltar; mantener Shift o Ctrl para agacharse; Tab o B para la mochila; C para la vista y Esc para pausa.
 - **Seis capítulos bíblicos**, en orden histórico:
   1. *Noé y el arca* (Génesis 6–9): construcción por planos, recogida de alimento, parejas y ciclo del diluvio.
   2. *José perdona a sus hermanos* (Génesis 43–45): sentar a los hermanos por edad (43:33), la copa de plata y el perdón.

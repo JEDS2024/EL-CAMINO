@@ -14,6 +14,11 @@ var bloqueado := false
 var clave_modelo := "david"
 var entrada_tactil := Vector2.ZERO
 
+var agachado := false
+var agachado_tactil := false
+var _salto_pendiente := 0.0
+var _forma: CollisionShape3D
+
 var pivote: Node3D
 var brazo: SpringArm3D
 var camara: Camera3D
@@ -23,6 +28,7 @@ var candil: OmniLight3D
 
 func _ready() -> void:
 	var forma := CollisionShape3D.new()
+	_forma = forma
 	var capsula := CapsuleShape3D.new()
 	capsula.radius = 0.35
 	capsula.height = 1.6
@@ -89,20 +95,56 @@ func _actualizar_candil() -> void:
 	t.tween_property(candil, "omni_range", 5.0 + Juego.luz * 0.09, 0.8)
 
 
+## Guarda una pulsación breve para saltar al llegar al suelo.
+func pedir_salto() -> void:
+	if not bloqueado:
+		_salto_pendiente = 0.15
+
+
+func _actualizar_postura() -> void:
+	var quiere := not bloqueado and (agachado_tactil or Input.is_action_pressed("agacharse"))
+	if agachado and not quiere:
+		# No levantarse dentro de un techo bajo: comprueba la cápsula completa.
+		var capsula := CapsuleShape3D.new()
+		capsula.radius = 0.35
+		capsula.height = 1.6
+		var consulta := PhysicsShapeQueryParameters3D.new()
+		consulta.shape = capsula
+		consulta.transform = Transform3D(global_basis, global_position + Vector3.UP * 0.82)
+		consulta.exclude = [get_rid()]
+		consulta.collision_mask = collision_mask
+		if not get_world_3d().direct_space_state.intersect_shape(consulta, 1).is_empty():
+			quiere = true
+	agachado = quiere
+	_forma.shape.height = 1.0 if agachado else 1.6
+	_forma.position.y = 0.5 if agachado else 0.8
+	modelo.scale.y = 0.65 if agachado else 1.0
+
+
 func _physics_process(delta: float) -> void:
+	_actualizar_postura()
+	if bloqueado:
+		_salto_pendiente = 0.0
+		agachado_tactil = false
+	elif Input.is_action_just_pressed("saltar"):
+		pedir_salto()
+	_salto_pendiente = maxf(0.0, _salto_pendiente - delta)
 	var entrada := Vector2.ZERO
 	if not bloqueado:
 		entrada = Input.get_vector("mover_izquierda", "mover_derecha", "mover_arriba", "mover_abajo") + entrada_tactil
 		entrada = entrada.limit_length(1.0)
 	var dir := Basis(Vector3.UP, yaw) * Vector3(entrada.x, 0, entrada.y)
 	# acelera y frena con suavidad (más rápido al frenar, para que responda bien)
-	var objetivo := Vector2(dir.x, dir.z) * VELOCIDAD
+	var objetivo := Vector2(dir.x, dir.z) * VELOCIDAD * (0.45 if agachado else 1.0)
 	var actual := Vector2(velocity.x, velocity.z)
 	actual = actual.move_toward(objetivo, (26.0 if objetivo.length() > 0.1 else 34.0) * delta)
 	velocity.x = actual.x
 	velocity.z = actual.y
 	if is_on_floor():
 		velocity.y = -0.5
+		if _salto_pendiente > 0.0 and not agachado and not bloqueado:
+			velocity.y = 7.4  # supera un bloque de altura con gravedad 20
+			_salto_pendiente = 0.0
 	else:
 		velocity.y -= GRAVEDAD * delta
 	move_and_slide()
@@ -117,6 +159,8 @@ func _physics_process(delta: float) -> void:
 
 
 func _process(_delta: float) -> void:
+	var altura := (ALTURA_OJOS if Juego.primera_persona else 1.7) - (0.6 if agachado else 0.0)
+	pivote.position.y = move_toward(pivote.position.y, altura, _delta * 5.0)
 	pivote.rotation.y = yaw
 	brazo.rotation.x = pitch
 	if not Juego.primera_persona:

@@ -71,11 +71,24 @@ func _crear_ui() -> void:
 	hud.pedir_pausa.connect(_mostrar_pausa)
 	hud.pedir_mochila.connect(_mostrar_mochila)
 	hud.pedir_ayuda.connect(func(): _explicar_mision(_mision_actual, false))
+	hud.pedir_salto.connect(func():
+		if jugador:
+			jugador.pedir_salto())
+	hud.cambiar_agachado.connect(func(valor: bool):
+		if jugador:
+			jugador.agachado_tactil = valor)
 	hud.pedir_picar.connect(_picar)
 	hud.pedir_poner.connect(_poner)
 	hud.elegir_casilla.connect(_elegir_casilla)
 	tactil.excluir = [hud.boton_accion, hud.boton_vista, hud.boton_pausa, hud.boton_mochila, hud.boton_ayuda, hud.boton_picar,
-		hud.boton_poner, hud.barra]
+		hud.boton_poner, hud.boton_salto, hud.boton_agachar, hud.barra]
+
+	tactil.acciones_tactiles[hud.boton_salto] = func(): hud.pedir_salto.emit()
+	tactil.acciones_tactiles[hud.boton_agachar] = func():
+		hud.boton_agachar.button_pressed = not hud.boton_agachar.button_pressed
+	if DisplayServer.is_touchscreen_available():
+		for boton in [hud.boton_salto, hud.boton_agachar]:
+			boton.mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 	dialogo = CajaDialogo.new()
 	raiz.add_child(dialogo)
@@ -107,7 +120,10 @@ func _modo_juego(activo: bool) -> void:
 	hud.visible = activo
 	tactil.visible = activo
 	tactil.reiniciar()
+	if not activo:
+		hud.boton_agachar.set_pressed_no_signal(false)
 	if jugador:
+		jugador.agachado_tactil = false
 		jugador.bloqueado = not activo
 	if nivel and not activo:
 		nivel.construccion.mostrar_previa(null, "")
