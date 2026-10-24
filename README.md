@@ -130,4 +130,10 @@ python3 herramientas/validar_capitulos.py
 
 Ajustes tiene opciones desplazables y un botón Volver fijo. Atrás de Android y Escape regresan a la pantalla anterior. La prueba `res://pruebas/ajustes.tscn` comprueba 1280×720, 1600×720 y 960×540.
 
-El APK 0.10 se guarda en `builds/ElCamino-v0.10.apk`. Puede actualizar la 0.9 conservando el paquete y la firma. Consulta `datos/LEEME_ACTUALIZACIONES.md` para verificar las entregas y la propuesta de actualización desde el juego con APK directo. El actualizador dentro del juego aún no está implementado.
+El APK 0.10 se guarda en `builds/ElCamino-v0.10.apk`. Puede actualizar la 0.9 conservando el paquete y la firma. Consulta `datos/LEEME_ACTUALIZACIONES.md` para verificar las entregas y la propuesta de actualización desde el juego con APK directo. El actualizador integrado se incorpora a partir de la versión 0.11.
+
+## Actualizador integrado (0.11)
+
+En Ajustes → Buscar actualizaciones, Android permite descargar una nueva versión, verificarla y abrir el instalador del sistema sin desinstalar. La versión 0.11 debe instalarse manualmente una vez para disponer de este actualizador. Las entregas posteriores se anuncian adjuntando APK y `actualizacion.json` a las Releases públicas de `JEDS2024/EL-CAMINO`. Consulta `datos/LEEME_ACTUALIZACIONES.md` para preparar y publicar cada entrega.
+
+Pruebas: `res://pruebas/actualizador.tscn` y `python3 herramientas/probar_actualizador.py` (servidor HTTPS local).

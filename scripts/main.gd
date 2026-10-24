@@ -31,6 +31,9 @@ func _ready() -> void:
 	get_tree().quit_on_go_back = false
 	_crear_vista()
 	_crear_ui()
+	Actualizador.antes_de_instalar.connect(func():
+		if not en_titulo:
+			Juego.guardar_partida())
 	Juego.aviso.connect(hud.mostrar_aviso)
 	Juego.aviso.connect(_sonido_aviso)
 	mostrar_titulo()
@@ -844,6 +847,7 @@ func _mostrar_ajustes(volver: Callable) -> void:
 	interruptor.call("Texto grande", "texto_grande")
 	interruptor.call("Guía: faro sobre el objetivo y «!» en personajes", "guia")
 	interruptor.call("Primera persona", "primera_persona")
+	col.add_child(PanelActualizaciones.new())
 	var salir := _boton(marco, "Volver", _salir_ajustes)
 	salir.name = "VolverDeAjustes"
 

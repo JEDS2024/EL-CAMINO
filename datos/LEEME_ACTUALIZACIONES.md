@@ -1,42 +1,67 @@
-# Actualizar el APK conservando la partida
+# Actualizador integrado de El Camino (0.11)
 
-## Estado de esta versión
+## Uso en Android
 
-La 0.10 corrige Ajustes y puede instalarse encima de la 0.9. No incorpora todavía un descargador ni un instalador dentro del juego. Se puede abrir el APK nuevo desde Descargas y confirmar «Actualizar» en Android, sin desinstalar el anterior.
+En Ajustes pulsa **Buscar actualizaciones**. Si hay una versión posterior, el juego muestra su nombre y tamaño y ofrece **Descargar actualización**. La descarga se guarda en archivos privados del juego y se puede cancelar. Al terminar se comprueban tamaño y SHA-256 antes de habilitar **Instalar actualización**.
 
-Se comprobó que los APK locales 0.8 y 0.9 usan `com.jader.elcamino` y el mismo certificado de prueba de Godot. La 0.10 mantiene esa firma e incrementa `version/code` a 10. Android conserva los datos privados de la aplicación al actualizarla; desinstalar sí los elimina.
+Android puede pedir que permitas a El Camino instalar aplicaciones. Concede el permiso, vuelve al juego y pulsa Instalar. Android muestra la confirmación «Actualizar»: no se desinstala la aplicación. Si cancelas la instalación, puedes intentarlo otra vez. La descarga verificada se conserva incluso al reiniciar el juego.
 
-Para que Android acepte la actualización hay que mantener el identificador y la firma y aumentar el código para cada publicación. Las builds actuales son de prueba. Antes de distribuir una versión pública se debe decidir la clave definitiva: cambiar de certificado sin un mecanismo válido de rotación rompe la compatibilidad con instalaciones anteriores.
+El juego guarda el progreso antes de abrir el instalador desde una partida. Desde la pantalla inicial conserva el guardado existente, sin sobrescribirlo con el mapa de demostración. Android exige mismo paquete y firma para reemplazar la aplicación; un APK de otro paquete o con un código inesperado se rechaza antes de abrir el instalador.
 
-## Verificación de cada entrega
+La 0.11 contiene por primera vez el actualizador. Para pasar de la 0.10 a la 0.11 hay que abrir manualmente el APK nuevo una vez y elegir Actualizar. Las versiones posteriores se podrán iniciar desde Ajustes.
 
-```bash
-python3 herramientas/verificar_actualizacion.py ../builds/ElCamino-v0.9.apk builds/ElCamino-v0.10.apk
+## Publicar una entrega
+
+El repositorio `JEDS2024/EL-CAMINO` ya es público. En `project.godot` está configurado:
+
+```text
+https://github.com/JEDS2024/EL-CAMINO/releases/latest/download/actualizacion.json
 ```
 
-La herramienta usa `aapt` y `apksigner` del SDK y falla si cambia el paquete, cambia la firma o el código nuevo no aumenta. Es una comprobación de los APK, no una prueba de instalación en un teléfono. La prueba final consiste en instalar la versión anterior, guardar una partida, actualizar con la nueva y verificar partida y ajustes.
+No basta con subir el código: cada release publicada debe incluir **el APK y actualizacion.json como archivos adjuntos**. No necesita credenciales dentro del juego. Antes de publicar una release nueva comprueba que tiene ambos archivos. GitHub no usa borradores ni prereleases como `latest`.
 
-## Propuesta para actualizar desde el juego con APK directo
+1. Aumentar `version/code` y `version/name` en `export_presets.cfg`, y `actualizaciones/version_code` y `application/config/version` en `project.godot`. No cambiar `com.jader.elcamino` ni la clave de firma de las instalaciones existentes.
+2. Exportar el APK. Por ejemplo, para la entrega actual:
 
-1. Publicar por HTTPS un manifiesto con `version_code`, `version_name`, `apk_url`, `sha256` y tamaño. Aún falta elegir/configurar esa URL.
-2. Añadir «Buscar actualizaciones» en Ajustes; consultar solo a petición del usuario, con tiempo de espera y aviso si no hay conexión. Mostrar versión y tamaño antes de descargar.
-3. Descargar el APK al almacenamiento privado temporal, verificar tamaño y SHA-256 y guardar la partida antes de iniciar la instalación. No hace falta permiso general para acceder a los archivos del teléfono.
-4. Integrar un plugin Android para Godot con `PackageInstaller` y el permiso `REQUEST_INSTALL_PACKAGES`. El flujo debe consultar `canRequestPackageInstalls`, abrir los ajustes del sistema cuando corresponda y continuar solo tras autorización. La exportación actual usa plantilla estándar (`gradle_build/use_gradle_build=false`); el plugin requiere preparar la compilación Gradle.
-5. Entregar el APK al instalador del sistema y manejar confirmación, cancelación, error y reintento. Android realiza la sustitución; no se desinstala la aplicación.
-6. Al abrir la versión nueva se carga la partida habitual. Mantener las migraciones de guardados existentes.
+```bash
+JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64 ANDROID_HOME=~/Android/Sdk \
+  ~/Juegos/herramientas/godot --headless --path . --export-debug Android builds/ElCamino-v0.11.apk
+python3 herramientas/verificar_actualizacion.py builds/ElCamino-v0.10.apk builds/ElCamino-v0.11.apk
+python3 herramientas/preparar_actualizacion.py builds/ElCamino-v0.11.apk \
+  --url https://github.com/JEDS2024/EL-CAMINO/releases/download/v0.11/ElCamino-v0.11.apk
+```
 
-El hash comprueba integridad de la descarga; la firma del APK es la que Android usa para aceptar que pertenece a la aplicación. No se promete instalación silenciosa.
+3. En GitHub → Releases → Create a new release, elegir etiqueta `v0.11` y el commit de esta entrega. Adjuntar `builds/ElCamino-v0.11.apk` y `builds/actualizacion.json`, y publicar como release normal.
+4. Para la siguiente entrega repetir con código 12 y versión/etiqueta `0.12`/`v0.12`. Desde 0.11 se ofrecerá esa nueva versión.
 
-### Dónde alojarlo
+Las herramientas no publican archivos ni cambian la visibilidad del repositorio. Los APK actuales usan la misma firma de prueba de Godot; `verificar_actualizacion.py` comprueba paquete, firma y aumento de código. Antes de una distribución definitiva hay que planificar la clave de publicación: cambiar de firma sin una rotación válida impide actualizar las instalaciones anteriores.
 
-- **Servidor propio (por ejemplo el VPS Oracle):** URL HTTPS pública para manifiesto y APK; permite controlar la publicación sin exponer el código.
-- **GitHub:** releases de un repositorio público dedicado a distribuir APK, o un servicio que entregue enlaces autorizados. El repositorio de código actual es privado: no se debe incluir una credencial de GitHub en el APK para acceder a sus releases privadas.
+## Implementación
 
-La versión instalada hoy necesitará recibir una vez por descarga manual un APK que incluya el futuro actualizador. A partir de esa versión se podrá iniciar el flujo desde Ajustes.
+- `scripts/actualizaciones/actualizador.gd`: servicio persistente de consulta y descarga, cancelación, progreso, integridad y recuperación tras reiniciar.
+- `scripts/actualizaciones/android.gd`: acceso al instalador nativo con `AndroidRuntime`/`JavaClassWrapper` y `FileProvider`, ya incluidos en Godot 4.7. No requiere un plugin externo ni activar Gradle.
+- `scripts/ui/panel_actualizaciones.gd`: botones y estado dentro del área desplazable de Ajustes. Cerrar Ajustes no corta una descarga activa.
+- `permissions/internet` y `android.permission.REQUEST_INSTALL_PACKAGES` en la exportación Android. No se solicita acceso general al almacenamiento.
+- Todas las URL y redirecciones deben usar HTTPS, con validación TLS normal. Manifiestos limitados a 64 KiB y APK a 250 MiB; se rechazan versiones inválidas, archivos truncados y huellas incorrectas.
+- La huella verifica integridad; Android comprueba la firma al instalar. No se promete instalación silenciosa.
 
-## Referencias oficiales
+En PC se puede consultar la versión publicada, pero los botones de descarga e instalación de APK se muestran solo en Android.
 
-- [Cómo Android acepta actualizaciones: paquete, certificado y versión](https://developer.android.com/google/play/app-updates)
-- [Confirmación del usuario en PackageInstaller](https://developer.android.com/reference/android/content/pm/PackageInstaller.SessionParams)
-- [Permiso de instalación y canRequestPackageInstalls](https://developer.android.com/reference/android/content/pm/PackageManager#canRequestPackageInstalls())
-- [Actualizaciones dentro de la app mediante Google Play](https://developer.android.com/guide/playcore/in-app-updates) — alternativa si más adelante se distribuye mediante esa tienda.
+## Pruebas
+
+```bash
+XDG_DATA_HOME=/tmp/lumbral-actualizador ~/Juegos/herramientas/godot --headless --path . res://pruebas/actualizador.tscn
+python3 herramientas/probar_actualizador.py
+XDG_DATA_HOME=/tmp/lumbral-ajustes ~/Juegos/herramientas/godot --headless --path . res://pruebas/ajustes.tscn
+```
+
+La segunda prueba levanta un servidor HTTPS local y comprueba consulta, redirección de descarga, escritura y verificación real. El certificado de prueba solo se configura en esa prueba, nunca en producción. Las pruebas automatizadas no aceptan la instalación de un APK en un teléfono.
+
+La prueba final de dispositivo consiste en guardar una partida en 0.11, publicar una entrega posterior firmada igual, buscarla, cancelar y reintentar, aceptar el permiso, instalar y comprobar que conserva partida y ajustes. No se ha confirmado aún ese último paso en un dispositivo conectado.
+
+## Referencias
+
+- [Integración con APIs Android en Godot](https://docs.godotengine.org/en/stable/tutorials/platform/android/javaclasswrapper_and_androidruntimeplugin.html)
+- [Paquete, firma y versión en actualizaciones Android](https://developer.android.com/google/play/app-updates)
+- [FileProvider](https://developer.android.com/reference/androidx/core/content/FileProvider)
+- [Permiso para solicitar instalación](https://developer.android.com/reference/android/content/pm/PackageManager#canRequestPackageInstalls())
