@@ -7,6 +7,7 @@ var _buscar: Button
 var _descargar: Button
 var _instalar: Button
 var _cancelar: Button
+var _externa: Button
 
 func _ready() -> void:
 	add_theme_constant_override("separation", 12)
@@ -25,6 +26,7 @@ func _ready() -> void:
 	_buscar = _boton("Buscar actualizaciones", Actualizador.buscar)
 	_descargar = _boton("Descargar actualización", Actualizador.descargar)
 	_instalar = _boton("Instalar actualización", Actualizador.instalar)
+	_externa = _boton("Abrir APK en el navegador", Actualizador.abrir_descarga_externa)
 	_cancelar = _boton("Cancelar", Actualizador.cancelar)
 	Actualizador.cambiado.connect(_actualizar)
 	_actualizar()
@@ -49,5 +51,6 @@ func _actualizar() -> void:
 	_descargar.visible = e == "disponible" and OS.get_name() == "Android"
 	_instalar.visible = e in ["preparado", "permiso"] and OS.get_name() == "Android"
 	_instalar.text = "Permitir instalación y continuar" if e == "permiso" else "Instalar actualización"
+	_externa.visible = OS.get_name() == "Android" and not Actualizador.nueva.is_empty() and e in ["disponible", "preparado", "permiso", "error"]
 	_cancelar.visible = e in ["consultando", "descargando", "preparado", "permiso"]
 	_cancelar.text = "Descartar descarga" if e in ["preparado", "permiso"] else "Cancelar"

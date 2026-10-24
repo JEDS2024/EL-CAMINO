@@ -21,14 +21,20 @@ static func permite_instalar() -> bool:
 	var version: Object = clase("android.os.Build$VERSION")
 	return version.SDK_INT < 26 or actividad().getPackageManager().canRequestPackageInstalls()
 
-static func abrir_permiso() -> void:
+static func abrir_permiso() -> String:
 	var a := actividad()
 	var Intent: Object = clase("android.content.Intent")
 	var Uri: Object = clase("android.net.Uri")
 	var intent: Object = Intent.Intent("android.settings.MANAGE_UNKNOWN_APP_SOURCES")
 	intent.setData(Uri.parse("package:" + String(a.getPackageName())))
-	var runtime := Engine.get_singleton("AndroidRuntime")
-	a.runOnUiThread(runtime.createRunnableFromGodotCallable(func(): a.startActivity(intent)))
+	intent.addFlags(268435456)  # FLAG_ACTIVITY_NEW_TASK
+	# startActivity permite esta llamada desde el hilo del juego. Un Runnable
+	# devolvía éxito antes de intentar abrir la pantalla y ocultaba sus errores.
+	a.startActivity(intent)
+	var excepcion: Object = Engine.get_singleton("JavaClassWrapper").get_exception()
+	if excepcion != null:
+		return "Android no pudo abrir el permiso de instalación: " + String(excepcion.toString())
+	return ""
 
 ## Rechaza archivos de otro paquete o una versión que no sea posterior.
 ## Android valida además la firma al instalar; no se desinstala ni borra la partida.
@@ -43,17 +49,11 @@ static func abrir_apk(ruta: String, codigo_esperado: int) -> String:
 	var codigo := int(info.getLongVersionCode()) if version.SDK_INT >= 28 else int(info.versionCode)
 	if codigo != codigo_esperado or codigo <= codigo_instalado():
 		return "La versión del APK no coincide con la actualización anunciada."
-	var File: Object = clase("java.io.File")
-	var Provider: Object = clase("androidx.core.content.FileProvider")
-	var uri: Object = Provider.getUriForFile(a, String(a.getPackageName()) + ".fileprovider", File.File(ruta))
-	if uri == null:
-		return "No se pudo compartir el APK con el instalador de Android."
-	var Intent: Object = clase("android.content.Intent")
-	var intent: Object = Intent.Intent("android.intent.action.VIEW")
-	intent.setDataAndType(uri, "application/vnd.android.package-archive")
-	intent.addFlags(1)  # FLAG_GRANT_READ_URI_PERMISSION: solo el APK compartido
-	# Android 11+ filtra resolveActivity por visibilidad de paquetes. startActivity
-	# puede abrir el instalador del sistema sin consultar aplicaciones ajenas.
-	var runtime := Engine.get_singleton("AndroidRuntime")
-	a.runOnUiThread(runtime.createRunnableFromGodotCallable(func(): a.startActivity(intent)))
+	# GodotIO.openURI ya comparte el archivo mediante FileProvider y asigna su
+	# MIME, FLAG_ACTIVITY_NEW_TASK y FLAG_GRANT_READ_URI_PERMISSION. Además
+	# captura las excepciones Java y devuelve FAILED si no puede abrirlo.
+	# Pasar una ruta absoluta (no content://) permite que conceda el permiso.
+	var resultado := OS.shell_open(ruta)
+	if resultado != OK:
+		return "Android no pudo abrir el instalador (código %d). Puedes abrir el APK desde el navegador." % resultado
 	return ""

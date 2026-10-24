@@ -21,6 +21,8 @@ var _url_descarga := ""
 var _saltos_consulta := 0
 var _saltos_descarga := 0
 var _ultimo_progreso := -1
+var _salio_al_instalador := false
+var _intento_instalar := 0
 
 func _ready() -> void:
 	_consulta = HTTPRequest.new()
@@ -202,7 +204,10 @@ func _fallo_descarga(texto: String) -> void:
 	_cambiar("error", texto)
 
 func instalar() -> void:
-	if estado not in ["preparado", "permiso"] or not InstaladorAndroid.disponible():
+	if estado not in ["preparado", "permiso"]:
+		return
+	if not InstaladorAndroid.disponible():
+		_cambiar("preparado", "El puente de instalación no está disponible. Puedes abrir el APK desde el navegador.")
 		return
 	if not _archivo_valido(APK, nueva):
 		_borrar(APK)
@@ -211,15 +216,33 @@ func instalar() -> void:
 		return
 	if not InstaladorAndroid.permite_instalar():
 		_cambiar("permiso", "Permite que El Camino instale actualizaciones y vuelve aquí para pulsar Instalar.")
-		InstaladorAndroid.abrir_permiso()
+		var error_permiso := InstaladorAndroid.abrir_permiso()
+		if not error_permiso.is_empty():
+			_cambiar("preparado", error_permiso)
 		return
 	antes_de_instalar.emit()
 	Juego.guardar_ajustes()
+	_salio_al_instalador = false
+	_intento_instalar += 1
+	var intento := _intento_instalar
+	_cambiar("instalando", "Abriendo el instalador de Android…")
 	var error := InstaladorAndroid.abrir_apk(ProjectSettings.globalize_path(APK), int(nueva.version_code))
 	if not error.is_empty():
-		_cambiar("error", error)
+		_cambiar("preparado", error)
 	else:
-		_cambiar("instalando", "Confirma Actualizar en el instalador de Android. Tu partida se conserva.")
+		# Algunas capas de Android pueden rechazar una ventana sin lanzar excepción.
+		# No dejar al jugador atrapado en «instalando» cuando el juego sigue delante.
+		get_tree().create_timer(6.0).timeout.connect(func(): _comprobar_apertura(intento))
+
+func _comprobar_apertura(intento: int) -> void:
+	if intento == _intento_instalar and estado == "instalando" and not _salio_al_instalador:
+		_cambiar("preparado", "Android no abrió el instalador. Reintenta o pulsa Abrir APK en el navegador y abre el archivo descargado. No desinstales El Camino.")
+
+func abrir_descarga_externa() -> void:
+	if not validar_manifiesto(nueva).is_empty():
+		return
+	if OS.shell_open(String(nueva.apk_url)) != OK:
+		_cambiar("preparado" if FileAccess.file_exists(APK) else "error", "No se pudo abrir el navegador. Revisa tu conexión y vuelve a intentarlo.")
 
 func _recuperar() -> void:
 	if not FileAccess.file_exists(RECIBO):
@@ -246,6 +269,8 @@ func _process(_delta: float) -> void:
 		cambiado.emit()
 
 func _notification(what: int) -> void:
+	if what == NOTIFICATION_APPLICATION_FOCUS_OUT and estado == "instalando":
+		_salio_al_instalador = true
 	if what == NOTIFICATION_APPLICATION_FOCUS_IN:
 		if estado == "permiso" and InstaladorAndroid.disponible() and InstaladorAndroid.permite_instalar():
 			_cambiar("preparado", "Permiso concedido. Pulsa Instalar para continuar.")

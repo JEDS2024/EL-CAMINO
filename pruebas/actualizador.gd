@@ -67,6 +67,7 @@ func _ready() -> void:
 	Actualizador.estado = "descargando"
 	Actualizador.cancelar()
 	comprobar(Actualizador.estado == "disponible" and not FileAccess.file_exists(Actualizador.PARCIAL), "cancelar limpia archivo parcial y permite reintentar")
+	_probar_apertura_instalador(contenido)
 	await _probar_guardado()
 	if OS.get_cmdline_user_args().has("--red"):
 		await _probar_red()
@@ -77,6 +78,23 @@ func _guardar(ruta: String, bytes: PackedByteArray) -> void:
 	var archivo := FileAccess.open(ruta, FileAccess.WRITE)
 	archivo.store_buffer(bytes)
 	archivo.close()
+
+func _probar_apertura_instalador(contenido: PackedByteArray) -> void:
+	_guardar(Actualizador.APK, contenido)
+	Actualizador._intento_instalar = 7
+	Actualizador.estado = "instalando"
+	Actualizador._salio_al_instalador = false
+	Actualizador._comprobar_apertura(6)
+	comprobar(Actualizador.estado == "instalando", "un temporizador antiguo no modifica el intento nuevo")
+	Actualizador._comprobar_apertura(7)
+	comprobar(Actualizador.estado == "preparado" and FileAccess.file_exists(Actualizador.APK), "si no abre Android, permite reintentar sin borrar el APK")
+	Actualizador.estado = "instalando"
+	Actualizador._notification(NOTIFICATION_APPLICATION_FOCUS_OUT)
+	Actualizador._comprobar_apertura(7)
+	comprobar(Actualizador.estado == "instalando", "salir al instalador impide un aviso falso")
+	Actualizador._notification(NOTIFICATION_APPLICATION_FOCUS_IN)
+	comprobar(Actualizador.estado == "preparado", "volver del instalador permite reintentar")
+	Actualizador.cancelar()
 
 func _probar_red() -> void:
 	var cert := X509Certificate.new()

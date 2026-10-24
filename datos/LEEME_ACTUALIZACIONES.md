@@ -14,6 +14,14 @@ La 0.11 contiene por primera vez el actualizador. Para pasar de la 0.10 a la 0.1
 
 La 0.12 activa la lectura en voz alta al abrirla por primera vez, tanto en instalaciones nuevas como al actualizar. La marca `lectura_por_defecto_v12` se guarda en ajustes: si después el jugador apaga la lectura, los siguientes inicios respetan esa elección. Conserva los demás ajustes y el progreso. Incluye un candil dorado sobre un camino como nuevo icono, con variantes normal y adaptativa para Android. Sus recursos originales se regeneran con `python3 herramientas/generar_icono.py`.
 
+## Corrección de apertura 0.13
+
+La prueba en un Redmi Note 13 con la 0.11 descargó el APK, pero no abrió el instalador. El puente anunciaba éxito antes de ejecutar un Runnable sin comprobar el resultado. Desde 0.13 se utiliza `OS.shell_open` con la ruta absoluta del APK: GodotIO añade FileProvider, MIME y los permisos de URI, abre una tarea de Android y captura las excepciones. El permiso de fuentes desconocidas también devuelve errores. Si el juego sigue delante tras seis segundos, se recupera el botón de instalación sin borrar la descarga; un intento anterior no modifica el estado de uno nuevo. El jugador también puede abrir el enlace del APK en su navegador.
+
+La versión instalada necesita recibir esta corrección manualmente una vez: descargar 0.13 y abrirla encima de la actual, sin desinstalar. Todavía falta confirmar la apertura en el Redmi real; las pruebas de escritorio no cubren la ventana del instalador Android.
+
+Referencia de la apertura nativa: [GodotIO.openURI en Godot 4.7.2](https://github.com/godotengine/godot/blob/4.7.2-stable/platform/android/java/lib/src/main/java/org/godotengine/godot/GodotIO.java).
+
 ## Publicar una entrega
 
 El repositorio `JEDS2024/EL-CAMINO` ya es público. En `project.godot` está configurado:
