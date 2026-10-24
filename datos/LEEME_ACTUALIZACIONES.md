@@ -38,6 +38,8 @@ Como las 0.13 y 0.14 instaladas tienen el puente roto, **la 0.15 se instala a ma
 
 Primera entrega que debe instalarse desde el propio juego con el puente corregido de la 0.15: en Ajustes, «Buscar actualizaciones» → «Descargar» → «Instalar» → Android pide «Actualizar». Al volver, Ajustes debe mostrar «Versión instalada: 0.16» y conservar la partida. No cambia el juego.
 
+**Confirmado en un teléfono real (23 de octubre de 2026):** la 0.15 descargó la 0.16 desde Ajustes, abrió el instalador de Android y quedó actualizada a la 0.16. El actualizador funciona de punta a punta; las siguientes entregas solo necesitan publicarse como release con el APK y `actualizacion.json`.
+
 ## Publicar una entrega
 
 El repositorio `JEDS2024/EL-CAMINO` ya es público. En `project.godot` está configurado:
