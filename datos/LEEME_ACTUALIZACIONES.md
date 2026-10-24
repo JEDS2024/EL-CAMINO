@@ -40,6 +40,13 @@ Primera entrega que debe instalarse desde el propio juego con el puente corregid
 
 **Confirmado en un teléfono real (23 de octubre de 2026):** la 0.15 descargó la 0.16 desde Ajustes, abrió el instalador de Android y quedó actualizada a la 0.16. El actualizador funciona de punta a punta; las siguientes entregas solo necesitan publicarse como release con el APK y `actualizacion.json`.
 
+## Enlaces de descarga para compartir (desde 0.17)
+
+- Descarga directa que nunca cambia: https://github.com/JEDS2024/EL-CAMINO/releases/latest/download/ElCamino.apk
+- Página de la última versión: https://github.com/JEDS2024/EL-CAMINO/releases/latest
+
+El primero solo funciona si la release más reciente lleva adjunto `ElCamino.apk`. El juego no lo usa: sigue leyendo `actualizacion.json`, que apunta al APK con número de versión.
+
 ## Publicar una entrega
 
 El repositorio `JEDS2024/EL-CAMINO` ya es público. En `project.godot` está configurado:
@@ -61,7 +68,7 @@ python3 herramientas/preparar_actualizacion.py builds/ElCamino-v0.12.apk \
   --url https://github.com/JEDS2024/EL-CAMINO/releases/download/v0.12/ElCamino-v0.12.apk
 ```
 
-3. En GitHub → Releases → Create a new release, elegir etiqueta `v0.12` y el commit de esta entrega. Adjuntar `builds/ElCamino-v0.12.apk` y `builds/actualizacion.json`, y publicar como release normal.
+3. En GitHub → Releases → Create a new release, elegir etiqueta `v0.12` y el commit de esta entrega. Adjuntar **tres archivos**: `builds/ElCamino-v0.12.apk`, `builds/ElCamino.apk` (la copia con nombre fijo que deja `preparar_actualizacion.py`) y `builds/actualizacion.json`, y publicar como release normal.
 4. Para la siguiente entrega repetir con código 13 y versión/etiqueta `0.13`/`v0.13`. Desde 0.11 se ofrecerá esa nueva versión.
 
 Las herramientas no publican archivos ni cambian la visibilidad del repositorio. Los APK actuales usan la misma firma de prueba de Godot; `verificar_actualizacion.py` comprueba paquete, firma y aumento de código. Antes de una distribución definitiva hay que planificar la clave de publicación: cambiar de firma sin una rotación válida impide actualizar las instalaciones anteriores.
