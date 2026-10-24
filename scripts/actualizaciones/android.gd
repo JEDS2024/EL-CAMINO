@@ -11,11 +11,17 @@ static func actividad() -> Object:
 static func clase(nombre: String) -> Object:
 	return Engine.get_singleton("JavaClassWrapper").wrap(nombre)
 
+## OJO: JavaClassWrapper solo expone MÉTODOS de los objetos Java y los campos ESTÁTICOS de las clases.
+## Leer un campo de instancia (info.packageName, info.versionCode) es un error de script en Android
+## que corta la función sin aviso: así la 0.13/0.14 nunca llegaba a abrir el instalador.
+
 static func codigo_instalado() -> int:
 	var a := actividad()
-	var info: Object = a.getPackageManager().getPackageInfo(a.getPackageName(), 0)
 	var version: Object = clase("android.os.Build$VERSION")
-	return int(info.getLongVersionCode()) if version.SDK_INT >= 28 else int(info.versionCode)
+	if version.SDK_INT < 28:  # getLongVersionCode() no existe; versionCode es un campo, inaccesible
+		return int(ProjectSettings.get_setting("actualizaciones/version_code", 0))
+	var info: Object = a.getPackageManager().getPackageInfo(a.getPackageName(), 0)
+	return int(info.getLongVersionCode())
 
 static func permite_instalar() -> bool:
 	var version: Object = clase("android.os.Build$VERSION")
@@ -36,19 +42,19 @@ static func abrir_permiso() -> String:
 		return "Android no pudo abrir el permiso de instalación: " + String(excepcion.toString())
 	return ""
 
-## Rechaza archivos de otro paquete o una versión que no sea posterior.
-## Android valida además la firma al instalar; no se desinstala ni borra la partida.
+## Rechaza un archivo que no sea APK o una versión que no sea posterior (solo con métodos Java).
+## El paquete ya lo garantiza el manifiesto verificado con SHA-256, y Android exige al instalar
+## mismo paquete y misma firma; no se desinstala ni se borra la partida.
 static func abrir_apk(ruta: String, codigo_esperado: int) -> String:
 	var a := actividad()
 	var info: Object = a.getPackageManager().getPackageArchiveInfo(ruta, 0)
 	if info == null:
 		return "El archivo no es un APK válido. Vuelve a descargarlo."
-	if String(info.packageName) != String(a.getPackageName()):
-		return "Este APK no pertenece a El Camino."
 	var version: Object = clase("android.os.Build$VERSION")
-	var codigo := int(info.getLongVersionCode()) if version.SDK_INT >= 28 else int(info.versionCode)
-	if codigo != codigo_esperado or codigo <= codigo_instalado():
-		return "La versión del APK no coincide con la actualización anunciada."
+	if version.SDK_INT >= 28:
+		var codigo := int(info.getLongVersionCode())
+		if codigo != codigo_esperado or codigo <= codigo_instalado():
+			return "La versión del APK no coincide con la actualización anunciada."
 	# GodotIO.openURI ya comparte el archivo mediante FileProvider y asigna su
 	# MIME, FLAG_ACTIVITY_NEW_TASK y FLAG_GRANT_READ_URI_PERMISSION. Además
 	# captura las excepciones Java y devuelve FAILED si no puede abrirlo.

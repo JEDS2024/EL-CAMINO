@@ -10,6 +10,12 @@ func comprobar(si: bool, texto: String) -> void:
 
 func _ready() -> void:
 	await get_tree().process_frame
+	# En Android, JavaClassWrapper solo expone métodos de objetos Java: leer un campo de instancia
+	# (info.packageName) corta el script sin aviso y el instalador nunca se abre. En PC no hay Java,
+	# así que se revisa el código: después de "info." siempre debe venir una llamada.
+	var puente := FileAccess.get_file_as_string("res://scripts/actualizaciones/android.gd")
+	var campos := RegEx.create_from_string("(?m)^[^#]*\\binfo\\.\\w+\\b(?!\\s*\\()").search_all(puente)
+	comprobar(campos.is_empty(), "el puente Android no lee campos de objetos Java (solo métodos)")
 	var contenido := "APK de prueba para verificar integridad de la descarga".to_utf8_buffer()
 	var m := {"package": "com.jader.elcamino", "version_code": Actualizador.codigo_actual() + 1,
 		"version_name": "siguiente", "apk_url": "https://example.com/juego.apk", "size": contenido.size(),

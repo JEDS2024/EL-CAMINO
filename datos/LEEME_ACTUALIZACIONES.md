@@ -26,6 +26,14 @@ Referencia de la apertura nativa: [GodotIO.openURI en Godot 4.7.2](https://githu
 
 Actualización para comprobar el paso de 0.13 a 0.14 desde el juego. Ajustes muestra en verde «Versión instalada: 0.14» después de instalarla, usando la versión del proyecto (no la anunciada en el manifiesto). Conserva el puente corregido de 0.13, la firma, el paquete y el progreso. La prueba final en el Redmi depende de la confirmación del usuario.
 
+## Corrección real del instalador 0.15
+
+La 0.13 y la 0.14 descargaban y verificaban el APK, pero nunca abrían el instalador. Causa: en Android, `JavaClassWrapper` de Godot 4.7.2 expone los **métodos** de los objetos Java y los campos **estáticos** de las clases (como `Build.VERSION.SDK_INT`), pero no los campos de instancia. `abrir_apk()` leía `info.packageName` (un campo de `PackageInfo`): eso es un error de script que corta la función antes de `OS.shell_open`, y a los seis segundos aparecía «Android no abrió el instalador». En el escritorio no hay Java, así que las pruebas no lo veían.
+
+Desde 0.15 el puente solo usa métodos (`getLongVersionCode()`), y `pruebas/actualizador.tscn` revisa el código de `android.gd` para que no vuelva a leerse un campo de un objeto Java. El paquete lo garantiza el manifiesto verificado con SHA-256, y Android exige mismo paquete y firma al instalar.
+
+Como las 0.13 y 0.14 instaladas tienen el puente roto, **la 0.15 se instala a mano una sola vez**: en Ajustes pulsa «Abrir APK en el navegador» (o descárgalo desde la release) y elige Actualizar, sin desinstalar. Desde la 0.15 las siguientes versiones se instalan desde el juego.
+
 ## Publicar una entrega
 
 El repositorio `JEDS2024/EL-CAMINO` ya es público. En `project.godot` está configurado:
