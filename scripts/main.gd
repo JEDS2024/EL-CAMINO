@@ -24,9 +24,11 @@ var hablando_con := ""  # nombre de quien dice la línea actual del diálogo
 var _mision_actual := {}  # objetivo vigente (para la tarjeta de ayuda)
 var _apunte := {}  # bloque al que apunta la mira (capítulos con construcción)
 var _espera_bloque := 0.0
+var _volver_ajustes: Callable
 
 
 func _ready() -> void:
+	get_tree().quit_on_go_back = false
 	_crear_vista()
 	_crear_ui()
 	Juego.aviso.connect(hud.mostrar_aviso)
@@ -552,6 +554,10 @@ func _cambiar_vista() -> void:
 
 
 func _unhandled_input(ev: InputEvent) -> void:
+	if ev.is_action_pressed("pausa") and _volver_ajustes.is_valid():
+		_salir_ajustes()
+		get_viewport().set_input_as_handled()
+		return
 	if ev.is_action_pressed("interactuar"):
 		_interactuar()
 	elif ev.is_action_pressed("cambiar_vista") and en_juego:
@@ -575,12 +581,16 @@ func _unhandled_input(ev: InputEvent) -> void:
 
 func _notification(what: int) -> void:
 	# botón "atrás" de Android
-	if what == NOTIFICATION_WM_GO_BACK_REQUEST and en_juego:
-		_mostrar_pausa()
+	if what == NOTIFICATION_WM_GO_BACK_REQUEST:
+		if _volver_ajustes.is_valid():
+			_salir_ajustes()
+		elif en_juego:
+			_mostrar_pausa()
 
 
 # ------------------------------------------------------------------ menús
 func _limpiar_menu() -> void:
+	_volver_ajustes = Callable()
 	for c in capa_menu.get_children():
 		c.queue_free()
 
@@ -765,10 +775,35 @@ func _mostrar_capitulos() -> void:
 	_boton(col, "Volver", mostrar_titulo)
 
 
+## Encabezado y salida fijos; solo las opciones se desplazan con el dedo.
 func _mostrar_ajustes(volver: Callable) -> void:
-	var col := _pantalla(0.75)
-	col.custom_minimum_size = Vector2(620, 0)
-	_texto(col, "Ajustes", 56, Color("ffd36b"))
+	_limpiar_menu()
+	_volver_ajustes = volver
+	var fondo := ColorRect.new()
+	fondo.color = Color(0.04, 0.03, 0.08, 0.92)
+	fondo.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	capa_menu.add_child(fondo)
+	var margen := MarginContainer.new()
+	margen.name = "PanelAjustes"
+	margen.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	for lado in ["left", "right", "top", "bottom"]:
+		margen.add_theme_constant_override("margin_" + lado, 24)
+	capa_menu.add_child(margen)
+	var marco := VBoxContainer.new()
+	marco.add_theme_constant_override("separation", 12)
+	margen.add_child(marco)
+	_texto(marco, "Ajustes", 44, Color("ffd36b"))
+	var scroll := ScrollContainer.new()
+	scroll.name = "OpcionesDesplazables"
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	scroll.follow_focus = true
+	scroll.scroll_deadzone = 16
+	marco.add_child(scroll)
+	var col := VBoxContainer.new()
+	col.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	col.add_theme_constant_override("separation", 18)
+	scroll.add_child(col)
 	var deslizador := func(titulo: String, clave: String, minimo: float, maximo: float):
 		_texto(col, titulo, 24, Color(1, 1, 1, 0.85))
 		var sl := HSlider.new()
@@ -776,7 +811,7 @@ func _mostrar_ajustes(volver: Callable) -> void:
 		sl.max_value = maximo
 		sl.step = 0.05
 		sl.value = Juego.get(clave)
-		sl.custom_minimum_size = Vector2(0, 44)
+		sl.custom_minimum_size = Vector2(0, 56)
 		sl.value_changed.connect(func(v):
 			Juego.set(clave, v)
 			Juego.guardar_ajustes()
@@ -789,23 +824,38 @@ func _mostrar_ajustes(volver: Callable) -> void:
 	_boton(col, "Probar voz", func():
 		CajaDialogo.hablar("Hola. Esta es la voz que lee las historias de El Camino."))
 	var interruptor := func(titulo: String, clave: String):
+		var fila := HBoxContainer.new()
+		fila.custom_minimum_size.y = 64
+		col.add_child(fila)
+		var etiqueta := _texto(fila, titulo, 28)
+		etiqueta.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		etiqueta.horizontal_alignment = HORIZONTAL_ALIGNMENT_LEFT
+		etiqueta.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		var c := CheckButton.new()
-		c.text = titulo
+		c.name = "Ajuste_" + clave
+		c.custom_minimum_size = Vector2(100, 64)
 		c.button_pressed = Juego.get(clave)
-		c.add_theme_font_size_override("font_size", 28)
 		c.toggled.connect(func(v):
 			Juego.set(clave, v)
 			Juego.guardar_ajustes()
 			Sonido.efecto("seleccion", 0.6))
-		col.add_child(c)
+		fila.add_child(c)
 	interruptor.call("Leer los diálogos en voz alta", "leer_voz")
 	interruptor.call("Texto grande", "texto_grande")
 	interruptor.call("Guía: faro sobre el objetivo y «!» en personajes", "guia")
 	interruptor.call("Primera persona", "primera_persona")
-	_boton(col, "Volver", func():
-		if jugador:
-			jugador.aplicar_vista(Juego.primera_persona, false)
-		volver.call())
+	var salir := _boton(marco, "Volver", _salir_ajustes)
+	salir.name = "VolverDeAjustes"
+
+
+func _salir_ajustes() -> void:
+	if not _volver_ajustes.is_valid():
+		return
+	var volver := _volver_ajustes
+	_volver_ajustes = Callable()
+	if jugador:
+		jugador.aplicar_vista(Juego.primera_persona, false)
+	volver.call()
 
 
 func _mostrar_pausa() -> void:
