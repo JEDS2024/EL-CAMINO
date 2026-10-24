@@ -22,6 +22,10 @@ La versión instalada necesita recibir esta corrección manualmente una vez: des
 
 Referencia de la apertura nativa: [GodotIO.openURI en Godot 4.7.2](https://github.com/godotengine/godot/blob/4.7.2-stable/platform/android/java/lib/src/main/java/org/godotengine/godot/GodotIO.java).
 
+## Prueba de entrega 0.14
+
+Actualización para comprobar el paso de 0.13 a 0.14 desde el juego. Ajustes muestra en verde «Versión instalada: 0.14» después de instalarla, usando la versión del proyecto (no la anunciada en el manifiesto). Conserva el puente corregido de 0.13, la firma, el paquete y el progreso. La prueba final en el Redmi depende de la confirmación del usuario.
+
 ## Publicar una entrega
 
 El repositorio `JEDS2024/EL-CAMINO` ya es público. En `project.godot` está configurado:

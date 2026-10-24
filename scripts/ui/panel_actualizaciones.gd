@@ -12,10 +12,16 @@ var _externa: Button
 func _ready() -> void:
 	add_theme_constant_override("separation", 12)
 	var titulo := Label.new()
-	titulo.text = "Actualizaciones · El Camino " + String(ProjectSettings.get_setting("application/config/version", ""))
+	titulo.text = "Actualizaciones de El Camino"
 	titulo.add_theme_font_size_override("font_size", 28)
 	titulo.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	add_child(titulo)
+	var version := Label.new()
+	version.text = "Versión instalada: " + String(ProjectSettings.get_setting("application/config/version", ""))
+	version.add_theme_font_size_override("font_size", 26)
+	version.add_theme_color_override("font_color", Color("a9e6a4"))
+	version.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	add_child(version)
 	_estado = Label.new()
 	_estado.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_estado.add_theme_font_size_override("font_size", 23)
