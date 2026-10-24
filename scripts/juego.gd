@@ -23,7 +23,7 @@ var primera_persona := false
 var sensibilidad := 1.0
 var vol_musica := 0.8
 var vol_efectos := 0.9
-var leer_voz := false  # leer los diálogos en voz alta (ideal para niños)
+var leer_voz := true  # leer los diálogos en voz alta (ideal para niños)
 var voz_lectura := ""  # identificador de voz instalado; vacío usa la preferencia española
 var ritmo_voz := 1.0
 var texto_grande := false
@@ -347,6 +347,7 @@ func _migrar_indices_a_noe(cfg: ConfigFile) -> void:
 
 func guardar_ajustes() -> void:
 	var cfg := ConfigFile.new()
+	cfg.set_value("ajustes", "lectura_por_defecto_v12", true)
 	cfg.set_value("ajustes", "primera_persona", primera_persona)
 	cfg.set_value("ajustes", "sensibilidad", sensibilidad)
 	for clave in ["vol_musica", "vol_efectos", "leer_voz", "voz_lectura", "ritmo_voz", "texto_grande", "guia"]:
@@ -361,3 +362,8 @@ func cargar_ajustes() -> void:
 		sensibilidad = cfg.get_value("ajustes", "sensibilidad", 1.0)
 		for clave in ["vol_musica", "vol_efectos", "leer_voz", "voz_lectura", "ritmo_voz", "texto_grande", "guia"]:
 			set(clave, cfg.get_value("ajustes", clave, get(clave)))
+	# La 0.12 activa la narración una sola vez, incluso al actualizar desde la 0.11.
+	# Guardar la marca permite respetar si luego el jugador decide apagarla.
+	if not cfg.get_value("ajustes", "lectura_por_defecto_v12", false):
+		leer_voz = true
+		guardar_ajustes()

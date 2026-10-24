@@ -1,4 +1,4 @@
-# Actualizador integrado de El Camino (0.11)
+# Actualizador integrado de El Camino (desde 0.11)
 
 ## Uso en Android
 
@@ -9,6 +9,10 @@ Android puede pedir que permitas a El Camino instalar aplicaciones. Concede el p
 El juego guarda el progreso antes de abrir el instalador desde una partida. Desde la pantalla inicial conserva el guardado existente, sin sobrescribirlo con el mapa de demostración. Android exige mismo paquete y firma para reemplazar la aplicación; un APK de otro paquete o con un código inesperado se rechaza antes de abrir el instalador.
 
 La 0.11 contiene por primera vez el actualizador. Para pasar de la 0.10 a la 0.11 hay que abrir manualmente el APK nuevo una vez y elegir Actualizar. Las versiones posteriores se podrán iniciar desde Ajustes.
+
+## Entrega de prueba 0.12
+
+La 0.12 activa la lectura en voz alta al abrirla por primera vez, tanto en instalaciones nuevas como al actualizar. La marca `lectura_por_defecto_v12` se guarda en ajustes: si después el jugador apaga la lectura, los siguientes inicios respetan esa elección. Conserva los demás ajustes y el progreso. Incluye un candil dorado sobre un camino como nuevo icono, con variantes normal y adaptativa para Android. Sus recursos originales se regeneran con `python3 herramientas/generar_icono.py`.
 
 ## Publicar una entrega
 
@@ -21,18 +25,18 @@ https://github.com/JEDS2024/EL-CAMINO/releases/latest/download/actualizacion.jso
 No basta con subir el código: cada release publicada debe incluir **el APK y actualizacion.json como archivos adjuntos**. No necesita credenciales dentro del juego. Antes de publicar una release nueva comprueba que tiene ambos archivos. GitHub no usa borradores ni prereleases como `latest`.
 
 1. Aumentar `version/code` y `version/name` en `export_presets.cfg`, y `actualizaciones/version_code` y `application/config/version` en `project.godot`. No cambiar `com.jader.elcamino` ni la clave de firma de las instalaciones existentes.
-2. Exportar el APK. Por ejemplo, para la entrega actual:
+2. Exportar el APK. Por ejemplo, para la entrega 0.12:
 
 ```bash
 JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64 ANDROID_HOME=~/Android/Sdk \
-  ~/Juegos/herramientas/godot --headless --path . --export-debug Android builds/ElCamino-v0.11.apk
-python3 herramientas/verificar_actualizacion.py builds/ElCamino-v0.10.apk builds/ElCamino-v0.11.apk
-python3 herramientas/preparar_actualizacion.py builds/ElCamino-v0.11.apk \
-  --url https://github.com/JEDS2024/EL-CAMINO/releases/download/v0.11/ElCamino-v0.11.apk
+  ~/Juegos/herramientas/godot --headless --path . --export-debug Android builds/ElCamino-v0.12.apk
+python3 herramientas/verificar_actualizacion.py builds/ElCamino-v0.11.apk builds/ElCamino-v0.12.apk
+python3 herramientas/preparar_actualizacion.py builds/ElCamino-v0.12.apk \
+  --url https://github.com/JEDS2024/EL-CAMINO/releases/download/v0.12/ElCamino-v0.12.apk
 ```
 
-3. En GitHub → Releases → Create a new release, elegir etiqueta `v0.11` y el commit de esta entrega. Adjuntar `builds/ElCamino-v0.11.apk` y `builds/actualizacion.json`, y publicar como release normal.
-4. Para la siguiente entrega repetir con código 12 y versión/etiqueta `0.12`/`v0.12`. Desde 0.11 se ofrecerá esa nueva versión.
+3. En GitHub → Releases → Create a new release, elegir etiqueta `v0.12` y el commit de esta entrega. Adjuntar `builds/ElCamino-v0.12.apk` y `builds/actualizacion.json`, y publicar como release normal.
+4. Para la siguiente entrega repetir con código 13 y versión/etiqueta `0.13`/`v0.13`. Desde 0.11 se ofrecerá esa nueva versión.
 
 Las herramientas no publican archivos ni cambian la visibilidad del repositorio. Los APK actuales usan la misma firma de prueba de Godot; `verificar_actualizacion.py` comprueba paquete, firma y aumento de código. Antes de una distribución definitiva hay que planificar la clave de publicación: cambiar de firma sin una rotación válida impide actualizar las instalaciones anteriores.
 
