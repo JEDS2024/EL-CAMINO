@@ -272,10 +272,16 @@ func _honda() -> void:
 	if juegos.is_empty():
 		return
 	var mj: MinijuegoHonda = juegos[0]
-	mj.resolver(false)
+	mj._pos = 0.0
+	mj._boton.pressed.emit()  # pulsa fuera de la zona: comprueba el botón real
 	await _esperar(1.0)
 	_ok(not Juego.fin_pedido and mj.is_inside_tree(), "fallar permite intentar otra vez")
-	mj.resolver(true)
+	var espera := 0.0
+	while not mj.acierta() and espera < 3.0:
+		await _esperar(0.01)
+		espera += 0.01
+	_ok(mj.acierta() and mj._activo, "el marcador alcanza la zona y permite lanzar")
+	mj._boton.pressed.emit()
 	await _esperar(1.3)
 	await _dialogos()
 

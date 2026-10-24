@@ -99,6 +99,8 @@ python3 herramientas/validar_capitulos.py
 - `validar_capitulos.py` revisa los JSON.
 - `recorrido.tscn` juega los 3 capítulos solo y debe terminar en `RESULTADO: TODO BIEN`.
 - `camara.tscn` simula toque, mouse, flechas y joystick y muestra cuánto gira la cámara.
+- `accesibilidad.tscn` comprueba rutas con la cápsula del jugador hacia entidades y planos, antes y después de construir, y los cuatro límites a distintas alturas. Se complementa con `recorrido.tscn`, que recorre las condiciones, tareas, repasos y el botón real de la honda.
+- Para aislar las partidas de las pruebas: `XDG_DATA_HOME=/tmp/lumbral-pruebas ~/Juegos/herramientas/godot --headless --path . res://pruebas/accesibilidad.tscn`.
 - `capturas_menus.tscn` guarda capturas de menús, guía y repaso.
 - `capturas.tscn` guarda imágenes en `~/.local/share/godot/app_userdata/El Camino/capturas/`.
 

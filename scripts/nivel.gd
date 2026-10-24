@@ -280,7 +280,12 @@ func _cordillera(a: Dictionary) -> void:
 	lejos.mesh = plano
 	lejos.position = centro_mapa + Vector3(0, -0.05, 0)
 	var ml := StandardMaterial3D.new()
-	ml.albedo_color = Color(a.get("suelo_lejano", "#5a6a40"))
+	# Continuidad del terreno hasta las montañas: evita el plano gris al mirar desde un cerro.
+	var textura_suelo: String = SUELOS.get(datos.get("suelo", "."), "pasto")
+	ml.albedo_texture = load("res://assets/texturas/%s.png" % textura_suelo)
+	ml.uv1_scale = Vector3(plano.size.x / C, plano.size.y / C, 1)
+	ml.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
+	ml.albedo_color = Color.WHITE
 	ml.roughness = 1.0
 	lejos.material_override = ml
 	add_child(lejos)
@@ -392,11 +397,12 @@ func _crear_colisiones() -> void:
 	add_child(cuerpo)
 	# piso
 	_caja_colision(cuerpo, Vector3(ancho * C / 2, -0.5, alto * C / 2), Vector3(ancho * C, 1, alto * C))
-	# bordes del mapa
-	_caja_colision(cuerpo, Vector3(-0.5, 2, alto * C / 2), Vector3(1, 6, alto * C))
-	_caja_colision(cuerpo, Vector3(ancho * C + 0.5, 2, alto * C / 2), Vector3(1, 6, alto * C))
-	_caja_colision(cuerpo, Vector3(ancho * C / 2, 2, -0.5), Vector3(ancho * C, 6, 1))
-	_caja_colision(cuerpo, Vector3(ancho * C / 2, 2, alto * C + 0.5), Vector3(ancho * C, 6, 1))
+	# Límites transparentes: se ve el paisaje exterior, pero no se puede salir,
+	# ni desde los cerros ni saltando sobre construcciones (altura máxima 14).
+	_caja_colision(cuerpo, Vector3(-0.5, 28, alto * C / 2), Vector3(1, 64, alto * C + 2))
+	_caja_colision(cuerpo, Vector3(ancho * C + 0.5, 28, alto * C / 2), Vector3(1, 64, alto * C + 2))
+	_caja_colision(cuerpo, Vector3(ancho * C / 2, 28, -0.5), Vector3(ancho * C + 2, 64, 1))
+	_caja_colision(cuerpo, Vector3(ancho * C / 2, 28, alto * C + 0.5), Vector3(ancho * C + 2, 64, 1))
 	# celdas sólidas: se unen tramos horizontales de igual altura
 	for z in alto:
 		var x := 0
