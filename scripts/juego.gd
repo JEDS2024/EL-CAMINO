@@ -4,10 +4,12 @@ extends Node
 
 signal estado_cambiado
 signal aviso(texto: String, icono: String)
+signal clima_cambiado(tipo: String)
 
 const VIRTUDES := ["fe", "esperanza", "amor", "perdon"]
 const NOMBRE_VIRTUD := {"fe": "Fe", "esperanza": "Esperanza", "amor": "Amor", "perdon": "Perdón"}
 const CAPITULOS := [
+	"res://datos/capitulos/cap0_noe.json",
 	"res://datos/capitulos/cap1_jose.json",
 	"res://datos/capitulos/cap2_rut.json",
 	"res://datos/capitulos/cap3_david.json",
@@ -22,6 +24,8 @@ var sensibilidad := 1.0
 var vol_musica := 0.8
 var vol_efectos := 0.9
 var leer_voz := false  # leer los diálogos en voz alta (ideal para niños)
+var voz_lectura := ""  # identificador de voz instalado; vacío usa la preferencia española
+var ritmo_voz := 1.0
 var texto_grande := false
 var guia := true  # faro sobre el siguiente objetivo y «!» en personajes
 var capitulo := 0
@@ -56,7 +60,10 @@ func _registrar_acciones() -> void:
 		"mirar_arriba": [KEY_UP, KEY_I], "mirar_abajo": [KEY_DOWN, KEY_K],
 		"interactuar": [KEY_E, KEY_SPACE, KEY_ENTER], "cambiar_vista": [KEY_C, KEY_V],
 		"pausa": [KEY_ESCAPE, KEY_P], "mochila": [KEY_TAB, KEY_B],
+		"picar": [KEY_Q, KEY_X], "poner": [KEY_F, KEY_R],
 	}
+	for i in 9:
+		mapa["casilla_%d" % (i + 1)] = [KEY_1 + i]
 	for accion in mapa:
 		if InputMap.has_action(accion):
 			continue
@@ -140,6 +147,24 @@ func _reg() -> Dictionary:
 ## Objetos recogidos en el capítulo actual: clave -> {icono, nombre, cantidad, reliquia}.
 func inventario_capitulo() -> Dictionary:
 	return _reg()["inventario"]
+
+
+## Bloques de construcción que lleva el jugador en este capítulo (van en la barra como objetos).
+func cantidad_bloque(material: String) -> int:
+	return int(inventario_capitulo().get("bloque_" + material, {}).get("cantidad", 0))
+
+
+func sumar_bloque(material: String, n: int) -> void:
+	var inv := inventario_capitulo()
+	var clave := "bloque_" + material
+	if not inv.has(clave):
+		var info: Dictionary = Construccion.MATERIALES.get(material, {})
+		inv[clave] = {"icono": info.get("icono", "bloque_piedra"), "nombre": info.get("nombre", material), "cantidad": 0,
+			"reliquia": false, "bloque": material}
+	inv[clave]["cantidad"] += n
+	if inv[clave]["cantidad"] <= 0:
+		inv.erase(clave)
+	estado_cambiado.emit()
 
 
 ## Reliquias (secretos) encontradas en todos los capítulos.
@@ -226,6 +251,8 @@ func aplicar(efectos) -> void:
 			fin_pedido = true
 		elif clave == "aviso":
 			aviso.emit(String(v), "")
+		elif clave == "clima":
+			clima_cambiado.emit(String(v))
 	estado_cambiado.emit()
 
 
@@ -263,6 +290,7 @@ func guardar_partida() -> void:
 	cfg.set_value("partida", "secretos", secretos)
 	for clave in ["capitulo_max", "completados", "estrellas", "registro"]:
 		cfg.set_value("partida", clave, get(clave))
+	cfg.set_value("partida", "version", 2)
 	cfg.save(RUTA_PARTIDA)
 
 
@@ -270,6 +298,8 @@ func cargar_partida() -> bool:
 	var cfg := ConfigFile.new()
 	if cfg.load(RUTA_PARTIDA) != OK:
 		return false
+	if int(cfg.get_value("partida", "version", 1)) < 2:
+		_migrar_indices_a_noe(cfg)
 	capitulo = cfg.get_value("partida", "capitulo", 0)
 	virtudes = cfg.get_value("partida", "virtudes", virtudes)
 	luz = cfg.get_value("partida", "luz", 30.0)
@@ -282,11 +312,44 @@ func cargar_partida() -> bool:
 	return true
 
 
+## Noé se inserta al principio; conserva el progreso anterior desplazando sus índices.
+func _migrar_indices_a_noe(cfg: ConfigFile) -> void:
+	var p := "partida"
+	cfg.set_value(p, "capitulo", int(cfg.get_value(p, "capitulo", 0)) + 1)
+	cfg.set_value(p, "capitulo_max", int(cfg.get_value(p, "capitulo_max", 0)) + 1)
+	var completados_viejos: Array = cfg.get_value(p, "completados", [])
+	var completados_nuevos: Array = []
+	for i in completados_viejos:
+		completados_nuevos.append(int(i) + 1)
+	cfg.set_value(p, "completados", completados_nuevos)
+	var estrellas_viejas: Dictionary = cfg.get_value(p, "estrellas", {})
+	var estrellas_nuevas := {}
+	for i in estrellas_viejas:
+		estrellas_nuevas[str(int(i) + 1)] = estrellas_viejas[i]
+	cfg.set_value(p, "estrellas", estrellas_nuevas)
+	var registro_viejo: Dictionary = cfg.get_value(p, "registro", {})
+	var registro_nuevo := {}
+	for i in registro_viejo:
+		registro_nuevo[str(int(i) + 1)] = registro_viejo[i]
+	cfg.set_value(p, "registro", registro_nuevo)
+	var flags_viejas: Dictionary = cfg.get_value(p, "flags", {})
+	var flags_nuevas := {}
+	for f in flags_viejas:
+		var nombre := String(f)
+		if nombre.begins_with("intro_vista_"):
+			var indice := nombre.substr("intro_vista_".length())
+			nombre = "intro_vista_%d" % (int(indice) + 1)
+		flags_nuevas[nombre] = flags_viejas[f]
+	cfg.set_value(p, "flags", flags_nuevas)
+	cfg.set_value(p, "version", 2)
+	cfg.save(RUTA_PARTIDA)
+
+
 func guardar_ajustes() -> void:
 	var cfg := ConfigFile.new()
 	cfg.set_value("ajustes", "primera_persona", primera_persona)
 	cfg.set_value("ajustes", "sensibilidad", sensibilidad)
-	for clave in ["vol_musica", "vol_efectos", "leer_voz", "texto_grande", "guia"]:
+	for clave in ["vol_musica", "vol_efectos", "leer_voz", "voz_lectura", "ritmo_voz", "texto_grande", "guia"]:
 		cfg.set_value("ajustes", clave, get(clave))
 	cfg.save(RUTA_AJUSTES)
 
@@ -296,5 +359,5 @@ func cargar_ajustes() -> void:
 	if cfg.load(RUTA_AJUSTES) == OK:
 		primera_persona = cfg.get_value("ajustes", "primera_persona", false)
 		sensibilidad = cfg.get_value("ajustes", "sensibilidad", 1.0)
-		for clave in ["vol_musica", "vol_efectos", "leer_voz", "texto_grande", "guia"]:
+		for clave in ["vol_musica", "vol_efectos", "leer_voz", "voz_lectura", "ritmo_voz", "texto_grande", "guia"]:
 			set(clave, cfg.get_value("ajustes", clave, get(clave)))

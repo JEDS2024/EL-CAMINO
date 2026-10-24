@@ -9,6 +9,7 @@ var _ambiente: AudioStreamPlayer
 var _ambiente_actual := ""
 var _actual := ""
 var _efectos: Array[AudioStreamPlayer] = []
+var _voz: AudioStreamPlayer  # narración grabada (assets/voz)
 var _cache := {}
 
 
@@ -18,6 +19,8 @@ func _ready() -> void:
 	add_child(_musica)
 	_ambiente = AudioStreamPlayer.new()
 	add_child(_ambiente)
+	_voz = AudioStreamPlayer.new()
+	add_child(_voz)
 	for i in 6:
 		var p := AudioStreamPlayer.new()
 		add_child(p)
@@ -36,6 +39,21 @@ func aplicar_volumenes() -> void:
 	if _actual != "":
 		_musica.volume_db = VOLUMEN_MUSICA_DB + linear_to_db(maxf(Juego.vol_musica, 0.001))
 	_ambiente.volume_db = -10.0 + linear_to_db(maxf(Juego.vol_efectos, 0.001))
+	_voz.volume_db = linear_to_db(maxf(Juego.vol_efectos, 0.001))
+
+
+## Lee una frase grabada (assets/voz/<clave>.ogg). Devuelve false si esa frase no tiene grabación.
+func hablar(clave: String) -> bool:
+	var stream := _cargar("res://assets/voz/%s.ogg" % clave)
+	if stream == null:
+		return false
+	_voz.stream = stream
+	_voz.play()
+	return true
+
+
+func callar() -> void:
+	_voz.stop()
 
 
 ## Sonido de fondo del lugar (viento, pájaros, grillos, ciudad). "" lo apaga.

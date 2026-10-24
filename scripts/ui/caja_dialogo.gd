@@ -4,7 +4,6 @@ extends Control
 ## Cada línea: {"quien", "texto", "si"?, "efectos"?, "opciones"?: [{"texto", "efectos"?, "siguiente"?, "si"?}]}
 
 const VELOCIDAD := 45.0  # letras por segundo
-
 signal linea_mostrada(quien: String)
 
 var resolver: Callable  # id -> Array de líneas
@@ -24,7 +23,6 @@ var _retrato: TextureRect
 var _vista_retrato: SubViewport
 var _modelo_retrato: Personaje3D
 var _clave_retrato := ""
-var _voz := ""  # voz del sistema en español para leer en voz alta
 var _quita_citas := RegEx.create_from_string("\\s*\\([^)]*\\d[^)]*\\)")
 var _indicador: Label
 var _cita: Label
@@ -132,7 +130,7 @@ func _siguiente() -> void:
 	if _indice >= _lineas.size():
 		visible = false
 		if Juego.leer_voz:
-			DisplayServer.tts_stop()
+			callar()
 		if _al_terminar.is_valid():
 			_al_terminar.call()
 		return
@@ -185,20 +183,48 @@ func _tamanos() -> void:
 	_nombre.add_theme_font_size_override("font_size", 36 if grande else 30)
 
 
-## Lee la línea con la voz del sistema (las referencias bíblicas no se leen).
+## Voz española preferida: prioriza el acento latinoamericano disponible en Colombia.
+static func voz_espanol() -> String:
+	var voces := DisplayServer.tts_get_voices_for_language("es")
+	var voz_guardada := String(Juego.voz_lectura)
+	if not voz_guardada.is_empty() and voces.has(voz_guardada):
+		return voz_guardada
+	for preferida in ["Spanish (Latin America)", "Spanish (Mexico)", "Spanish (Spain)"]:
+		if voces.has(preferida):
+			return preferida
+	if not voces.is_empty():
+		return voces[0]
+	return ""
+
+
+## Lee en voz alta: primero la narración grabada con voz natural (herramientas/generar_voces.py);
+## si la frase no tiene grabación (textos armados en el momento), usa la voz del sistema.
+static func hablar(texto: String, interrumpir := true) -> bool:
+	if interrumpir:
+		callar()
+	if Sonido.hablar(texto.strip_edges().sha1_text().substr(0, 16)):
+		return true
+	var voz := voz_espanol()
+	if voz.is_empty():
+		return false
+	DisplayServer.tts_speak(texto, voz, 100, 1.0, Juego.ritmo_voz)
+	return true
+
+
+static func callar() -> void:
+	Sonido.callar()
+	if DisplayServer.tts_is_speaking():
+		DisplayServer.tts_stop()
+
+
+## Lee la línea en voz alta (las referencias bíblicas no se leen).
 func _leer(quien: String, texto: String) -> void:
 	if not Juego.leer_voz:
 		return
-	if _voz == "":
-		var voces := DisplayServer.tts_get_voices_for_language("es")
-		if voces.is_empty():
-			return
-		_voz = voces[0]
-	DisplayServer.tts_stop()
 	var frase := _quita_citas.sub(texto, "", true)
 	if quien != "":
 		frase = quien + ": " + frase
-	DisplayServer.tts_speak(frase, _voz)
+	hablar(frase)
 
 
 func _terminar_escritura() -> void:

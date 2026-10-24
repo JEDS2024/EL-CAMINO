@@ -1,9 +1,10 @@
 class_name MapaCamino
 extends Control
-## Mapa ilustrado (aproximado, no a escala) con los lugares de las cinco historias.
+## Mapa ilustrado (aproximado, no a escala) con los lugares de las seis historias.
 
 # "lado": dónde va el nombre respecto al punto (las posiciones son aproximadas y algo separadas para leerse)
 const LUGARES := [
+	{"nombre": "Montes de Ararat", "historia": "Noé", "pos": Vector2(0.88, 0.25), "lado": Vector2(-1, 0)},
 	{"nombre": "Egipto", "historia": "José", "pos": Vector2(0.14, 0.82), "lado": Vector2(0, -1)},
 	{"nombre": "Belén", "historia": "Rut", "pos": Vector2(0.66, 0.6), "lado": Vector2(1, 0)},
 	{"nombre": "Valle de Ela", "historia": "David", "pos": Vector2(0.47, 0.62), "lado": Vector2(-1, 0)},

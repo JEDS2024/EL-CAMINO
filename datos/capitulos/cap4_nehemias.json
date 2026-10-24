@@ -8,6 +8,7 @@
  },
  "suelo": "%",
  "mirar_inicio": 0,
+ "construccion": true,
  "ambiente": {
   "cielo_arriba": "#070a1c",
   "cielo_horizonte": "#28305a",
@@ -36,13 +37,13 @@
   "^.......................5.7.......^^",
   "^..T...........................T..^^",
   "^..#####x##########S#######y####..^^",
-  "^..#s#%%%%%%%%%%%%%%%%%%%%%%%%%#..^^",
+  "^..#s#%%%%%e%%%e%%%%%%%e%%%%%e%#..^^",
   "^..#?HHH%%%%%%%%%%%%+%%%%%HHH%%#..^^",
   "^..#%HHH%%%%%::::::::%%%%%HHH%%#..^^",
-  "^..#%%%%%%%%%::::2:::%%%%%%%%%%#..^^",
-  "^..#%%%%%%%%%::::::::%+%%%%%%%%#..^^",
+  "^..#%%%%%%e%%::::2:::%%%%%%%%%%#..^^",
+  "^..#%e%%%%%%%::::::::%+%%%%%%%%#..^^",
   "^..z%%%%4%%%%%%%%%%%%%%%%%%i%%%#..^^",
-  "^..#%%%%%%+%%%%%%%|%%%%%%%%%%%%#..^^",
+  "^..#%e%%%%+%%%%%%%|%%%%%%%%%%%%#..^^",
   "^..#%HHH%%%%%%%%%%%%%%%36HHH%%%#..^^",
   "^..#%HHH%%%%%P%%%%%%%%%%%HHH%%%#..^^",
   "^..#%%%%%%%%%%%%+%%%%%%%%%%%%%%#..^^",
@@ -193,9 +194,8 @@
    "etiqueta": "Tus notas"
   },
   "x": {
-   "tipo": "mecanismo",
-   "modelo": "brecha",
-   "accion": "Reparar",
+   "tipo": "obra",
+   "accion": "Ver la obra",
    "requiere": [
     "flag:edificar"
    ],
@@ -209,12 +209,15 @@
    },
    "dialogo_listo": "tramo_listo",
    "dialogo_falta": "tramo_falta",
-   "dialogo_hecho": "tramo_hecho"
+   "dialogo_hecho": "tramo_hecho",
+   "material": "piedra",
+   "alto": 3,
+   "nombre_obra": "Brecha norte",
+   "pendiente": "primero reúne al pueblo con Eliasib"
   },
   "y": {
-   "tipo": "mecanismo",
-   "modelo": "brecha",
-   "accion": "Reparar",
+   "tipo": "obra",
+   "accion": "Ver la obra",
    "requiere": [
     "flag:guardia"
    ],
@@ -227,12 +230,15 @@
    },
    "dialogo_listo": "tramo_listo2",
    "dialogo_falta": "tramo_falta2",
-   "dialogo_hecho": "tramo_hecho"
+   "dialogo_hecho": "tramo_hecho",
+   "material": "piedra",
+   "alto": 3,
+   "nombre_obra": "Brecha este",
+   "pendiente": "primero anima a los obreros"
   },
   "z": {
-   "tipo": "mecanismo",
-   "modelo": "brecha",
-   "accion": "Reparar",
+   "tipo": "obra",
+   "accion": "Ver la obra",
    "requiere": [
     "flag:guardia"
    ],
@@ -245,7 +251,11 @@
    },
    "dialogo_listo": "tramo_listo2",
    "dialogo_falta": "tramo_falta2",
-   "dialogo_hecho": "tramo_hecho"
+   "dialogo_hecho": "tramo_hecho",
+   "material": "piedra",
+   "alto": 3,
+   "nombre_obra": "Brecha oeste",
+   "pendiente": "primero anima a los obreros"
   },
   "s": {
    "tipo": "objeto",
@@ -285,6 +295,11 @@
      "id": "tobias_antes"
     }
    ]
+  },
+  "e": {
+   "tipo": "monton",
+   "material": "escombro",
+   "bloques": 5
   }
  },
  "acertijos": {
@@ -312,66 +327,77 @@
    "hecho": [
     "flag:leyo_notas"
    ],
-   "marca": "i"
+   "marca": "i",
+   "ayuda": "Ve al letrero de tus notas y pulsa «Leer». Ahí está el orden del recorrido."
   },
   {
    "texto": "Sal de noche a inspeccionar los muros, en orden",
    "hecho": [
     "flag:inspeccion_ok"
    ],
-   "marca_acertijo": "inspeccion"
+   "marca_acertijo": "inspeccion",
+   "ayuda": "Sal de la ciudad y pulsa «Inspeccionar» en cada lugar, en este orden: puerta del Valle, fuente del Dragón, puerta del Muladar, puerta de la Fuente y estanque del Rey."
   },
   {
    "texto": "Reúne al pueblo en el templo (habla con Eliasib)",
    "hecho": [
     "flag:edificar"
    ],
-   "marca": "2"
+   "marca": "2",
+   "ayuda": "Ve al templo, en el centro de la ciudad, y pulsa «Hablar» junto a Eliasib."
   },
   {
-   "texto": "Repara el tramo norte del muro",
+   "texto": "Repara el tramo norte: pica escombros y pon las piedras en la silueta azul",
    "hecho": [
     "flag:tramo_norte"
    ],
-   "marca": "x"
+   "ayuda": "Pica los montones de escombros con «Picar» para sacar piedras. Luego apunta a la silueta azul del muro y pulsa «Poner».",
+   "marca_plano": "tramo_norte"
   },
   {
    "texto": "Responde a Sanbalat (al norte, fuera del muro)",
    "hecho": [
     "flag:respondio"
    ],
-   "marca": "5"
+   "marca": "5",
+   "ayuda": "Sal por el norte del muro, busca a Sanbalat y pulsa «Hablar». Elige cómo responderle."
   },
   {
    "texto": "Anima a los obreros a seguir con la guardia",
    "hecho": [
     "flag:guardia"
    ],
-   "marca": "4"
+   "marca": "4",
+   "ayuda": "Busca al obrero que marca el rombo dorado y pulsa «Hablar»."
   },
   {
-   "texto": "Repara los tramos este y oeste",
+   "texto": "Repara los tramos este y oeste con piedras",
    "hecho": [
     "cont:tramos>=3"
    ],
-   "marca": "yz"
+   "ayuda": "Junta más piedras de los escombros y llena las siluetas azules del muro, al este y al oeste.",
+   "marca_plano": [
+    "tramo_este",
+    "tramo_oeste"
+   ]
   },
   {
    "texto": "Dedica el muro en la Puerta de las Ovejas",
    "hecho": [
     "flag:__nunca"
    ],
-   "marca": "S"
+   "marca": "S",
+   "ayuda": "Ve a la Puerta de las Ovejas, al norte, y pulsa «Dedicar el muro»."
   }
  ],
  "intro": [
   {
    "quien": "",
-   "texto": "Nehemías era copero del rey Artajerjes en Susa. Supo que el muro de Jerusalén estaba derribado y sus puertas quemadas a fuego, y lloró, ayunó y oró. (Nehemías 1:3-4, 11)"
+   "texto": "Nehemías servía las bebidas del rey Artajerjes en Susa. Cuando supo que el muro de Jerusalén estaba derribado y sus puertas quemadas, lloró, dejó de comer y oró. (Nehemías 1:3-4, 11)"
   },
   {
    "quien": "Nehemías",
-   "texto": "Te ruego, oh Jehová, esté ahora atento tu oído a la oración de tu siervo... concede ahora buen éxito a tu siervo. (Nehemías 1:11)"
+   "texto": "Señor, por favor, escucha la oración de tu siervo... y ayúdame a que me vaya bien hoy. (Nehemías 1:11)"
   },
   {
    "quien": "",
@@ -379,21 +405,21 @@
   },
   {
    "quien": "",
-   "texto": "Llegó a Jerusalén, y después de tres días se levantó de noche con unos pocos hombres, sin decir a nadie lo que Dios había puesto en su corazón. (Nehemías 2:11-12)"
+   "texto": "Llegó a Jerusalén, y a los tres días salió de noche con unos pocos hombres, sin contarle a nadie lo que Dios le había puesto en el corazón. (Nehemías 2:11-12)"
   }
  ],
  "epilogo": [
   {
    "quien": "",
-   "texto": "Fue terminado, pues, el muro, el veinticinco del mes de Elul, en cincuenta y dos días. (Nehemías 6:15)"
+   "texto": "El muro se terminó el día veinticinco del mes de Elul. ¡Lo construyeron en solo cincuenta y dos días! (Nehemías 6:15)"
   },
   {
    "quien": "",
-   "texto": "Cuando lo oyeron todos sus enemigos, se sintieron humillados, y conocieron que por nuestro Dios había sido hecha esta obra. (Nehemías 6:16)"
+   "texto": "Cuando sus enemigos lo supieron, se sintieron avergonzados, porque entendieron que Dios había hecho esta obra. (Nehemías 6:16)"
   },
   {
    "quien": "",
-   "texto": "«No os entristezcáis, porque el gozo de Jehová es vuestra fuerza». (Nehemías 8:10)"
+   "texto": "«No estén tristes, porque la alegría del Señor es su fuerza». (Nehemías 8:10)"
   }
  ],
  "dialogos": {
@@ -407,11 +433,11 @@
    },
    {
     "quien": "",
-    "texto": "«Salí de noche por la puerta del Valle hacia la fuente del Dragón y a la puerta del Muladar; y observé los muros de Jerusalén que estaban derribados, y sus puertas consumidas por el fuego». (Nehemías 2:13)"
+    "texto": "«Salí de noche por la puerta del Valle, pasé por la fuente del Dragón y llegué a la puerta del Muladar. Vi los muros derribados y las puertas quemadas». (Nehemías 2:13)"
    },
    {
     "quien": "",
-    "texto": "«Pasé luego a la puerta de la Fuente, y al estanque del Rey; pero no había lugar por donde pasase la cabalgadura». (Nehemías 2:14)"
+    "texto": "«Luego fui a la puerta de la Fuente y al estanque del Rey, pero había tantos escombros que mi animal no podía pasar». (Nehemías 2:14)"
    }
   ],
   "inspeccion_fallo": [
@@ -427,7 +453,7 @@
   "inspeccion_exito": [
    {
     "quien": "",
-    "texto": "Subiste de noche por el torrente y observaste el muro, y volviste a entrar por la puerta del Valle. (Nehemías 2:15)"
+    "texto": "Subiste de noche por el arroyo revisando el muro, y volviste a entrar por la puerta del Valle. (Nehemías 2:15)"
    },
    {
     "quien": "",
@@ -443,28 +469,28 @@
   "eliasib_edifiquemos": [
    {
     "quien": "Nehemías",
-    "texto": "Vosotros veis el mal en que estamos, que Jerusalén está desierta, y sus puertas consumidas por el fuego; venid, y edifiquemos el muro de Jerusalén, y no estemos más en oprobio. (Nehemías 2:17)"
+    "texto": "Ustedes ven el problema que tenemos: Jerusalén está en ruinas y sus puertas quemadas. ¡Vengan, reconstruyamos el muro, para que ya no pasemos más vergüenza! (Nehemías 2:17)"
    },
    {
     "quien": "Nehemías",
-    "texto": "La mano de mi Dios ha sido buena sobre mí, y también las palabras que el rey me ha dicho. (Nehemías 2:18)"
+    "texto": "Dios ha sido bueno conmigo, y el rey también me ha dado su apoyo. (Nehemías 2:18)"
    },
    {
     "quien": "",
-    "texto": "Y dijeron: «Levantémonos y edifiquemos». Así esforzaron sus manos para bien. (Nehemías 2:18)",
+    "texto": "Y todos dijeron: «¡Manos a la obra, vamos a construir!». Y se animaron a trabajar. (Nehemías 2:18)",
     "efectos": {
      "flag": "edificar"
     }
    },
    {
     "quien": "",
-    "texto": "Eliasib el sumo sacerdote y sus hermanos los sacerdotes edificaron la Puerta de las Ovejas. (Nehemías 3:1)"
+    "texto": "Eliasib, el sumo sacerdote, y los demás sacerdotes reconstruyeron la Puerta de las Ovejas. (Nehemías 3:1)"
    }
   ],
   "eliasib_obra": [
    {
     "quien": "",
-    "texto": "Los sacerdotes restauran cada uno enfrente de su casa. (Nehemías 3:28)"
+    "texto": "Cada sacerdote repara el muro frente a su propia casa. (Nehemías 3:28)"
    }
   ],
   "eliasib_final": [
@@ -476,7 +502,7 @@
   "salum": [
    {
     "quien": "",
-    "texto": "Junto a ellos restauró Salum, gobernador de la mitad de la región de Jerusalén, él con sus hijas. (Nehemías 3:12)"
+    "texto": "A su lado trabajaba Salum, jefe de la mitad del distrito de Jerusalén, junto con sus hijas. (Nehemías 3:12)"
    }
   ],
   "hija_salum": [
@@ -494,20 +520,20 @@
   "sanbalat_burla": [
    {
     "quien": "Sanbalat",
-    "texto": "¿Qué es esto que hacéis vosotros? ¿Os rebeláis contra el rey? (Nehemías 2:19)"
+    "texto": "¿Qué están haciendo? ¿Acaso se rebelan contra el rey? (Nehemías 2:19)"
    },
    {
     "quien": "Sanbalat",
-    "texto": "¿Qué hacen estos débiles judíos? ¿Resucitarán de los montones del polvo las piedras que fueron quemadas? (Nehemías 4:2)",
+    "texto": "¿Qué hacen estos judíos tan débiles? ¿Creen que van a sacar piedras nuevas de esos montones de escombro quemado? (Nehemías 4:2)",
     "opciones": [
      {
-      "texto": "«El Dios de los cielos, él nos prosperará» (2:20)",
+      "texto": "«El Dios del cielo nos ayudará» (2:20)",
       "efectos": {
        "esperanza": 1
       }
      },
      {
-      "texto": "Orar: «Oye, oh Dios nuestro, que somos objeto de su menosprecio» (4:4)",
+      "texto": "Orar: «Escucha, Dios nuestro, cómo se burlan de nosotros» (4:4)",
       "efectos": {
        "fe": 1
       }
@@ -516,7 +542,7 @@
    },
    {
     "quien": "Nehemías",
-    "texto": "El Dios de los cielos, él nos prosperará, y nosotros sus siervos nos levantaremos y edificaremos. (Nehemías 2:20)",
+    "texto": "El Dios del cielo nos ayudará a terminar. Nosotros, sus siervos, vamos a construir. (Nehemías 2:20)",
     "efectos": {
      "flag": "respondio"
     }
@@ -537,11 +563,11 @@
   "obrero_miedo": [
    {
     "quien": "",
-    "texto": "El pueblo decía: «Las fuerzas de los acarreadores se han debilitado, y el escombro es mucho». Y sus enemigos planeaban atacarlos. (Nehemías 4:10-11)"
+    "texto": "La gente decía: «Los cargadores ya no tienen fuerzas, y el escombro es demasiado». Y sus enemigos planeaban atacarlos. (Nehemías 4:10-11)"
    },
    {
     "quien": "Nehemías",
-    "texto": "No temáis delante de ellos; acordaos del Señor, grande y temible, y pelead por vuestros hermanos, por vuestros hijos y por vuestras hijas. (Nehemías 4:14)"
+    "texto": "¡No les tengan miedo! Acuérdense del Señor, que es grande y poderoso, y luchen por sus hermanos, por sus hijos y por sus hijas. (Nehemías 4:14)"
    },
    {
     "quien": "",
@@ -561,13 +587,13 @@
   "tramo_falta": [
    {
     "quien": "",
-    "texto": "Primero hay que reunir al pueblo para la obra."
+    "texto": "Primero hay que reunir al pueblo para la obra. Habla con Eliasib en el templo."
    }
   ],
   "tramo_listo": [
    {
     "quien": "",
-    "texto": "Las familias quitan el escombro y levantan las piedras. Ya el muro llega a la mitad de su altura, porque el pueblo tenía ánimo para trabajar. (Nehemías 4:6)"
+    "texto": "Las familias quitan el escombro y levantan las piedras. El muro ya llega a la mitad de su altura, porque el pueblo trabajaba con ganas. (Nehemías 4:6)"
    }
   ],
   "tramo_falta2": [
@@ -579,13 +605,13 @@
   "tramo_listo2": [
    {
     "quien": "",
-    "texto": "Trabajan desde que sube el alba hasta que salen las estrellas, con la espada a la mano. (Nehemías 4:21)"
+    "texto": "Trabajan desde que sale el sol hasta que aparecen las estrellas, con la espada a la mano. (Nehemías 4:21)"
    }
   ],
   "tramo_hecho": [
    {
     "quien": "",
-    "texto": "Este tramo del muro está firme otra vez."
+    "texto": "Este tramo del muro está firme otra vez. El pueblo trabajaba con ganas. (Nehemías 4:6)"
    }
   ],
   "hallazgo_cartas": [
@@ -595,7 +621,7 @@
    },
    {
     "quien": "",
-    "texto": "Una carta para Asaf, guarda del bosque del rey, para que te dé madera para las puertas y el muro. Y te lo concedió el rey, según la benéfica mano de Dios sobre ti. (Nehemías 2:8)"
+    "texto": "Una carta para Asaf, el guardián del bosque del rey, para que te dé madera para las puertas y el muro. El rey te lo concedió, porque Dios estaba contigo. (Nehemías 2:8)"
    }
   ],
   "muro_incompleto": [
@@ -613,11 +639,11 @@
   "tobias_burla": [
    {
     "quien": "Tobías",
-    "texto": "Aun lo que ellos edifican, si subiere una zorra derribará su muro de piedra. (Nehemías 4:3)"
+    "texto": "¡Ese muro que construyen es tan débil que, si una zorra se sube, lo tumba! (Nehemías 4:3)"
    },
    {
     "quien": "",
-    "texto": "Pero Nehemías oró: «Oye, oh Dios nuestro, que somos objeto de su menosprecio». Y siguieron edificando. (Nehemías 4:4, 6)"
+    "texto": "Pero Nehemías oró: «Escucha, Dios nuestro, cómo se burlan de nosotros». Y siguieron construyendo. (Nehemías 4:4, 6)"
    }
   ]
  },

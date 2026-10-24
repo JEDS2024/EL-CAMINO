@@ -7,6 +7,12 @@ extends Node3D
 ## (corto, largo, calvo, panuelo), panuelo, capucha, turbante, tocado/tocado2 (egipcio), collar,
 ## armadura, casco, escudo, lanza, honda, baston, candil, nino, escala.
 const ASPECTO := {
+	# Génesis 6–9
+	"noe": {"piel":"b9845a", "pelo":"2a1a12", "tunica":"8a6845", "manto":"5a4030", "barba":"2a1a12", "baston":true},
+	"mujer_noe": {"piel":"c99470", "pelo":"2a1a12", "tunica":"8a5a6a", "manto":"d0b88a", "peinado":"panuelo", "panuelo":"d0b88a"},
+	"sem": {"piel":"b07a52", "pelo":"241812", "tunica":"6a8060", "manto":"4a5a3a", "barba":"241812"},
+	"cam": {"piel":"c68b5e", "pelo":"3a2416", "tunica":"6a7890", "manto":"405068", "barba":"3a2416"},
+	"jafet": {"piel":"a8714a", "pelo":"1a120c", "tunica":"9a704a", "manto":"6a5038", "barba":"1a120c"},
 	# Génesis 43–45
 	"jose": {"piel": "b9845a", "pelo": "1a120c", "tunica": "e8e2d0", "cinto": "d9a830", "collar": "d9a830",
 		"tocado": "e8e2d0", "tocado2": "3a5a9a"},
@@ -160,18 +166,19 @@ func _construir(a: Dictionary) -> void:
 		_caja(p, Vector3(0.19, 0.08, 0.26), Vector3(0, -0.69, -0.03), "3a2618")
 
 	# túnica, cinto y detalles
-	_caja(_cuerpo, Vector3(0.5, 0.78, 0.32), Vector3(0, 0.93, 0), tunica)
+	_caja(_cuerpo, Vector3(0.5, 0.76, 0.32), Vector3(0, 0.92, 0), tunica)  # llega hasta y = 1.30
+	_caja(_cuerpo, Vector3(0.17, 0.1, 0.17), Vector3(0, 1.31, 0), piel)  # cuello: tapa el hueco entre túnica y cabeza
 	_caja(_cuerpo, Vector3(0.52, 0.07, 0.34), Vector3(0, 0.98, 0), a.get("cinto", "6b4527"))
 	if a.get("delantal", false):
 		_caja(_cuerpo, Vector3(0.36, 0.42, 0.02), Vector3(0, 0.8, -0.17), "e8e0cc")
 	if a.has("manto"):
-		_caja(_cuerpo, Vector3(0.56, 0.86, 0.06), Vector3(0, 0.92, 0.18), a["manto"])
+		_caja(_cuerpo, Vector3(0.56, 0.78, 0.06), Vector3(0, 0.89, 0.185), a["manto"])  # queda bajo el hombro y pegado a la espalda, sin cruzar el pelo
 	if a.has("armadura"):  # cota y grebas de bronce (1 Samuel 17:5-6)
-		_caja(_cuerpo, Vector3(0.56, 0.46, 0.38), Vector3(0, 1.08, 0), a["armadura"])
+		_caja(_cuerpo, Vector3(0.56, 0.44, 0.38), Vector3(0, 1.07, 0), a["armadura"])
 		_caja(_pierna_i, Vector3(0.2, 0.3, 0.22), Vector3(0, -0.5, 0), a["armadura"])
 		_caja(_pierna_d, Vector3(0.2, 0.3, 0.22), Vector3(0, -0.5, 0), a["armadura"])
 	if a.has("collar"):  # collar de oro sobre ropa de lino (Génesis 41:42)
-		_caja(_cuerpo, Vector3(0.44, 0.1, 0.36), Vector3(0, 1.28, 0), a["collar"])
+		_caja(_cuerpo, Vector3(0.44, 0.08, 0.36), Vector3(0, 1.26, 0), a["collar"])
 		_caja(_cuerpo, Vector3(0.3, 0.12, 0.03), Vector3(0, 1.2, -0.17), a["collar"])
 
 	# brazos (giran desde el hombro)
@@ -209,7 +216,8 @@ func _construir(a: Dictionary) -> void:
 	_caja(cabeza, Vector3(0.06, 0.07, 0.05), Vector3(0, 0.15, -0.21), Color(piel).darkened(0.15).to_html(false))
 	if a.has("barba"):
 		_caja(cabeza, Vector3(0.36, 0.17, 0.08), Vector3(0, 0.05, -0.17), a["barba"])
-		_caja(cabeza, Vector3(0.38, 0.09, 0.3), Vector3(0, 0.03, 0.0), a["barba"])
+		# un poco más ancha que la cabeza (0.38): si mide igual, sus lados parpadean con las mejillas
+		_caja(cabeza, Vector3(0.4, 0.09, 0.3), Vector3(0, 0.03, 0.0), a["barba"])
 	else:
 		_caja(cabeza, Vector3(0.12, 0.03, 0.02), Vector3(0, 0.08, -0.19), "7a3a30")
 
@@ -231,7 +239,7 @@ func _construir(a: Dictionary) -> void:
 	elif a.has("turbante"):
 		_caja(cabeza, Vector3(0.46, 0.18, 0.46), Vector3(0, 0.44, 0.01), a["turbante"])
 		_caja(cabeza, Vector3(0.48, 0.05, 0.48), Vector3(0, 0.37, 0.01), Color(a["turbante"]).darkened(0.2).to_html(false))
-		_caja(cabeza, Vector3(0.41, 0.2, 0.07), Vector3(0, 0.25, 0.2), pelo)
+		_caja(cabeza, Vector3(0.41, 0.2, 0.07), Vector3(0, 0.24, 0.2), pelo)  # termina bajo el turbante, sin compartir plano
 	elif a.get("capucha", false):
 		var m: String = a["manto"]
 		_caja(cabeza, Vector3(0.46, 0.08, 0.46), Vector3(0, 0.42, 0.01), m)
@@ -294,7 +302,7 @@ func actualizar(delta: float, direccion: Vector3, moviendose: bool, _camara: Cam
 		brazo_d -= sin(_t * 2.1) * 0.04
 	else:
 		_cuerpo.rotation.z = lerpf(_cuerpo.rotation.z, 0.0, delta * 6.0)
-		inclinacion = 0.08 * (_amplitud / 0.62)  # se inclina un poco hacia adelante al caminar
+		inclinacion = -0.08 * (_amplitud / 0.62)  # rotación negativa inclina el frente (-Z) hacia adelante
 	# hablar: manos que acompañan las palabras y la cabeza asiente
 	var cabeza_x := 0.0
 	if hablando:

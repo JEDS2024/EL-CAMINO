@@ -718,6 +718,78 @@ PERSONAJES = {
 }
 
 
+# ------------------------------------------------------------------ bloques de construcción
+def gofer():  # tablas de madera clara, como las de Minecraft (Génesis 6:14)
+    im = lienzo(16, 16)
+    px = im.load()
+    for y in range(16):
+        tabla = y // 4
+        base = var(hexc("b07a44"), [4, -8, 10, -2][tabla])
+        for x in range(16):
+            c = var(base, R.randint(-7, 7))
+            if y % 4 == 3: c = hexc("6a4424")
+            if x == (tabla * 7 + 3) % 16 and y % 4 != 3: c = hexc("7a5030")
+            px[x, y] = c
+    for (x, y) in ((2, 1), (13, 5), (6, 9), (10, 13)):
+        px[x, y] = hexc("8a5a30")
+    return im
+
+
+def brea():  # brea por dentro y por fuera (Génesis 6:14): negra con brillos
+    im = lienzo(16, 16)
+    px = im.load()
+    for y in range(16):
+        for x in range(16):
+            px[x, y] = var(hexc("26201c"), R.randint(-5, 5))
+    for k in range(7):
+        x0, y0 = R.randint(0, 15), R.randint(0, 15)
+        for d in range(R.randint(2, 4)):
+            if x0 + d < 16:
+                px[x0 + d, y0] = hexc("4a4038") if d else hexc("6a5c50")
+    return im
+
+
+def tronco():  # corteza de árbol talado
+    im = lienzo(16, 16)
+    px = im.load()
+    for x in range(16):
+        base = var(hexc("6a4a2e"), [0, -10, 6, -4, 8, -6, 2, -12][x % 8])
+        for y in range(16):
+            c = var(base, R.randint(-6, 6))
+            if (x % 5 == 0) and R.random() < 0.7: c = hexc("3e2a18")
+            px[x, y] = c
+    return im
+
+
+def bloque_iso(tex):
+    """Ícono 16x16 de un cubo en perspectiva isométrica con la textura dada (como en el inventario de Minecraft)."""
+    im = lienzo(16, 16)
+    px = im.load()
+    t = tex.load()
+    T, Rr, Cc, L = (8.0, 0.6), (15.4, 4.3), (8.0, 8.0), (0.6, 4.3)
+    alto = 7.2
+
+    def resolver(p, o, a, b):
+        det = a[0] * b[1] - a[1] * b[0]
+        dx, dy = p[0] - o[0], p[1] - o[1]
+        return (dx * b[1] - dy * b[0]) / det, (a[0] * dy - a[1] * dx) / det
+
+    caras = [
+        (L, (T[0] - L[0], T[1] - L[1]), (Cc[0] - L[0], Cc[1] - L[1]), 1.0),
+        (L, (Cc[0] - L[0], Cc[1] - L[1]), (0, alto), 0.78),
+        (Cc, (Rr[0] - Cc[0], Rr[1] - Cc[1]), (0, alto), 0.6),
+    ]
+    for y in range(16):
+        for x in range(16):
+            for o, a, b, luz in caras:
+                u, v = resolver((x + 0.5, y + 0.5), o, a, b)
+                if 0 <= u < 1 and 0 <= v < 1:
+                    c = t[min(int(u * 16), 15), min(int(v * 16), 15)]
+                    px[x, y] = (int(c[0] * luz), int(c[1] * luz), int(c[2] * luz), 255)
+                    break
+    return im
+
+
 def main():
     tex = {"cebada": cebada, "ladera": lambda: ladera(False), "ladera_arena": lambda: ladera(True), "tela": tela, "pasto": pasto, "camino": camino, "arena": arena, "adoquin": adoquin, "madera": madera, "muro": muro,
            "pared_casa": pared_casa, "tejado": tejado, "agua": agua, "roca": roca, "piedra_oscura": piedra_oscura}
@@ -742,6 +814,13 @@ def main():
                  "pergamino": objeto_pergamino, "arpa": objeto_arpa}.items():
         guardar(f(), "iconos", n + ".png")
     ui_texturas()
+    # bloques de construcción: texturas y sus íconos isométricos (al final para no alterar el azar de lo anterior)
+    bloques = {"gofer": gofer(), "brea": brea(), "tronco": tronco()}
+    for n, im in bloques.items():
+        guardar(im, "texturas", n + ".png")
+    muro_img = Image.open(os.path.join(RAIZ, "texturas", "muro.png")).convert("RGBA")
+    for n, im in {"bloque_piedra": muro_img, "bloque_madera": bloques["gofer"], "bloque_brea": bloques["brea"]}.items():
+        guardar(bloque_iso(im), "iconos", n + ".png")
     # los personajes ahora son modelos 3D (scripts/personaje_3d.gd); ya no se generan sprites
     print("arte generado en", os.path.abspath(RAIZ))
 

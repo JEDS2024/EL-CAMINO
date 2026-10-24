@@ -208,21 +208,24 @@
    "hecho": [
     "flag:explicacion"
    ],
-   "marca": "1"
+   "marca": "1",
+   "ayuda": "Camina por el sendero. Cuando se acerque el forastero, pulsa «Hablar»."
   },
   {
    "texto": "Recuerda las Escrituras en orden: comenzando desde Moisés y siguiendo por los profetas",
    "hecho": [
     "flag:escrituras_ok"
    ],
-   "marca_acertijo": "escrituras"
+   "marca_acertijo": "escrituras",
+   "ayuda": "Pulsa «Recordar» en cada piedra del camino, en este orden: Génesis, Deuteronomio, Isaías y Zacarías."
   },
   {
    "texto": "Llega a la casa en Emaús (norte)",
    "hecho": [
     "flag:__nunca"
    ],
-   "marca": "S"
+   "marca": "S",
+   "ayuda": "Sigue el camino hacia el norte y pulsa «Entrar a la casa»."
   }
  ],
  "retratos": {
@@ -236,7 +239,7 @@
   },
   {
    "quien": "",
-   "texto": "Van hablando entre sí de todas las cosas que habían acontecido. (Lucas 24:14)"
+   "texto": "Van conversando de todo lo que había pasado en esos días. (Lucas 24:14)"
   },
   {
    "quien": "",
@@ -246,35 +249,35 @@
  "epilogo": [
   {
    "quien": "",
-   "texto": "Llegaron a la aldea adonde iban, y él hizo como que iba más lejos. (Lucas 24:28)"
+   "texto": "Llegaron a la aldea, y él hizo como que iba a seguir de largo. (Lucas 24:28)"
   },
   {
    "quien": "Cleofás",
-   "texto": "Quédate con nosotros, porque se hace tarde, y el día ya ha declinado. (Lucas 24:29)"
+   "texto": "Quédate con nosotros, que ya es tarde y está anocheciendo. (Lucas 24:29)"
   },
   {
    "quien": "",
-   "texto": "Y entró a quedarse con ellos. Estando sentado con ellos a la mesa, tomó el pan y lo bendijo, lo partió, y les dio. (Lucas 24:29-30)"
+   "texto": "Entró a quedarse con ellos. Sentado a la mesa, tomó el pan, dio gracias, lo partió y se lo dio. (Lucas 24:29-30)"
   },
   {
    "quien": "",
-   "texto": "Entonces les fueron abiertos los ojos, y le reconocieron: ¡era Jesús! Mas él se desapareció de su vista. (Lucas 24:31)"
+   "texto": "En ese momento se les abrieron los ojos y lo reconocieron: ¡era Jesús! Pero él desapareció de su vista. (Lucas 24:31)"
   },
   {
    "quien": "Cleofás",
-   "texto": "¿No ardía nuestro corazón en nosotros, mientras nos hablaba en el camino, y cuando nos abría las Escrituras? (Lucas 24:32)"
+   "texto": "¿No sentíamos que nos ardía el corazón mientras nos hablaba en el camino y nos explicaba las Escrituras? (Lucas 24:32)"
   },
   {
    "quien": "",
-   "texto": "Y levantándose en la misma hora, volvieron a Jerusalén, y hallaron a los once reunidos. (Lucas 24:33)"
+   "texto": "En ese mismo momento se levantaron, volvieron a Jerusalén y encontraron a los once discípulos reunidos. (Lucas 24:33)"
   },
   {
    "quien": "Los once",
-   "texto": "Ha resucitado el Señor verdaderamente, y ha aparecido a Simón. (Lucas 24:34)"
+   "texto": "¡Es verdad! ¡El Señor ha resucitado y se le apareció a Simón! (Lucas 24:34)"
   },
   {
    "quien": "",
-   "texto": "Entonces ellos contaron las cosas que les habían acontecido en el camino, y cómo le habían reconocido al partir el pan. (Lucas 24:35)"
+   "texto": "Entonces ellos contaron lo que les pasó en el camino, y cómo lo reconocieron cuando partió el pan. (Lucas 24:35)"
   }
  ],
  "dialogos": {
@@ -293,15 +296,15 @@
   "forastero_encuentro": [
    {
     "quien": "",
-    "texto": "Mientras hablaban, Jesús mismo se acercó y caminaba con ellos; pero sus ojos estaban velados para que no le conociesen. (Lucas 24:15-16)"
+    "texto": "Mientras hablaban, Jesús mismo se acercó y caminó con ellos, pero no lo reconocieron. (Lucas 24:15-16)"
    },
    {
     "quien": "Forastero",
-    "texto": "¿Qué pláticas son estas que tenéis entre vosotros mientras camináis, y por qué estáis tristes? (Lucas 24:17)"
+    "texto": "¿De qué van hablando por el camino? ¿Por qué están tan tristes? (Lucas 24:17)"
    },
    {
     "quien": "Cleofás",
-    "texto": "¿Eres tú el único forastero en Jerusalén que no has sabido las cosas que en ella han acontecido en estos días? (Lucas 24:18)"
+    "texto": "¿Eres el único en Jerusalén que no sabe lo que pasó allí estos días? (Lucas 24:18)"
    },
    {
     "quien": "Forastero",
@@ -323,23 +326,23 @@
    },
    {
     "quien": "Cleofás",
-    "texto": "De Jesús nazareno, que fue varón profeta, poderoso en obra y en palabra delante de Dios y de todo el pueblo; y cómo le entregaron los principales sacerdotes y nuestros gobernantes a sentencia de muerte, y le crucificaron. (Lucas 24:19-20)"
+    "texto": "Lo de Jesús de Nazaret. Era un profeta poderoso en lo que hacía y en lo que decía, delante de Dios y de todo el pueblo. Pero los jefes de los sacerdotes y nuestros gobernantes lo entregaron para que lo condenaran a muerte, y lo crucificaron. (Lucas 24:19-20)"
    },
    {
     "quien": "Cleofás",
-    "texto": "Pero nosotros esperábamos que él era el que había de redimir a Israel. (Lucas 24:21)"
+    "texto": "Nosotros esperábamos que él fuera el que iba a liberar a Israel. (Lucas 24:21)"
    },
    {
     "quien": "Cleofás",
-    "texto": "Aunque también nos han asombrado unas mujeres de entre nosotros: fueron al sepulcro y no hallaron su cuerpo, y dijeron que vieron ángeles, los cuales dijeron que él vive. (Lucas 24:22-23)"
+    "texto": "Y unas mujeres de nuestro grupo nos dejaron asombrados: fueron a la tumba y no encontraron su cuerpo. Dicen que vieron ángeles que les dijeron que él está vivo. (Lucas 24:22-23)"
    },
    {
     "quien": "Forastero",
-    "texto": "¡Oh insensatos, y tardos de corazón para creer todo lo que los profetas han dicho! ¿No era necesario que el Cristo padeciera estas cosas, y que entrara en su gloria? (Lucas 24:25-26)"
+    "texto": "¡Qué lentos son para entender y para creer todo lo que dijeron los profetas! ¿No tenía que sufrir el Cristo todo esto antes de entrar en su gloria? (Lucas 24:25-26)"
    },
    {
     "quien": "",
-    "texto": "Y comenzando desde Moisés, y siguiendo por todos los profetas, les declaraba en todas las Escrituras lo que de él decían. (Lucas 24:27)",
+    "texto": "Y comenzando por los libros de Moisés y siguiendo por todos los profetas, les explicó lo que las Escrituras decían de él. (Lucas 24:27)",
     "efectos": {
      "flag": "explicacion"
     }
@@ -358,7 +361,7 @@
   "forastero_llegando": [
    {
     "quien": "",
-    "texto": "Ya se ve la aldea de Emaús. El día está declinando. (Lucas 24:28-29)"
+    "texto": "Ya se ve la aldea de Emaús. Está atardeciendo. (Lucas 24:28-29)"
    }
   ],
   "piedra_fria": [
@@ -370,25 +373,25 @@
   "texto_genesis": [
    {
     "quien": "",
-    "texto": "«Pondré enemistad entre ti y la mujer, y entre tu simiente y la simiente suya; esta te herirá en la cabeza, y tú le herirás en el calcañar». (Génesis 3:15)"
+    "texto": "Dios le dijo a la serpiente: «Pondré enemistad entre ti y la mujer, y entre tu descendencia y la de ella. Él te aplastará la cabeza, y tú le morderás el talón». (Génesis 3:15)"
    }
   ],
   "texto_deuteronomio": [
    {
     "quien": "",
-    "texto": "«Profeta de en medio de ti, de tus hermanos, como yo, te levantará Jehová tu Dios; a él oiréis». (Deuteronomio 18:15)"
+    "texto": "Moisés dijo: «El Señor tu Dios hará surgir de entre tu pueblo un profeta como yo. A él deben escuchar». (Deuteronomio 18:15)"
    }
   ],
   "texto_isaias": [
    {
     "quien": "",
-    "texto": "«Mas él herido fue por nuestras rebeliones, molido por nuestros pecados; el castigo de nuestra paz fue sobre él, y por su llaga fuimos nosotros curados». (Isaías 53:5)"
+    "texto": "«Él fue herido por nuestras rebeldías y golpeado por nuestros pecados. Recibió el castigo que nos trae paz, y por sus heridas fuimos sanados». (Isaías 53:5)"
    }
   ],
   "texto_zacarias": [
    {
     "quien": "",
-    "texto": "«Alégrate mucho, hija de Sion; da voces de júbilo, hija de Jerusalén; he aquí tu rey vendrá a ti, justo y salvador, humilde, y cabalgando sobre un asno». (Zacarías 9:9)"
+    "texto": "«¡Alégrate mucho, Jerusalén! ¡Grita de alegría! Mira, tu rey viene a ti, justo y salvador, humilde y montado en un burro». (Zacarías 9:9)"
    }
   ],
   "escrituras_fallo": [
@@ -420,7 +423,7 @@
    },
    {
     "quien": "",
-    "texto": "«¿Por qué buscáis entre los muertos al que vive? No está aquí, sino que ha resucitado. Acordaos de lo que os habló, cuando aún estaba en Galilea». (Lucas 24:5-6)"
+    "texto": "«¿Por qué buscan entre los muertos al que está vivo? No está aquí, ¡ha resucitado! Acuérdense de lo que les dijo cuando todavía estaba en Galilea». (Lucas 24:5-6)"
    }
   ],
   "casa_cerrada": [
@@ -434,19 +437,19 @@
   "antes": [
    {
     "quien": "",
-    "texto": "Cinco historias de la Biblia, un mismo camino: Dios obrando en personas reales."
+    "texto": "Seis historias de la Biblia, un mismo camino: Dios obrando en personas reales."
    }
   ],
   "fe": [
    {
     "quien": "",
-    "texto": "Como David, aprendiste que «de Jehová es la batalla». (1 Samuel 17:47)"
+    "texto": "Como David, aprendiste que «la batalla es del Señor». (1 Samuel 17:47)"
    }
   ],
   "esperanza": [
    {
     "quien": "",
-    "texto": "Como Nehemías, viste que lo derribado puede levantarse: «El Dios de los cielos, él nos prosperará». (Nehemías 2:20)"
+    "texto": "Como Nehemías, viste que lo derribado puede levantarse: «El Dios del cielo nos ayudará». (Nehemías 2:20)"
    }
   ],
   "amor": [

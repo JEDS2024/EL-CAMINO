@@ -21,6 +21,9 @@ var _objetivo_entidad: Entidad
 var _reloj := 0.0
 var faro: Faro
 var hablando_con := ""  # nombre de quien dice la línea actual del diálogo
+var _mision_actual := {}  # objetivo vigente (para la tarjeta de ayuda)
+var _apunte := {}  # bloque al que apunta la mira (capítulos con construcción)
+var _espera_bloque := 0.0
 
 
 func _ready() -> void:
@@ -67,7 +70,12 @@ func _crear_ui() -> void:
 	hud.pedir_vista.connect(_cambiar_vista)
 	hud.pedir_pausa.connect(_mostrar_pausa)
 	hud.pedir_mochila.connect(_mostrar_mochila)
-	tactil.excluir = [hud.boton_accion, hud.boton_vista, hud.boton_pausa, hud.boton_mochila]
+	hud.pedir_ayuda.connect(func(): _explicar_mision(_mision_actual, false))
+	hud.pedir_picar.connect(_picar)
+	hud.pedir_poner.connect(_poner)
+	hud.elegir_casilla.connect(_elegir_casilla)
+	tactil.excluir = [hud.boton_accion, hud.boton_vista, hud.boton_pausa, hud.boton_mochila, hud.boton_ayuda, hud.boton_picar,
+		hud.boton_poner, hud.barra]
 
 	dialogo = CajaDialogo.new()
 	raiz.add_child(dialogo)
@@ -101,6 +109,8 @@ func _modo_juego(activo: bool) -> void:
 	tactil.reiniciar()
 	if jugador:
 		jugador.bloqueado = not activo
+	if nivel and not activo:
+		nivel.construccion.mostrar_previa(null, "")
 
 
 # ------------------------------------------------------------------ niveles
@@ -125,7 +135,12 @@ func _cargar_nivel(i: int) -> void:
 	faro = Faro.new()
 	faro.visible = false
 	nivel.add_child(faro)
-	_reloj = 0.0
+	_mision_actual = {}
+	_reloj = 2.6  # la primera misión se explica después de la introducción
+	nivel.construccion.plano_completo.connect(_plano_completo)
+	hud.construir = bool(datos_cap.get("construccion", false))
+	hud.casilla_elegida = -1
+	hud.fijar_construccion(false, false, false)
 	var retratos := {String(prota.get("nombre", "")): jugador.clave_modelo}
 	retratos.merge(datos_cap.get("retratos", {}))
 	for clave in datos_cap.get("leyenda", {}):
@@ -202,6 +217,7 @@ func _abrir_dialogo(lineas: Array, despues: Callable = Callable()) -> void:
 	tactil.reiniciar()
 	tactil.visible = false
 	hud.fijar_accion("")
+	hud.ocultar_mision()
 	dialogo.iniciar(lineas, func():
 		hablando_con = ""
 		if jugador:
@@ -240,23 +256,99 @@ func _process(delta: float) -> void:
 	if _objetivo_entidad:
 		_objetivo_entidad.resaltada = true
 	hud.fijar_accion(_objetivo_entidad.texto_accion() if _objetivo_entidad else "")
+	if hud.construir:
+		_apuntar_bloque()
+	_espera_bloque -= delta
 	_reloj -= delta
 	if _reloj <= 0:
 		_reloj = 0.5
+		if nivel.construccion.actualizar_planos():
+			hud.mostrar_aviso(_texto_ayuda_bloques(), "", 5.0)
+		_actualizar_seleccion()
 		var actual: Dictionary = {}
 		for o in datos_cap.get("objetivos", []):
 			if not Juego.cumple(o.get("hecho", [])):
 				actual = o
 				break
-		hud.fijar_objetivo(actual.get("texto", ""))
+		hud.fijar_objetivo(_texto_objetivo(actual))
 		_actualizar_faro(actual)
+		if actual.get("texto", "") != _mision_actual.get("texto", ""):
+			_mision_actual = actual
+			_explicar_mision(actual, true)
+
+
+## Cómo cumplir un objetivo: su "ayuda" del JSON o, si no tiene, una explicación según su tipo.
+func ayuda_de(o: Dictionary) -> String:
+	if o.has("ayuda"):
+		return String(o["ayuda"])
+	if o.has("marca_plano"):
+		return "Sigue el rombo dorado. Pica bloques del montón con «Picar» y ponlos en la silueta azul con «Poner»."
+	if o.has("marca_acertijo"):
+		return "Sigue el rombo dorado y pulsa el botón junto a cada lugar, en el orden correcto."
+	return "Sigue el rombo dorado y, cuando estés cerca, pulsa el botón grande de la derecha."
+
+
+## Tarjeta de la misión vigente; la lee en voz alta si está activada la lectura.
+func _explicar_mision(o: Dictionary, nueva: bool) -> void:
+	if o.is_empty() or not en_juego or dialogo.visible:
+		return
+	var como := ayuda_de(o)
+	hud.mostrar_mision(String(o.get("texto", "")), como, nueva)
+	if Juego.leer_voz:
+		CajaDialogo.hablar(como)
+
+
+## Material que pide ahora un objetivo de construir ("marca_plano"), si el jugador no tiene nada de él.
+func _material_que_falta(o: Dictionary) -> String:
+	var id := _plano_del_objetivo(o)
+	var con := nivel.construccion
+	if id == "":
+		return ""
+	var celda = con.celda_que_falta(id, jugador.global_position)
+	if celda == null:
+		return ""
+	var material: String = con.planos[id]["celdas"][celda]
+	return material if Juego.cantidad_bloque(material) == 0 else ""
+
+
+## Plano activo y sin terminar que señala "marca_plano" (un id o una lista de ids), o "".
+func _plano_del_objetivo(o: Dictionary) -> String:
+	var ids = o.get("marca_plano", [])
+	for id in (ids if ids is Array else [ids]):
+		var con := nivel.construccion
+		if con.planos.has(id) and con.planos[id]["activo"] and not con.planos[id]["hecho"]:
+			return String(id)
+	return ""
+
+
+## Texto del objetivo; en los de construir avisa primero de dónde sacar el material.
+func _texto_objetivo(o: Dictionary) -> String:
+	var texto := String(o.get("texto", ""))
+	var falta := _material_que_falta(o)
+	if falta != "":
+		var fuente := "los troncos" if falta == "madera" else ("los montones de brea" if falta == "brea" else "los escombros")
+		texto = "Pica %s para sacar %s («Picar»)" % [fuente, Construccion.nombre_de(falta).to_lower()]
+	return texto
 
 
 ## Coloca el faro sobre el objetivo: la entidad más cercana con una de las letras de "marca",
-## o la siguiente lámpara de "marca_acertijo".
+## la siguiente lámpara de "marca_acertijo" o, en "marca_plano", el próximo bloque por poner
+## (o el montón donde conseguir el material, si no tienes).
 func _actualizar_faro(o: Dictionary) -> void:
 	var destino: Entidad = null
-	if o.has("marca_acertijo"):
+	var punto: Variant = null
+	if o.has("marca_plano"):
+		var con := nivel.construccion
+		var falta := _material_que_falta(o)
+		var id_plano := _plano_del_objetivo(o)
+		var celda: Variant = null
+		if falta != "":
+			celda = con.fuente_de(falta, jugador.global_position)
+		elif id_plano != "":
+			celda = con.celda_que_falta(id_plano, jugador.global_position)
+		if celda != null:
+			punto = Vector3(celda) + Vector3(0.5, 0.0, 0.5)
+	elif o.has("marca_acertijo"):
 		destino = nivel.siguiente_del_acertijo(o["marca_acertijo"])
 	elif o.has("marca"):
 		var mejor := INF
@@ -269,9 +361,11 @@ func _actualizar_faro(o: Dictionary) -> void:
 	for e in nivel.entidades:
 		if is_instance_valid(e):
 			e.marcada = Juego.guia and e == destino
-	faro.visible = Juego.guia and destino != null
 	if destino:
-		faro.global_position = destino.global_position
+		punto = destino.global_position
+	faro.visible = Juego.guia and punto != null
+	if punto != null:
+		faro.global_position = punto
 
 
 func _interactuar() -> void:
@@ -290,6 +384,150 @@ func _interactuar() -> void:
 		e.interactuar(self)
 
 
+# ------------------------------------------------------------------ bloques (estilo Minecraft)
+## Material de construcción en la mano: el elegido en la barra o, si se acabó, el primero que haya
+## (prefiere lo que falta en los planos activos).
+func _material_elegido() -> String:
+	var c := nivel.construccion
+	if c.seleccion != "" and Juego.cantidad_bloque(c.seleccion) > 0:
+		return c.seleccion
+	var falta := c.faltantes()
+	var primero := ""
+	for o in Juego.inventario_capitulo().values():
+		if o.has("bloque") and o["cantidad"] > 0:
+			if falta.has(o["bloque"]):
+				return o["bloque"]
+			if primero == "":
+				primero = o["bloque"]
+	return primero
+
+
+func _actualizar_seleccion() -> void:
+	var m := _material_elegido()
+	var idx := -1
+	var lista: Array = Juego.inventario_capitulo().values()
+	for i in lista.size():
+		if lista[i].get("bloque", "") == m:
+			idx = i
+	if idx != hud.casilla_elegida:
+		hud.casilla_elegida = idx
+		hud.actualizar()
+
+
+func _elegir_casilla(i: int) -> void:
+	var lista: Array = Juego.inventario_capitulo().values()
+	if nivel and i < lista.size() and lista[i].has("bloque"):
+		nivel.construccion.seleccion = lista[i]["bloque"]
+		Sonido.efecto("seleccion", 0.5)
+		hud.mostrar_aviso(String(lista[i]["nombre"]), "", 0.8)
+		_actualizar_seleccion()
+
+
+func _ciclar_material(paso: int) -> void:
+	var mats := []
+	for o in Juego.inventario_capitulo().values():
+		if o.has("bloque"):
+			mats.append(o["bloque"])
+	if mats.size() < 2:
+		return
+	var actual := mats.find(_material_elegido())
+	nivel.construccion.seleccion = mats[posmod(actual + paso, mats.size())]
+	_actualizar_seleccion()
+
+
+func _apuntar_bloque() -> void:
+	var c := nivel.construccion
+	_apunte = c.apuntar(jugador.camara, jugador)
+	var mat := _material_elegido()
+	var puede_picar := false
+	var puede_poner := false
+	if not _apunte.is_empty():
+		puede_picar = c.se_puede_picar(_apunte["bloque"])
+		puede_poner = mat != "" and c.motivo_para_no_poner(_apunte["poner"], mat) == ""
+	if puede_poner:
+		var destino: Vector3i = _apunte["poner"]
+		var es_plano := c.plano_de(destino) != ""
+		var material_destino := c.material_de_plano(destino) if es_plano else mat
+		c.mostrar_previa(destino, "plano" if es_plano else "poner", material_destino)
+	elif puede_picar:
+		var material_objetivo: String = c.bloques[_apunte["bloque"]]["material"]
+		c.mostrar_previa(_apunte["bloque"], "picar", material_objetivo)
+	else:
+		c.mostrar_previa(null, "")
+	hud.fijar_construccion(true, puede_picar, puede_poner)
+
+
+func _texto_ayuda_bloques() -> String:
+	if DisplayServer.is_touchscreen_available():
+		return "Apunta con la mira: «Picar» saca bloques de los montones y «Poner» los coloca en la silueta azul"
+	return "Apunta con la mira: Q pica bloques de los montones y F los pone en la silueta azul (1-9 o la rueda: elegir)"
+
+
+## Lo que dice la obra cuando la tocas: cuántos bloques faltan y cómo se hace.
+func ayuda_construir(faltan: int) -> void:
+	decir("Faltan %d bloques en la silueta azul. %s." % [faltan, _texto_ayuda_bloques()])
+
+
+func _picar() -> void:
+	if not en_juego or dialogo.visible or not hud.construir or _espera_bloque > 0:
+		return
+	if _apunte.is_empty() or not nivel.construccion.se_puede_picar(_apunte["bloque"]):
+		hud.mostrar_aviso("Apunta la mira a un bloque suelto", "", 1.2)
+		return
+	picar_en(_apunte["bloque"])
+
+
+func picar_en(celda: Vector3i) -> void:
+	_espera_bloque = 0.15
+	var material: String = nivel.construccion.bloques[celda]["material"]
+	var recurso := nivel.construccion.picar_jugador(celda)
+	Juego.sumar_bloque(recurso, 1)
+	Sonido.efecto("picar", 0.8)
+	var color := Color(Construccion.MATERIALES.get(material, {}).get("color", "#b8b2a8"))
+	nivel.chispas(Vector3(celda) + Vector3.ONE * 0.5, color, 14)
+	if jugador.modelo.visible:
+		jugador.modelo.gesto("recoger")
+	_actualizar_seleccion()
+
+
+func _poner() -> void:
+	if not en_juego or dialogo.visible or not hud.construir or _espera_bloque > 0:
+		return
+	var mat := _material_elegido()
+	if mat == "":
+		hud.mostrar_aviso("No tienes bloques: pica un montón para conseguirlos", "", 2.0)
+		return
+	if _apunte.is_empty():
+		hud.mostrar_aviso("Apunta la mira al suelo o a otro bloque", "", 1.2)
+		return
+	var motivo := nivel.construccion.motivo_para_no_poner(_apunte["poner"], mat)
+	if motivo != "":
+		hud.mostrar_aviso(motivo, "", 1.6)
+		return
+	poner_en(_apunte["poner"], mat)
+
+
+func poner_en(celda: Vector3i, material: String) -> void:
+	_espera_bloque = 0.15
+	Juego.sumar_bloque(material, -1)
+	nivel.construccion.poner_jugador(celda, material)
+	Sonido.efecto("poner", 0.8)
+	if jugador.modelo.visible:
+		jugador.modelo.gesto("encender")
+	_actualizar_seleccion()
+
+
+func _plano_completo(id: String) -> void:
+	var p: Dictionary = nivel.construccion.planos[id]
+	var centro_plano := Vector3.ZERO
+	for c in p["celdas"]:
+		centro_plano += Vector3(c)
+	centro_plano /= maxf(p["celdas"].size(), 1)
+	Sonido.efecto("exito")
+	nivel.chispas(centro_plano + Vector3(0.5, 1.5, 0.5), Color("ffe08a"), 80)
+	iniciar_dialogo(String(p["dialogo"]))
+
+
 func _cambiar_vista() -> void:
 	if jugador:
 		jugador.aplicar_vista(not Juego.primera_persona)
@@ -306,6 +544,17 @@ func _unhandled_input(ev: InputEvent) -> void:
 		_mostrar_pausa()
 	elif ev.is_action_pressed("mochila") and en_juego and not dialogo.visible:
 		_mostrar_mochila()
+	elif ev.is_action_pressed("picar"):
+		_picar()
+	elif ev.is_action_pressed("poner"):
+		_poner()
+	elif ev is InputEventMouseButton and ev.pressed and en_juego and hud.construir and \
+			ev.button_index in [MOUSE_BUTTON_WHEEL_UP, MOUSE_BUTTON_WHEEL_DOWN]:
+		_ciclar_material(1 if ev.button_index == MOUSE_BUTTON_WHEEL_DOWN else -1)
+	elif en_juego:
+		for i in 9:
+			if ev.is_action_pressed("casilla_%d" % (i + 1)):
+				_elegir_casilla(i)
 
 
 func _notification(what: int) -> void:
@@ -388,7 +637,7 @@ func mostrar_titulo() -> void:
 
 
 const FRASES_PORTADA := [
-	"¡Historias reales de la Biblia!", "¡Cinco piedras lisas!", "¡De Jehová es la batalla!",
+	"¡Historias reales de la Biblia!", "¡El arca de Noé!", "¡Cinco piedras lisas!", "¡De Jehová es la batalla!",
 	"¡Tu pueblo será mi pueblo!", "¡Yo soy José!", "¡Levantémonos y edifiquemos!",
 	"¡Ardía nuestro corazón!", "¡Para niños y adultos!",
 ]
@@ -520,6 +769,9 @@ func _mostrar_ajustes(volver: Callable) -> void:
 	deslizador.call("Volumen de la música", "vol_musica", 0.0, 1.0)
 	deslizador.call("Volumen de los efectos", "vol_efectos", 0.0, 1.0)
 	deslizador.call("Sensibilidad de la cámara", "sensibilidad", 0.3, 2.5)
+	_texto(col, "Voz de lectura: natural, incluida en el juego (no necesita internet)", 22, Color(1, 1, 1, 0.85))
+	_boton(col, "Probar voz", func():
+		CajaDialogo.hablar("Hola. Esta es la voz que lee las historias de El Camino."))
 	var interruptor := func(titulo: String, clave: String):
 		var c := CheckButton.new()
 		c.text = titulo
@@ -534,8 +786,6 @@ func _mostrar_ajustes(volver: Callable) -> void:
 	interruptor.call("Texto grande", "texto_grande")
 	interruptor.call("Guía: faro sobre el objetivo y «!» en personajes", "guia")
 	interruptor.call("Primera persona", "primera_persona")
-	if Juego.leer_voz and DisplayServer.tts_get_voices_for_language("es").is_empty():
-		_texto(col, "No se encontró una voz en español en este dispositivo.", 22, Color(1, 0.7, 0.6))
 	_boton(col, "Volver", func():
 		if jugador:
 			jugador.aplicar_vista(Juego.primera_persona, false)
@@ -658,10 +908,7 @@ func _mostrar_versiculo() -> void:
 	_texto(dentro, "«%s»" % rep.get("versiculo", ""), 44 if Juego.texto_grande else 38)
 	_texto(dentro, rep.get("cita", ""), 30, Color("ffd36b"))
 	if Juego.leer_voz:
-		var voces := DisplayServer.tts_get_voices_for_language("es")
-		if not voces.is_empty():
-			DisplayServer.tts_stop()
-			DisplayServer.tts_speak("%s. %s" % [rep.get("versiculo", ""), rep.get("cita", "")], voces[0])
+		CajaDialogo.hablar("%s. %s" % [rep.get("versiculo", ""), rep.get("cita", "")])
 	_aciertos = 0
 	_boton(col, "Responder preguntas", _mostrar_pregunta.bind(0))
 
@@ -679,10 +926,7 @@ func _mostrar_pregunta(n: int) -> void:
 	_texto(col, "Pregunta %d de %d" % [n + 1, preguntas.size()], 28, Color("ffd36b"))
 	_texto(col, p.get("pregunta", ""), 44 if Juego.texto_grande else 38)
 	if Juego.leer_voz:
-		var voces := DisplayServer.tts_get_voices_for_language("es")
-		if not voces.is_empty():
-			DisplayServer.tts_stop()
-			DisplayServer.tts_speak(p.get("pregunta", ""), voces[0])
+		CajaDialogo.hablar(p.get("pregunta", ""))
 	var botones: Array[Button] = []
 	for j in p.get("opciones", []).size():
 		var b := _boton(col, p["opciones"][j], Callable())

@@ -1,5 +1,5 @@
 extends Node
-## Prueba automática: juega los tres capítulos de principio a fin.
+## Prueba automática: recorre los seis capítulos en orden.
 ## Uso: godot --headless --path . res://pruebas/recorrido.tscn
 
 var main: Node
@@ -11,10 +11,65 @@ func _ready() -> void:
 	main = load("res://escenas/main.tscn").instantiate()
 	add_child(main)
 	await _frames(5)
+	var legado := ConfigFile.new()
+	legado.set_value("partida", "version", 1)
+	legado.set_value("partida", "capitulo", 2)
+	legado.set_value("partida", "capitulo_max", 4)
+	legado.set_value("partida", "completados", [0, 4])
+	legado.set_value("partida", "estrellas", {"0": 2, "4": 3})
+	legado.set_value("partida", "registro", {"0": {"flags": []}, "4": {"flags": []}})
+	legado.set_value("partida", "flags", {"intro_vista_0": true, "intro_vista_4": true, "otro": true})
+	legado.save(Juego.RUTA_PARTIDA)
+	_ok(Juego.cargar_partida(), "se carga partida versión 1")
+	_ok(Juego.capitulo == 3 and Juego.capitulo_max == 5, "la migración desplaza capítulo actual y máximo")
+	_ok(Juego.completados == [1, 5] and Juego.estrellas.has("1") and Juego.registro.has("5"), "la migración conserva progreso, estrellas y registros")
+	_ok(Juego.flags.has("intro_vista_1") and Juego.flags.has("intro_vista_5") and Juego.flags.has("otro"), "la migración desplaza las introducciones y conserva otras marcas")
 	Juego.nueva_partida(false)
+	Juego.leer_voz = true  # recorre todo leyendo en voz alta con la narración grabada
 	main.iniciar_capitulo(0)
 	await _esperar(2.5)
+	_ok(main.dialogo.visible and Sonido._voz.playing, "la introducción se lee con la voz grabada")
 	await _dialogos()
+
+	# --- 0. Noé (Génesis 6–9)
+	var con_noe: Construccion = main.nivel.construccion
+	_ok(con_noe.bloques.size() > 150, "el arca carga sus bloques estructurales fijos")
+	_ok(con_noe.planos.has("costado") and con_noe.planos.has("aposentos") and con_noe.planos.has("brea"), "el arca presenta los tres planos")
+	await _esperar(0.6)
+	_ok(main.hud._mision.modulate.a > 0.5 and main.hud._mision_texto.text.contains("Picar"), "la tarjeta de misión explica cómo construir")
+	_ok(main.hud._objetivo.text.contains("Pica los troncos"), "sin madera, el objetivo dice de dónde sacarla")
+	_ok(main.faro.visible and con_noe.bloques.get(Vector3i(main.faro.global_position.floor()), {}).get("material", "") == "tronco",
+		"el faro señala un tronco para picar")
+	await _construir("costado", 3)
+	await _esperar(0.6)
+	var hacia: Variant = con_noe.celda_que_falta("costado", main.jugador.global_position)
+	_ok(main.faro.visible and hacia != null and main.faro.global_position.distance_to(Vector3(hacia) + Vector3(0.5, 0, 0.5)) < 0.1,
+		"con madera, el faro señala el próximo bloque de la silueta")
+	await _construir("costado")
+	await _construir("aposentos")
+	await _construir("brea")
+	_ok(Juego.cumple("flag:arca_lista"), "la brea termina el arca")
+	await _objetos()
+	_ok(Juego.contadores.get("alimento", 0) == 4, "se reúnen cuatro raciones")
+	var parejas_noe: Array[Entidad] = []
+	for _i in 4:
+		var pareja := _tipo("pareja")
+		parejas_noe.append(pareja)
+		await _usar(pareja)
+	_ok(Juego.contadores.get("parejas", 0) == 4, "las cuatro parejas se reciben")
+	await _esperar(8.0)
+	var desaparecieron := true
+	for pareja_noe in parejas_noe:
+		if is_instance_valid(pareja_noe):
+			desaparecieron = false
+			for animal_noe in pareja_noe.animales:
+				if is_instance_valid(animal_noe):
+					print("DEBUG pareja: ", pareja_noe.def.get("id"), " pos ", animal_noe.global_position, " destino ", pareja_noe.def.get("destino"))
+	_ok(desaparecieron, "las parejas llegan a la puerta y desaparecen")
+	await _usar(_tipo("salida"))
+	_ok(main.nivel._arcoiris.visible and not main.nivel._agua_diluvio.visible and not main.nivel._lluvia.emitting,
+		"el epílogo despeja el cielo, baja el agua y muestra el arcoíris")
+	await _seguir()
 
 	# --- 1. José (Génesis 43–45)
 	await _usar(_lampara("ruben"))
@@ -36,7 +91,7 @@ func _ready() -> void:
 	await _seguir()
 
 	# --- 2. Rut (Rut 1–2)
-	_ok(Juego.capitulo == 1, "pasó a Rut")
+	_ok(Juego.capitulo == 2, "pasó a Rut")
 	await _usar(_npc("Noemí"))
 	await _usar(_npc("Criado de los segadores"))
 	await _esperar(0.5)
@@ -51,9 +106,9 @@ func _ready() -> void:
 	await _seguir()
 
 	# --- 3. David (1 Samuel 17)
-	_ok(Juego.capitulo == 2, "pasó a David")
+	_ok(Juego.capitulo == 3, "pasó a David")
 	await _usar(_npc("Goliat"))
-	_ok(not Juego.fin_pedido and Juego.capitulo == 2, "Goliat solo desafía si no estás listo")
+	_ok(not Juego.fin_pedido and Juego.capitulo == 3, "Goliat solo desafía si no estás listo")
 	await _usar(_npc("Soldado de Israel"))
 	await _usar(_npc("Eliab"))
 	await _usar(_npc("Saúl"))
@@ -65,21 +120,27 @@ func _ready() -> void:
 	await _seguir()
 
 	# --- 4. Nehemías (Nehemías 2–6)
-	_ok(Juego.capitulo == 3, "pasó a Nehemías")
+	_ok(Juego.capitulo == 4, "pasó a Nehemías")
 	await _usar(_tipo("letrero"))
 	await _usar(_lampara("dragon"))  # orden equivocado a propósito
 	_ok(not Juego.cumple("flag:inspeccion_ok"), "la ruta empieza en la puerta del Valle")
 	for s in ["valle", "dragon", "muladar", "fuente", "estanque"]:
 		await _usar(_lampara(s))
 	_ok(Juego.cumple("flag:inspeccion_ok"), "inspección nocturna (Neh 2:13-15)")
+	var con: Construccion = main.nivel.construccion
+	var primera: Vector3i = con.planos["tramo_norte"]["celdas"].keys()[0]
+	_ok(con.motivo_para_no_poner(primera, "piedra") != "", "no se construye antes de reunir al pueblo")
 	await _usar(_npc("Eliasib"))
-	await _usar(_mecanismo("tramo_este"))
+	await _usar(_obra("tramo_este"))
 	_ok(not Juego.cumple("flag:tramo_este"), "sin guardia los obreros tienen miedo")
-	await _usar(_mecanismo("tramo_norte"))
+	await _construir("tramo_norte")
+	_ok(Juego.cumple("flag:tramo_norte"), "tramo norte levantado con bloques")
+	var fijo: Vector3i = con.planos["tramo_norte"]["celdas"].keys()[0]
+	_ok(not con.se_puede_picar(fijo), "lo construido para la historia no se pica")
 	await _usar(_npc("Sanbalat"))
 	await _usar(_npc("Obrero"))
-	await _usar(_mecanismo("tramo_este"))
-	await _usar(_mecanismo("tramo_oeste"))
+	await _construir("tramo_este")
+	await _construir("tramo_oeste")
 	_ok(Juego.contadores.get("tramos", 0) == 3, "muro reparado")
 	await _usar(_npc("Salum"))
 	await _objetos()
@@ -87,7 +148,7 @@ func _ready() -> void:
 	await _seguir()
 
 	# --- 5. Emaús (Lucas 24)
-	_ok(Juego.capitulo == 4, "pasó a Emaús")
+	_ok(Juego.capitulo == 5, "pasó a Emaús")
 	await _usar(_lampara("genesis"))
 	_ok(not _lampara("genesis").encendida, "las Escrituras esperan al forastero")
 	await _usar(_npc("Forastero"))
@@ -107,17 +168,17 @@ func _ready() -> void:
 		b.pressed.emit()
 		await _dialogos()
 	_ok(_boton_menu("Volver al inicio") != null, "pantalla de fin")
-	_ok(Juego.secretos == 5, "los 5 secretos encontrados")
+	_ok(Juego.secretos == 6, "los seis secretos encontrados")
 
 	# --- rejugar un capítulo desde «Capítulos» no duplica virtudes ni secretos
 	var antes := Juego.virtudes.duplicate()
 	main.mostrar_titulo()
 	await _frames(3)
-	main.jugar_capitulo(2)
+	main.jugar_capitulo(3)
 	await _esperar(2.6)
 	await _dialogos()
-	_ok(not Juego.cumple("flag:saul_bendice") and Juego.contadores.get("piedras", 0) == 0, "David empieza de nuevo")
-	_ok(Juego.secretos == 4, "su secreto vuelve a estar escondido")
+	_ok(not Juego.cumple("flag:saul_bendice") and Juego.contadores.get("piedras", 0) == 0, "David empieza de nuevo tras insertar a Noé")
+	_ok(Juego.secretos == 5, "el secreto de David vuelve a estar escondido")
 	await _usar(_npc("Soldado de Israel"))
 	await _usar(_npc("Saúl"))
 	await _objetos()
@@ -126,7 +187,7 @@ func _ready() -> void:
 	await _dialogos()
 	await _frames(3)
 	await _repaso()
-	_ok(Juego.virtudes["fe"] <= antes["fe"] + 1 and Juego.secretos == 5, "rejugar no infla las virtudes")
+	_ok(Juego.virtudes["fe"] <= antes["fe"] + 1 and Juego.secretos == 6, "rejugar no infla las virtudes")
 	print("VIRTUDES: ", Juego.virtudes, "  LUZ: ", Juego.luz, "  SECRETOS: ", Juego.secretos)
 	print("RESULTADO: ", "TODO BIEN" if fallos == 0 else "%d FALLOS" % fallos)
 	get_tree().quit(fallos)
@@ -219,11 +280,50 @@ func _objetos() -> void:
 			await _usar(e)
 
 
-func _mecanismo(flag: String) -> Entidad:
+func _obra(flag: String) -> Entidad:
 	for e in _entidades():
-		if e.tipo == "mecanismo" and e.def.get("flag_activo", "") == flag:
+		if e.tipo == "obra" and e.def.get("flag_activo", "") == flag:
 			return e
 	return null
+
+
+## Llena un plano como lo haría el jugador: pica montones para sacar material y lo pone en la silueta.
+func _construir(id: String, maximo := 999) -> void:
+	var con: Construccion = main.nivel.construccion
+	con.actualizar_planos()
+	_ok(con.planos[id]["activo"], "el plano %s está activo" % id)
+	var celdas: Dictionary = con.planos[id]["celdas"]
+	var cualquiera: Vector3i = celdas.keys()[0]
+	# el jugador se aparta para no estorbar donde van los bloques
+	main.jugador.global_position = Vector3(cualquiera) + Vector3(4, 0.2, 4)
+	await _frames(2)
+	var puestos := 0
+	for c in celdas:
+		if con.bloques.has(c):
+			continue
+		if puestos >= maximo:  # deja material en la mano para probar el faro
+			while Juego.cantidad_bloque(celdas[c]) == 0:
+				main.picar_en(con.fuente_de(celdas[c], main.jugador.global_position))
+			return
+		puestos += 1
+		var material: String = celdas[c]
+		while Juego.cantidad_bloque(material) == 0:
+			var fuente = null
+			for b in con.bloques:
+				if con.se_puede_picar(b) and con.recurso_de(con.bloques[b]["material"]) == material and con.plano_de(b) == "":
+					fuente = b
+					break
+			if fuente == null:
+				_ok(false, "hay %s para picar" % material)
+				return
+			main.picar_en(fuente)
+		var motivo := con.motivo_para_no_poner(c, material)
+		if motivo != "":
+			_ok(false, "se puede poner en %s: %s" % [c, motivo])
+			return
+		main.poner_en(c, material)
+	await _frames(3)
+	await _dialogos()
 
 
 ## Pantalla del versículo y las tres preguntas: responde bien todas.

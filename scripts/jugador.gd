@@ -52,7 +52,7 @@ func _ready() -> void:
 	candil = OmniLight3D.new()
 	candil.light_color = Color("ffc978")
 	candil.light_energy = 1.4
-	candil.position = Vector3(0.3, 1.2, 0)
+	candil.position = Vector3(0.0, 2.3, -0.7)  # alta y adelantada: a un lado del cuello quemaba la piel y la ropa
 	add_child(candil)
 
 	aplicar_vista(Juego.primera_persona, false)
@@ -120,4 +120,6 @@ func _process(_delta: float) -> void:
 	pivote.rotation.y = yaw
 	brazo.rotation.x = pitch
 	if not Juego.primera_persona:
-		modelo.visible = brazo.get_hit_length() > 1.2
+		# con la cámara pegada a una pared el personaje taparía la pantalla: se oculta (con margen para que no parpadee)
+		var cerca := brazo.get_hit_length() < (2.5 if not modelo.visible else 2.2)
+		modelo.visible = not cerca

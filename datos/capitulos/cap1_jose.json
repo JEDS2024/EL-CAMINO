@@ -309,41 +309,48 @@
    "hecho": [
     "flag:banquete"
    ],
-   "marca": "1"
+   "marca": "1",
+   "ayuda": "Sigue el rombo dorado hasta el mayordomo y pulsa «Hablar»."
   },
   {
    "texto": "Lee el registro de la familia",
    "hecho": [
     "flag:leyo_registro"
    ],
-   "marca": "i"
+   "marca": "i",
+   "ayuda": "Ve al letrero del registro y pulsa «Leer». Ahí dice quién es el mayor y quién el menor."
   },
   {
    "texto": "Sienta a tus hermanos por edad, del mayor al menor",
    "hecho": [
     "flag:mesa_ok"
-   ]
+   ],
+   "ayuda": "Cada asiento tiene el nombre de un hermano. Pulsa «Sentar» en cada uno, del mayor al menor: Rubén, Simeón, Leví, Judá y por último Benjamín.",
+   "marca_acertijo": "mesa"
   },
   {
    "texto": "Da tus órdenes al mayordomo",
    "hecho": [
     "flag:copa_hallada"
    ],
-   "marca": "1"
+   "marca": "1",
+   "ayuda": "Vuelve con el mayordomo y pulsa «Hablar». Después elige una respuesta."
   },
   {
    "texto": "Escucha a Judá",
    "hecho": [
     "flag:perdon_revelado"
    ],
-   "marca": "2"
+   "marca": "2",
+   "ayuda": "Busca a Judá, pulsa «Hablar» y escucha lo que dice por su hermano."
   },
   {
    "texto": "Envía los carros a buscar a tu padre (este)",
    "hecho": [
     "flag:__nunca"
    ],
-   "marca": "S"
+   "marca": "S",
+   "ayuda": "Ve hacia el este, a los carros, y pulsa «Enviar los carros»."
   }
  ],
  "intro": [
@@ -371,15 +378,15 @@
   },
   {
    "quien": "",
-   "texto": "Le dijeron a Jacob: «José vive aún, y él es señor en toda la tierra de Egipto». (Génesis 45:26)"
+   "texto": "Le dijeron a Jacob: «¡José está vivo, y gobierna todo Egipto!». (Génesis 45:26)"
   },
   {
    "quien": "Jacob",
-   "texto": "Basta; José mi hijo vive todavía: iré, y le veré antes que yo muera. (Génesis 45:28)"
+   "texto": "¡Me basta! Mi hijo José está vivo. Iré a verlo antes de morir. (Génesis 45:28)"
   },
   {
    "quien": "",
-   "texto": "Años después, José les diría a sus hermanos: «Vosotros pensasteis mal contra mí, mas Dios lo encaminó a bien». (Génesis 50:20)"
+   "texto": "Años después, José les dijo a sus hermanos: «Ustedes quisieron hacerme mal, pero Dios lo convirtió en bien». (Génesis 50:20)"
   }
  ],
  "retratos": {
@@ -389,11 +396,11 @@
   "mayordomo_inicio": [
    {
     "quien": "José",
-    "texto": "Lleva a casa a esos hombres, y degüella víctima y adereza; porque estos hombres comerán conmigo al mediodía. (Génesis 43:16)"
+    "texto": "Lleva a estos hombres a mi casa, mata un animal y prepara la comida, porque ellos comerán conmigo al mediodía. (Génesis 43:16)"
    },
    {
     "quien": "",
-    "texto": "Y el mayordomo hizo como José dijo. (Génesis 43:17)",
+    "texto": "El mayordomo hizo lo que José le dijo. (Génesis 43:17)",
     "efectos": {
      "flag": "banquete"
     }
@@ -445,11 +452,11 @@
   "mesa_exito": [
    {
     "quien": "",
-    "texto": "Y se sentaron delante de él, el mayor conforme a su primogenitura, y el menor conforme a su menor edad; y estaban aquellos hombres atónitos mirándose el uno al otro. (Génesis 43:33)"
+    "texto": "Los hermanos se sentaron delante de José, del mayor al menor, y se miraban unos a otros asombrados: ¿cómo sabía su orden? (Génesis 43:33)"
    },
    {
     "quien": "",
-    "texto": "La porción de Benjamín era cinco veces mayor que la de cualquiera de ellos. Y bebieron y se alegraron con él. (Génesis 43:34)"
+    "texto": "A Benjamín le sirvieron cinco veces más comida que a los demás. Y comieron y se alegraron con José. (Génesis 43:34)"
    }
   ],
   "mayordomo_copa": [
@@ -471,15 +478,15 @@
    },
    {
     "quien": "José",
-    "texto": "Llena de alimento los costales de estos hombres, cuanto pudieren llevar... y pondrás mi copa, la copa de plata, en la boca del costal del menor. (Génesis 44:1-2)"
+    "texto": "Llena los costales de estos hombres con todo el alimento que puedan cargar, y pon mi copa de plata en el costal del menor. (Génesis 44:1-2)"
    },
    {
     "quien": "",
-    "texto": "Al amanecer, los hermanos se fueron. El mayordomo los alcanzó y buscó comenzando por el mayor y acabando en el menor; y la copa fue hallada en el costal de Benjamín. (Génesis 44:3-12)"
+    "texto": "Al amanecer, los hermanos se fueron. El mayordomo los alcanzó y revisó los costales, del mayor al menor. ¡La copa estaba en el costal de Benjamín! (Génesis 44:3-12)"
    },
    {
     "quien": "",
-    "texto": "Entonces ellos rasgaron sus vestidos, cargaron sus asnos y volvieron a la ciudad. ¡Ninguno abandonó a Benjamín! (Génesis 44:13)",
+    "texto": "Los hermanos rompieron su ropa de tristeza, cargaron sus burros y volvieron a la ciudad. ¡Ninguno abandonó a Benjamín! (Génesis 44:13)",
     "efectos": {
      "flag": "copa_hallada"
     }
@@ -492,15 +499,15 @@
    },
    {
     "quien": "José",
-    "texto": "Llena de alimento los costales de estos hombres, cuanto pudieren llevar... y pondrás mi copa, la copa de plata, en la boca del costal del menor. (Génesis 44:1-2)"
+    "texto": "Llena los costales de estos hombres con todo el alimento que puedan cargar, y pon mi copa de plata en el costal del menor. (Génesis 44:1-2)"
    },
    {
     "quien": "",
-    "texto": "Al amanecer, los hermanos se fueron. El mayordomo los alcanzó y buscó comenzando por el mayor y acabando en el menor; y la copa fue hallada en el costal de Benjamín. (Génesis 44:3-12)"
+    "texto": "Al amanecer, los hermanos se fueron. El mayordomo los alcanzó y revisó los costales, del mayor al menor. ¡La copa estaba en el costal de Benjamín! (Génesis 44:3-12)"
    },
    {
     "quien": "",
-    "texto": "Entonces ellos rasgaron sus vestidos, cargaron sus asnos y volvieron a la ciudad. ¡Ninguno abandonó a Benjamín! (Génesis 44:13)",
+    "texto": "Los hermanos rompieron su ropa de tristeza, cargaron sus burros y volvieron a la ciudad. ¡Ninguno abandonó a Benjamín! (Génesis 44:13)",
     "efectos": {
      "flag": "copa_hallada"
     }
@@ -509,7 +516,7 @@
   "mayordomo_despues": [
    {
     "quien": "",
-    "texto": "Vino Judá con sus hermanos a casa de José, y se postraron delante de él en tierra. (Génesis 44:14)"
+    "texto": "Judá y sus hermanos llegaron a la casa de José y se inclinaron hasta el suelo delante de él. (Génesis 44:14)"
    }
   ],
   "juda_antes": [
@@ -521,7 +528,7 @@
   "juda_suplica": [
    {
     "quien": "Judá",
-    "texto": "¿Qué diremos a mi señor? ¿qué hablaremos? ¿o con qué nos justificaremos? Dios ha hallado la maldad de tus siervos. (Génesis 44:16)"
+    "texto": "¿Qué podemos decirte, señor? ¿Cómo vamos a defendernos? Dios ha descubierto la maldad de tus siervos. (Génesis 44:16)"
    },
    {
     "quien": "Judá",
@@ -529,7 +536,7 @@
    },
    {
     "quien": "Judá",
-    "texto": "Te ruego, pues, que quede ahora tu siervo en lugar del joven por siervo de mi señor, y que el joven vaya con sus hermanos. (Génesis 44:33)",
+    "texto": "Por favor, déjame quedarme a mí como tu esclavo en lugar del muchacho, y deja que él vuelva con sus hermanos. (Génesis 44:33)",
     "opciones": [
      {
       "texto": "Darte a conocer: tus hermanos han cambiado.",
@@ -546,31 +553,31 @@
    },
    {
     "quien": "José",
-    "texto": "Haced salir de delante de mí a todos. (Génesis 45:1)"
+    "texto": "¡Que salgan todos de aquí! (Génesis 45:1)"
    },
    {
     "quien": "",
-    "texto": "Y José se dio a conocer a sus hermanos, y lloró a gritos. (Génesis 45:1-2)"
+    "texto": "Entonces José les dijo a sus hermanos quién era, y lloró tan fuerte que todos lo oyeron. (Génesis 45:1-2)"
    },
    {
     "quien": "José",
-    "texto": "Yo soy José: ¿vive aún mi padre? (Génesis 45:3)"
+    "texto": "Yo soy José. ¿Todavía vive mi padre? (Génesis 45:3)"
    },
    {
     "quien": "",
-    "texto": "Sus hermanos no podían responderle, porque estaban turbados delante de él. (Génesis 45:3)"
+    "texto": "Sus hermanos no podían contestarle: estaban asustados delante de él. (Génesis 45:3)"
    },
    {
     "quien": "José",
-    "texto": "Yo soy José vuestro hermano, el que vendisteis para Egipto. Ahora pues, no os entristezcáis, ni os pese de haberme vendido acá; que para preservación de vida me envió Dios delante de vosotros. (Génesis 45:4-5)"
+    "texto": "Yo soy José, su hermano, el que ustedes vendieron a Egipto. Pero no se pongan tristes ni se culpen por eso: Dios me mandó antes que ustedes para salvar vidas. (Génesis 45:4-5)"
    },
    {
     "quien": "José",
-    "texto": "Así pues, no me enviasteis vosotros acá, sino Dios. Daos prisa, id a mi padre y decidle: Ven a mí, no te detengas. (Génesis 45:8-9)"
+    "texto": "Así que no fueron ustedes quienes me enviaron aquí, sino Dios. ¡Rápido, vayan con mi padre y díganle: «Ven conmigo, no te demores»! (Génesis 45:8-9)"
    },
    {
     "quien": "",
-    "texto": "Y se echó sobre el cuello de Benjamín su hermano y lloró; y besó a todos sus hermanos, y lloró sobre ellos. Después sus hermanos hablaron con él. (Génesis 45:14-15)",
+    "texto": "José abrazó a su hermano Benjamín y lloró. Luego besó a todos sus hermanos, llorando con ellos. Después sus hermanos pudieron hablar con él. (Génesis 45:14-15)",
     "efectos": {
      "flag": "perdon_revelado",
      "luz": 20
@@ -580,35 +587,35 @@
   "jose_conmovido": [
    {
     "quien": "",
-    "texto": "Pero José no podía ya contenerse delante de todos los que estaban con él. (Génesis 45:1)"
+    "texto": "José ya no pudo aguantar la emoción delante de todos. (Génesis 45:1)"
    },
    {
     "quien": "José",
-    "texto": "Haced salir de delante de mí a todos. (Génesis 45:1)"
+    "texto": "¡Que salgan todos de aquí! (Génesis 45:1)"
    },
    {
     "quien": "",
-    "texto": "Y José se dio a conocer a sus hermanos, y lloró a gritos. (Génesis 45:1-2)"
+    "texto": "Entonces José les dijo a sus hermanos quién era, y lloró tan fuerte que todos lo oyeron. (Génesis 45:1-2)"
    },
    {
     "quien": "José",
-    "texto": "Yo soy José: ¿vive aún mi padre? (Génesis 45:3)"
+    "texto": "Yo soy José. ¿Todavía vive mi padre? (Génesis 45:3)"
    },
    {
     "quien": "",
-    "texto": "Sus hermanos no podían responderle, porque estaban turbados delante de él. (Génesis 45:3)"
+    "texto": "Sus hermanos no podían contestarle: estaban asustados delante de él. (Génesis 45:3)"
    },
    {
     "quien": "José",
-    "texto": "Yo soy José vuestro hermano, el que vendisteis para Egipto. Ahora pues, no os entristezcáis, ni os pese de haberme vendido acá; que para preservación de vida me envió Dios delante de vosotros. (Génesis 45:4-5)"
+    "texto": "Yo soy José, su hermano, el que ustedes vendieron a Egipto. Pero no se pongan tristes ni se culpen por eso: Dios me mandó antes que ustedes para salvar vidas. (Génesis 45:4-5)"
    },
    {
     "quien": "José",
-    "texto": "Así pues, no me enviasteis vosotros acá, sino Dios. Daos prisa, id a mi padre y decidle: Ven a mí, no te detengas. (Génesis 45:8-9)"
+    "texto": "Así que no fueron ustedes quienes me enviaron aquí, sino Dios. ¡Rápido, vayan con mi padre y díganle: «Ven conmigo, no te demores»! (Génesis 45:8-9)"
    },
    {
     "quien": "",
-    "texto": "Y se echó sobre el cuello de Benjamín su hermano y lloró; y besó a todos sus hermanos, y lloró sobre ellos. Después sus hermanos hablaron con él. (Génesis 45:14-15)",
+    "texto": "José abrazó a su hermano Benjamín y lloró. Luego besó a todos sus hermanos, llorando con ellos. Después sus hermanos pudieron hablar con él. (Génesis 45:14-15)",
     "efectos": {
      "flag": "perdon_revelado",
      "luz": 20,
@@ -619,7 +626,7 @@
   "ruben_antes": [
    {
     "quien": "Rubén",
-    "texto": "¿No os hablé yo y dije: No pequéis contra el joven; y no escuchasteis? (Génesis 42:22)"
+    "texto": "¿No les dije que no le hicieran daño al muchacho? Y ustedes no me hicieron caso. (Génesis 42:22)"
    },
    {
     "quien": "",
@@ -635,7 +642,7 @@
   "levi_antes": [
    {
     "quien": "",
-    "texto": "Los hermanos se decían unos a otros: «Verdaderamente hemos pecado contra nuestro hermano, que vimos la angustia de su alma cuando nos rogaba, y no le escuchamos». (Génesis 42:21)"
+    "texto": "Los hermanos se decían: «De verdad hicimos mal a nuestro hermano. Vimos su angustia cuando nos rogaba, y no lo escuchamos». (Génesis 42:21)"
    },
    {
     "quien": "",
@@ -645,11 +652,11 @@
   "benjamin_antes": [
    {
     "quien": "José",
-    "texto": "¿Es este vuestro hermano menor, de quien me hablasteis? Dios tenga misericordia de ti, hijo mío. (Génesis 43:29)"
+    "texto": "¿Este es el hermano menor del que me hablaron? Que Dios te bendiga, hijo mío. (Génesis 43:29)"
    },
    {
     "quien": "",
-    "texto": "José se conmovió profundamente por su hermano, buscó dónde llorar, entró en su cámara y lloró allí. (Génesis 43:30)",
+    "texto": "José se emocionó tanto al ver a su hermano que tuvo que salir a su cuarto para llorar. (Génesis 43:30)",
     "efectos": {
      "flag": "vio_benjamin",
      "amor": 1
@@ -681,7 +688,7 @@
    },
    {
     "quien": "",
-    "texto": "«Mi gavilla se levantaba y estaba derecha, y vuestras gavillas estaban alrededor y se inclinaban a la mía». (Génesis 37:7)"
+    "texto": "«Mi manojo de trigo se levantaba y quedaba derecho, y los manojos de ustedes se ponían alrededor y se inclinaban ante el mío». (Génesis 37:7)"
    },
    {
     "quien": "",
@@ -697,7 +704,7 @@
   "mercader": [
    {
     "quien": "",
-    "texto": "De toda la tierra venían a Egipto para comprar grano a José, porque el hambre había crecido en toda la tierra. (Génesis 41:57)"
+    "texto": "De todos los países venían a Egipto a comprarle grano a José, porque había hambre en toda la tierra. (Génesis 41:57)"
    },
    {
     "quien": "",

@@ -21,11 +21,13 @@ Para agregar uno nuevo:
 | `mirar_inicio` | Hacia dónde mira Ezra al empezar, en grados (0 = norte) |
 | `ambiente` | Cielo (colores, `nubes` 0–1, `luna`, `estrellas`), luz, niebla, `montanas` y `suelo_lejano` del horizonte y `particulas` (luciernagas, polen o polvo). `"aves": true` agrega palomas volando. Con `"ciclo": {"inicio": 7.5, "fin": 18, "minutos": 12}` la hora avanza y el cielo, el sol y la luz cambian solos |
 | `mapa` | La cuadrícula del nivel; cada carácter es una celda de 2×2 metros |
+| `estructuras` | Lista de estructuras permanentes hechas de bloques. `partes` acepta `desde`, `tam`, `material`, `hueca` y `quitar` (para dejar puertas y ventanas). |
+| `planos` | Lista de formas construibles con `desde`/`tam` o piezas, material requerido, `requiere`, efectos y diálogo al completarse. |
 | `leyenda` | Convierte letras del mapa en personajes, lámparas, objetos, etc. |
 | `acertijos` | Grupos de lámparas que se encienden en un orden |
 | `objetivos` | Lo que se muestra arriba; aparece el primero que no esté `hecho`. Con `"marca": "12"` el faro apunta a la entidad más cercana con esas letras del mapa; con `"marca_acertijo": "id"` apunta a la siguiente lámpara correcta |
-| `musica` | Tema de fondo: titulo, jose, rut, david, nehemias o emaus |
-| `ambiente_sonido` | Sonido del lugar: campo, ciudad, noche o tarde |
+| `musica` | Tema de fondo: titulo, noe, jose, rut, david, nehemias o emaus |
+| `ambiente_sonido` | Sonido del lugar: campo, ciudad, noche, tarde o lluvia |
 | `lugar` | Dónde ocurre (se muestra con el título) |
 | `repaso` | `{"versiculo", "cita", "preguntas": [{"pregunta", "opciones": [...], "correcta": 0, "explica"}]}`: se muestra al terminar el capítulo (3 preguntas = 3 estrellas) |
 | `intro`, `epilogo` | Diálogos al entrar y al terminar el capítulo |
@@ -86,8 +88,15 @@ Opciones que sirven para cualquier entidad:
 - **letrero**: `{"tipo":"letrero","dialogo":"..."}`
 - **objeto**: `{"tipo":"objeto","id":"hilo1","icono":"hilo","efectos":{...},"dialogo":"..."}`
   Íconos: espiga, piedra, copa, pergamino, arpa, hilo, pieza, pan, fe, esperanza, amor, perdon, luz. Con `"secreto":1` en efectos cuenta como secreto.
+- **monton**: `{"tipo":"monton","material":"tronco","bloques":5}` coloca bloques extraíbles para reunir materiales. El tipo debe estar a distancia caminable.
+- **pareja**: `{"tipo":"pareja","especies":["oveja","oveja"],"aparece_si":["flag:arca_lista"],"efectos":{"sumar":{"parejas":1}},"destino":[30,1,24]}`. Al recibirla, los dos animales caminan al destino y desaparecen; el id también guarda `tomado_<id>`. Especies: oveja, vaca, camello o ave.
+- **obra**: `{"tipo":"obra","material":"piedra","alto":3,"flag_activo":"tramo","dialogo_listo":"..."}` define una brecha del muro que se repara con bloques.
 - **mecanismo**: `"modelo"` puede ser `pozo`, `brecha` (escombros que se vuelven muro) o `monton` (gavillas). `{"tipo":"mecanismo","requiere":[...],"flag_activo":"...","efectos":{...},"dialogo_listo":"...","dialogo_falta":"...","dialogo_hecho":"..."}`
 - **salida**: `{"tipo":"salida","requiere":[...],"dialogo_cerrado":"..."}`. Al cruzarla termina el capítulo.
+
+## Efectos de clima
+
+`{"clima":"lluvia"}`, `{"clima":"diluvio"}`, `{"clima":"bajar"}` y `{"clima":"arcoiris"}` cambian el cielo, la lluvia, el nivel visual del agua y el arcoíris del capítulo. Úsalos en las líneas del epílogo en orden narrativo.
 
 ## Diálogos
 

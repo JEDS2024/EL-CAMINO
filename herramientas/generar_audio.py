@@ -186,6 +186,14 @@ def ambiente(tipo, seg=24.0):
         pista += viento(n, 0.25 if tipo != "ciudad" else 0.12)
     if tipo == "noche":
         pista += viento(n, 0.12)
+    if tipo == "lluvia":
+        lluvia = rng.standard_normal(n)
+        pista += (_filtro(lluvia, 0.16) - _filtro(lluvia, 0.02)) * 0.28
+        for _ in range(1400):
+            inicio = int(rng.uniform(0, seg) * SR)
+            if inicio < n:
+                largo = min(n - inicio, int(rng.uniform(0.018, 0.07) * SR))
+                pista[inicio:inicio + largo] += rng.uniform(0.15, 0.5) * np.hanning(max(2, largo))[:largo]
     if tipo == "ciudad":
         pista += murmullo(n)
     if tipo in ("campo", "ciudad", "tarde"):
@@ -242,6 +250,13 @@ def sfx():
     poner(co, 0, arpa(hz(84), 0.4, 0.3))
     poner(co, 0.1, arpa(hz(88), 0.4, 0.3))
     s["correcto"] = co
+    # Efectos añadidos para construir y para la historia de Noé (azar aislado).
+    local = np.random.default_rng(909)
+    s["picar"] = (local.standard_normal(int(0.16 * SR)) * np.exp(-t(0.16) * 24) * 0.35)
+    s["poner"] = np.concatenate([arpa(hz(62), 0.10, 0.28), arpa(hz(69), 0.16, 0.25)])
+    trueno_t = t(2.8)
+    trueno = _filtro(local.standard_normal(len(trueno_t)), 0.015)
+    s["trueno"] = trueno / (np.max(np.abs(trueno)) + 1e-9) * np.exp(-trueno_t * 1.15) * 0.55
     return s
 
 
@@ -267,6 +282,17 @@ def main():
         print("ambiente", tipo)
     for nombre, señal in sfx().items():
         guardar_ogg("sfx_" + nombre, señal / (np.max(np.abs(señal)) + 1e-9) * 0.8)
+    # Contenido nuevo: usa un generador local y se añade después para conservar idénticos los recursos anteriores.
+    global rng
+    anterior = rng
+    rng = np.random.default_rng(809)
+    tema_noe = componer(68, 59, MENOR, [0, 4, 5, 3], arpa, campanas=True, semilla=71)
+    guardar_ogg("musica_noe", tema_noe)
+    guardar_ogg("amb_lluvia", ambiente("lluvia"))
+    for nombre, señal in sfx().items():
+        if nombre in ("picar", "poner", "trueno"):
+            guardar_ogg("sfx_" + nombre, señal / (np.max(np.abs(señal)) + 1e-9) * 0.8)
+    rng = anterior
     print("efectos listos en", os.path.abspath(RAIZ))
 
 

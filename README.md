@@ -4,19 +4,35 @@ Aventura 3D con estilo pixel art para celular (Android), hecha en **Godot 4.7**,
 En cada capítulo juegas como su protagonista. Las decisiones hacen crecer la **fe, la esperanza, el amor y el perdón**,
 pero nunca cambian lo que la Biblia cuenta.
 
-## Qué tiene esta versión (0.7)
+## Qué tiene esta versión (0.9)
 
 - **3D pixelado**: la escena se dibuja a 1/3 de la resolución y se agranda sin suavizar. Los personajes son modelos 3D de bloques con brazos y piernas animados.
 - **Cámara en primera o tercera persona**: se elige al empezar y se cambia en cualquier momento (botón «Vista» o tecla C).
 - **Controles táctiles**: joystick a la izquierda, deslizar a la derecha para mirar y botón de acción. En la PC: WASD para caminar; flechas, IJKL o arrastrar con el mouse (clic izquierdo o derecho) para mirar; E/Espacio para interactuar; Tab o B para la mochila; C para la vista y Esc para pausa.
-- **Cinco capítulos bíblicos**, en orden histórico:
-  1. *José perdona a sus hermanos* (Génesis 43–45): sentar a los hermanos por edad (43:33), la copa de plata y el perdón.
-  2. *Rut en el campo de Booz* (Rut 1–2): espigar tras los segadores y el efa de cebada (2:17).
-  3. *David y Goliat* (1 Samuel 17): Eliab, Saúl, la armadura y las cinco piedras lisas (17:40).
-  4. *Nehemías reconstruye el muro* (Nehemías 2–6): la inspección nocturna (2:13-15), Sanbalat y la obra con la espada en la mano (4:17).
-  5. *El camino a Emaús* (Lucas 24:13-35): el forastero explica las Escrituras y se le reconoce al partir el pan.
+- **Seis capítulos bíblicos**, en orden histórico:
+  1. *Noé y el arca* (Génesis 6–9): construcción por planos, recogida de alimento, parejas y ciclo del diluvio.
+  2. *José perdona a sus hermanos* (Génesis 43–45): sentar a los hermanos por edad (43:33), la copa de plata y el perdón.
+  3. *Rut en el campo de Booz* (Rut 1–2): espigar tras los segadores y el efa de cebada (2:17).
+  4. *David y Goliat* (1 Samuel 17): Eliab, Saúl, la armadura y las cinco piedras lisas (17:40).
+  5. *Nehemías reconstruye el muro* (Nehemías 2–6): la inspección nocturna (2:13-15), Sanbalat y la obra con la espada en la mano (4:17).
+  6. *El camino a Emaús* (Lucas 24:13-35): el forastero explica las Escrituras y se le reconoce al partir el pan.
 - **Decisiones con consecuencias**: cambian diálogos, virtudes, luz y el final.
 - **Secretos** detrás de arbustos falsos, **acertijos** de orden y **guardado automático**.
+
+## Fase 2: arca y construcción por bloques
+
+- El capítulo de Noé se juega antes de las cinco historias existentes. Sus partidas guardadas desplazan automáticamente los índices y conservan capítulos, estrellas, registros y marcas de introducción.
+- El arca carga sus bloques estructurales fijos; completa los planos de costado, aposentos y brea con madera de gofer y brea que se extraen de montones.
+- Guarda cuatro alimentos y recibe cuatro parejas de animales; ovejas, vacas, camellos y aves caminan a la entrada y desaparecen al llegar.
+- Lluvia, subida y retirada del agua y arcoíris acompañan la secuencia narrada de Génesis 7–9. Música, lluvia y efectos son recursos originales.
+
+## 0.9: voz natural, lenguaje claro y guía
+
+- **Narración grabada con voz natural** (Kokoro-82M, voz Dora, sin internet) para todos los diálogos, misiones, versículos y preguntas. Se regenera con `herramientas/generar_voces.py`.
+- **Diálogos en español actual**, fieles al sentido del versículo citado; solo el «versículo para recordar» queda literal.
+- **Tarjeta «Nueva misión»** con instrucciones de cada objetivo, leídas en voz alta, y botón «?» para repetirlas.
+- **Construcción guiada**: el rombo dorado señala el montón para picar o el bloque exacto que sigue; las siluetas laten y llevan cartel; las obras que aún no tocan se ven en gris.
+- Arreglos: aldeanos que caminaban de espaldas, cuello de los personajes, luz del candil que quemaba al protagonista, silueta que vibraba y cámara pegada a la pared.
 
 ## Para toda la familia
 
@@ -68,7 +84,7 @@ pero nunca cambian lo que la Biblia cuenta.
 Importa la carpeta `LUMBRAL` (el nombre de la carpeta no importa) y presiona F5. El APK de prueba se exporta desde Proyecto → Exportar → Android, o así:
 
 ```bash
-JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64 ANDROID_HOME=~/Android/Sdk ~/Juegos/herramientas/godot --headless --path . --export-debug "Android" ../builds/ElCamino-v0.7.apk
+JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64 ANDROID_HOME=~/Android/Sdk ~/Juegos/herramientas/godot --headless --path . --export-debug "Android" ../builds/ElCamino-v0.9.apk
 ```
 
 ## Pruebas

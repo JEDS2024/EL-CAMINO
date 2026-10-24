@@ -5,6 +5,9 @@ extends Control
 
 signal terminado
 
+const INSTRUCCIONES := "Un marcador blanco va y viene por la barra. Pulsa «¡Lanzar!» justo cuando pase por la zona dorada."
+const ACIERTO := "¡La piedra dio en la frente del filisteo!"
+const FALLO := "¡Casi! Espera a que el marcador pase por lo dorado y vuelve a intentarlo."
 const ANCHO_ZONA := 0.2  # fracción de la barra; generosa para que los niños también acierten
 
 var _pos := 0.0
@@ -40,7 +43,7 @@ func _ready() -> void:
 	titulo.add_theme_color_override("font_color", Color("ffd36b"))
 	col.add_child(titulo)
 	_mensaje = Label.new()
-	_mensaje.text = "Pulsa «¡Lanzar!» cuando la piedra pase por la zona dorada."
+	_mensaje.text = INSTRUCCIONES
 	_mensaje.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	_mensaje.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	_mensaje.add_theme_font_size_override("font_size", 26)
@@ -57,6 +60,8 @@ func _ready() -> void:
 	_boton.pressed.connect(lanzar)
 	col.add_child(_boton)
 	_zona = randf_range(0.3, 0.7)
+	if Juego.leer_voz:
+		CajaDialogo.hablar(INSTRUCCIONES)
 
 
 func _process(delta: float) -> void:
@@ -93,13 +98,17 @@ func resolver(bien: bool) -> void:
 	_activo = false
 	if bien:
 		Sonido.efecto("exito")
-		_mensaje.text = "¡La piedra dio en la frente del filisteo!"
+		_mensaje.text = ACIERTO
+		if Juego.leer_voz:
+			CajaDialogo.hablar(ACIERTO)
 		_boton.disabled = true
 		await get_tree().create_timer(1.0).timeout
 		terminado.emit()
 	else:
 		Sonido.efecto("fallo")
-		_mensaje.text = "¡Casi! Espera a que la piedra pase por lo dorado y vuelve a intentarlo."
+		_mensaje.text = FALLO
+		if Juego.leer_voz:
+			CajaDialogo.hablar(FALLO)
 		await get_tree().create_timer(0.8).timeout
 		_zona = randf_range(0.3, 0.7)
 		_activo = true

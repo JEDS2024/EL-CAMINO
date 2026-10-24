@@ -291,42 +291,48 @@
    "hecho": [
     "flag:permiso_noemi"
    ],
-   "marca": "1"
+   "marca": "1",
+   "ayuda": "Sigue el rombo dorado hasta Noemí y pulsa «Hablar»."
   },
   {
    "texto": "Pide permiso al criado que cuida a los segadores",
    "hecho": [
     "flag:permiso_criado"
    ],
-   "marca": "2"
+   "marca": "2",
+   "ayuda": "Busca al criado que cuida a los que cosechan y pulsa «Hablar»."
   },
   {
    "texto": "Habla con Booz, el dueño del campo",
    "hecho": [
     "flag:booz_ordena"
    ],
-   "marca": "3"
+   "marca": "3",
+   "ayuda": "Booz acaba de llegar al campo. Acércate y pulsa «Hablar»."
   },
   {
    "texto": "Recoge espigas detrás de los segadores (6)",
    "hecho": [
     "cont:espigas>=6"
    ],
-   "marca": "efghjk"
+   "marca": "efghjk",
+   "ayuda": "Camina por el campo detrás de los segadores. Cuando estés junto a unas espigas, pulsa «Tomar». Necesitas seis."
   },
   {
    "texto": "Desgrana lo que recogiste",
    "hecho": [
     "flag:efa"
    ],
-   "marca": "w"
+   "marca": "w",
+   "ayuda": "Ve al lugar para desgranar que marca el rombo dorado y pulsa «Desgranar»."
   },
   {
    "texto": "Vuelve con Noemí a la ciudad",
    "hecho": [
     "flag:__nunca"
    ],
-   "marca": "1"
+   "marca": "1",
+   "ayuda": "Regresa a la ciudad y pulsa «Hablar» junto a Noemí."
   }
  ],
  "intro": [
@@ -336,11 +342,11 @@
   },
   {
    "quien": "Rut",
-   "texto": "No me ruegues que te deje, y que me aparte de ti: porque a dondequiera que tú fueres, iré yo; y dondequiera que vivieres, viviré. Tu pueblo será mi pueblo, y tu Dios mi Dios. (Rut 1:16)"
+   "texto": "No me pidas que te deje. A donde tú vayas, iré yo; y donde tú vivas, viviré yo. Tu pueblo será mi pueblo, y tu Dios será mi Dios. (Rut 1:16)"
   },
   {
    "quien": "",
-   "texto": "Y llegaron a Belén en el comienzo de la siega de la cebada. (Rut 1:22)"
+   "texto": "Llegaron a Belén cuando empezaba la cosecha de la cebada. (Rut 1:22)"
   }
  ],
  "epilogo": [
@@ -350,7 +356,7 @@
   },
   {
    "quien": "",
-   "texto": "Las mujeres le decían a Noemí: «tu nuera, que te ama, es de más valor para ti que siete hijos». (Rut 4:15)"
+   "texto": "Las mujeres le decían a Noemí: «Tu nuera te ama, y vale para ti más que siete hijos». (Rut 4:15)"
   },
   {
    "quien": "",
@@ -361,7 +367,7 @@
   "noemi_inicio": [
    {
     "quien": "Rut",
-    "texto": "Te ruego que me dejes ir al campo, y cogeré espigas en pos de aquel a cuyos ojos hallare gracia. (Rut 2:2)"
+    "texto": "Déjame ir al campo a recoger las espigas que quedan, detrás de alguien que sea amable conmigo. (Rut 2:2)"
    },
    {
     "quien": "Noemí",
@@ -374,7 +380,7 @@
   "noemi_espera": [
    {
     "quien": "Noemí",
-    "texto": "Ve, hija mía. Que el Señor te guíe al campo correcto."
+    "texto": "Ve, hija mía. (Rut 2:2)"
    }
   ],
   "noemi_regreso": [
@@ -384,15 +390,15 @@
    },
    {
     "quien": "Noemí",
-    "texto": "¿Dónde has espigado hoy? ¿y dónde has trabajado? Bendito sea el que te ha reconocido. (Rut 2:19)"
+    "texto": "¿Dónde recogiste espigas hoy? ¿Dónde trabajaste? ¡Bendito sea el que se fijó en ti! (Rut 2:19)"
    },
    {
     "quien": "Rut",
-    "texto": "El nombre del varón con quien hoy he trabajado es Booz. (Rut 2:19)"
+    "texto": "El hombre en cuyo campo trabajé hoy se llama Booz. (Rut 2:19)"
    },
    {
     "quien": "Noemí",
-    "texto": "Sea él bendito de Jehová, pues que no ha rehusado a los vivos la benevolencia que tuvo para con los finados. Nuestro pariente es aquel varón, y de nuestros redentores es. (Rut 2:20)",
+    "texto": "¡Que el Señor lo bendiga! Él sigue siendo bueno con los vivos y con los que murieron. Ese hombre es nuestro pariente, uno de los que pueden ayudarnos y rescatarnos. (Rut 2:20)",
     "efectos": {
      "fin_capitulo": true
     }
@@ -407,7 +413,7 @@
   "criado_permiso": [
    {
     "quien": "Rut",
-    "texto": "Ruégote que me dejes coger y juntar tras los segadores entre las gavillas. (Rut 2:7)"
+    "texto": "Por favor, déjame recoger espigas entre los manojos, detrás de los que cosechan. (Rut 2:7)"
    },
    {
     "quien": "",
@@ -430,17 +436,17 @@
   "segador": [
    {
     "quien": "",
-    "texto": "Los segadores trabajan sin parar. Cuando Booz los saludó, respondieron: «Jehová te bendiga». (Rut 2:4)"
+    "texto": "Los que cosechan trabajan sin parar. Cuando Booz los saludó, respondieron: «¡El Señor te bendiga!». (Rut 2:4)"
    }
   ],
   "booz_encuentro": [
    {
     "quien": "",
-    "texto": "Booz saludó a los segadores: «Jehová sea con vosotros». Y ellos respondieron: «Jehová te bendiga». (Rut 2:4)"
+    "texto": "Booz saludó a los que cosechaban: «¡El Señor esté con ustedes!». Y ellos respondieron: «¡El Señor te bendiga!». (Rut 2:4)"
    },
    {
     "quien": "Booz",
-    "texto": "Oye, hija mía, no vayas a espigar a otro campo, ni pases de aquí; y aquí estarás con mis criadas. Y cuando tengas sed, ve a los vasos, y bebe del agua que sacan los criados. (Rut 2:8-9)",
+    "texto": "Escucha, hija mía: no vayas a otro campo; quédate aquí junto a mis trabajadoras. Y cuando tengas sed, ve a los cántaros y toma del agua que sacan mis criados. (Rut 2:8-9)",
     "opciones": [
      {
       "texto": "Inclinarte y preguntar por qué te muestra favor.",
@@ -456,23 +462,23 @@
    },
    {
     "quien": "Rut",
-    "texto": "¿Por qué he hallado gracia en tus ojos para que tú me reconozcas, siendo yo extranjera? (Rut 2:10)"
+    "texto": "¿Por qué eres tan bueno conmigo y te fijas en mí, si soy extranjera? (Rut 2:10)"
    },
    {
     "quien": "Booz",
-    "texto": "Por cierto se me ha declarado todo lo que has hecho con tu suegra después de la muerte de tu marido. (Rut 2:11)"
+    "texto": "Me contaron todo lo que hiciste por tu suegra después de que murió tu esposo. (Rut 2:11)"
    },
    {
     "quien": "Booz",
-    "texto": "Jehová galardone tu obra, y tu remuneración sea llena por Jehová Dios de Israel, que has venido para cubrirte debajo de sus alas. (Rut 2:12)"
+    "texto": "Que el Señor te premie por lo que hiciste. Que el Dios de Israel, bajo cuyas alas viniste a refugiarte, te recompense por completo. (Rut 2:12)"
    },
    {
     "quien": "Booz",
-    "texto": "Ven aquí, y come del pan, y moja tu bocado en el vinagre. (Rut 2:14)"
+    "texto": "Ven a comer pan, y moja tu pedazo en la salsa. (Rut 2:14)"
    },
    {
     "quien": "",
-    "texto": "A la hora de comer, Booz le dio pan y grano tostado; y ella comió y se sació, y le sobró. (Rut 2:14)",
+    "texto": "A la hora de comer, Booz le dio pan y grano tostado. Rut comió hasta quedar satisfecha, y todavía le sobró. (Rut 2:14)",
     "opciones": [
      {
       "texto": "Guardar lo que sobró para Noemí.",
@@ -488,7 +494,7 @@
    },
    {
     "quien": "Booz",
-    "texto": "Coja también espigas entre las gavillas, y no la avergoncéis; antes echaréis a sabiendas de los manojos, y la dejaréis que los coja. (Rut 2:15-16)",
+    "texto": "Déjenla recoger espigas incluso entre los manojos, y no la molesten. Hasta dejen caer algunas espigas a propósito para que ella las recoja. (Rut 2:15-16)",
     "efectos": {
      "flag": "booz_ordena"
     }
@@ -497,34 +503,34 @@
   "booz_silencio": [
    {
     "quien": "",
-    "texto": "Pero Rut se inclinó rostro a tierra y le preguntó: (Rut 2:10)"
+    "texto": "Rut se inclinó hasta el suelo y le preguntó: (Rut 2:10)"
    },
    {
     "quien": "Rut",
-    "texto": "¿Por qué he hallado gracia en tus ojos para que tú me reconozcas, siendo yo extranjera? (Rut 2:10)"
+    "texto": "¿Por qué eres tan bueno conmigo y te fijas en mí, si soy extranjera? (Rut 2:10)"
    },
    {
     "quien": "Booz",
-    "texto": "Por cierto se me ha declarado todo lo que has hecho con tu suegra después de la muerte de tu marido. (Rut 2:11)"
+    "texto": "Me contaron todo lo que hiciste por tu suegra después de que murió tu esposo. (Rut 2:11)"
    },
    {
     "quien": "Booz",
-    "texto": "Jehová galardone tu obra, y tu remuneración sea llena por Jehová Dios de Israel, que has venido para cubrirte debajo de sus alas. (Rut 2:12)"
+    "texto": "Que el Señor te premie por lo que hiciste. Que el Dios de Israel, bajo cuyas alas viniste a refugiarte, te recompense por completo. (Rut 2:12)"
    },
    {
     "quien": "Booz",
-    "texto": "Ven aquí, y come del pan, y moja tu bocado en el vinagre. (Rut 2:14)"
+    "texto": "Ven a comer pan, y moja tu pedazo en la salsa. (Rut 2:14)"
    },
    {
     "quien": "",
-    "texto": "A la hora de comer, Booz le dio pan y grano tostado; y ella comió y se sació, y le sobró. Rut lo guardó para Noemí. (Rut 2:14, 18)",
+    "texto": "A la hora de comer, Booz le dio pan y grano tostado. Rut comió hasta quedar satisfecha, y guardó lo que sobró para Noemí. (Rut 2:14, 18)",
     "efectos": {
      "amor": 1
     }
    },
    {
     "quien": "Booz",
-    "texto": "Coja también espigas entre las gavillas, y no la avergoncéis; antes echaréis a sabiendas de los manojos, y la dejaréis que los coja. (Rut 2:15-16)",
+    "texto": "Déjenla recoger espigas incluso entre los manojos, y no la molesten. Hasta dejen caer algunas espigas a propósito para que ella las recoja. (Rut 2:15-16)",
     "efectos": {
      "flag": "booz_ordena"
     }
@@ -540,7 +546,7 @@
    },
    {
     "quien": "Booz",
-    "texto": "Coja también espigas entre las gavillas, y no la avergoncéis; antes echaréis a sabiendas de los manojos, y la dejaréis que los coja. (Rut 2:15-16)",
+    "texto": "Déjenla recoger espigas incluso entre los manojos, y no la molesten. Hasta dejen caer algunas espigas a propósito para que ella las recoja. (Rut 2:15-16)",
     "efectos": {
      "flag": "booz_ordena"
     }
@@ -571,7 +577,7 @@
    },
    {
     "quien": "",
-    "texto": "«Cuando siegues tu mies en tu campo, y olvides alguna gavilla en el campo, no volverás a tomarla: para el extranjero, para el huérfano, y para la viuda será». (Deuteronomio 24:19)"
+    "texto": "«Cuando coseches tu campo y se te olvide un manojo, no regreses por él: déjalo para el extranjero, el huérfano y la viuda». (Deuteronomio 24:19)"
    },
    {
     "quien": "",
@@ -597,7 +603,7 @@
   "desgranar_listo": [
    {
     "quien": "",
-    "texto": "Espigó, pues, en el campo hasta la tarde, y desgranó lo que había recogido, y fue como un efa de cebada. (Rut 2:17)"
+    "texto": "Rut recogió espigas hasta la tarde. Luego desgranó lo que había juntado, y salió como un efa de cebada: ¡un costal grande! (Rut 2:17)"
    }
   ],
   "desgranar_hecho": [
@@ -613,7 +619,7 @@
    },
    {
     "quien": "",
-    "texto": "«Cuando siegues la mies de tu tierra, no acabarás de segar el rincón de tu campo, ni espigarás tu sementera segada; para el pobre y para el extranjero lo dejarás». (Levítico 19:9-10)"
+    "texto": "«Cuando coseches tu tierra, no cortes hasta la orilla del campo ni recojas las espigas que queden: déjalas para el pobre y el extranjero». (Levítico 19:9-10)"
    }
   ],
   "criadas": [

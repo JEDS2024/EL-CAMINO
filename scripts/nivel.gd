@@ -18,10 +18,19 @@ var alto := 0
 var entidades: Array[Entidad] = []
 var progreso_acertijos := {}
 var ciclo: CicloDia
+var construccion: Construccion
+var _entorno: Environment
+var _sol: DirectionalLight3D
+var _cielo: ShaderMaterial
+var _lluvia: CPUParticles3D
+var _agua_diluvio: MeshInstance3D
+var _arcoiris: Node3D
+var _nivel_agua := -8.0
 var _materiales_lejanos: Array[StandardMaterial3D] = []
 
 var _superficies := {}  # textura -> SurfaceTool
 var _solidos := {}  # Vector2i -> altura
+var _colisiones_extra: Array = []  # [posición, tamaño] de cajas que no ocupan una celda entera
 
 
 func construir(d: Dictionary, main_ref: Node) -> void:
@@ -33,6 +42,9 @@ func construir(d: Dictionary, main_ref: Node) -> void:
 		ancho = max(ancho, String(f).length())
 	var leyenda: Dictionary = d.get("leyenda", {})
 	var suelo_def: String = d.get("suelo", ".")
+	construccion = Construccion.new()
+	construccion.nivel = self
+	add_child(construccion)
 	for z in alto:
 		var fila: String = filas[z]
 		for x in fila.length():
@@ -40,13 +52,44 @@ func construir(d: Dictionary, main_ref: Node) -> void:
 			if leyenda.has(ch):
 				var def: Dictionary = leyenda[ch]
 				_suelo(x, z, String(def.get("suelo", suelo_def)))
-				_crear_entidad(def, x, z, ch)
+				if def.get("tipo", "") == "monton":
+					construccion.monton(Vector3i(x * 2, 0, z * 2), def.get("material", "escombro"), int(def.get("bloques", 5)))
+				else:
+					_crear_entidad(def, x, z, ch)
 			else:
 				_celda(ch, x, z, suelo_def)
+	var materiales_fijos := {}
+	for pieza in d.get("estructuras", []):
+		for parte in pieza.get("partes", [pieza]):
+			var o: Array = parte["desde"]
+			var t: Array = parte["tam"]
+			for x in int(t[0]):
+				for y in int(t[1]):
+					for z in int(t[2]):
+						var borde := x == 0 or z == 0 or x == int(t[0]) - 1 or z == int(t[2]) - 1 or y == 0
+						if parte.get("hueca", false) and not borde:
+							continue
+						var c := Vector3i(int(o[0]) + x, int(o[1]) + y, int(o[2]) + z)
+						if parte.get("quitar", false):
+							materiales_fijos.erase(c)
+						else:
+							materiales_fijos[c] = String(parte.get("material", pieza.get("material", "madera")))
+	for c in materiales_fijos:
+		construccion.poner(c, materiales_fijos[c], true, false)
+	var reconstruidos := {}
+	for material_fijo in materiales_fijos.values():
+		if reconstruidos.has(material_fijo):
+			continue
+		reconstruidos[material_fijo] = true
+		construccion._reconstruir(material_fijo)
+	for id in d.get("planos", {}):
+		agregar_plano_json(id, d["planos"][id])
 	_cordillera(d.get("ambiente", {}))
 	_cerrar_mallas()
 	_crear_colisiones()
 	_ambiente(d.get("ambiente", {}))
+	if not Juego.clima_cambiado.is_connected(aplicar_clima):
+		Juego.clima_cambiado.connect(aplicar_clima)
 
 
 func centro(x: int, z: int) -> Vector3:
@@ -293,7 +336,9 @@ func _caja(a: Vector3, b: Vector3, tex_lados: String, tex_arriba: String) -> voi
 static func material(tex: String) -> StandardMaterial3D:
 	var m := StandardMaterial3D.new()
 	m.albedo_texture = load("res://assets/texturas/%s.png" % tex)
-	m.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST_WITH_MIPMAPS
+	# Texturas de pixel art 16x16: evitar mipmaps que mezclan píxeles de color al alejarse
+	# y producen parpadeo/ruido en suelos y muros repetidos.
+	m.texture_filter = BaseMaterial3D.TEXTURE_FILTER_NEAREST
 	m.cull_mode = BaseMaterial3D.CULL_DISABLED
 	m.roughness = 1.0
 	if tex == "agua":
@@ -367,6 +412,8 @@ func _crear_colisiones() -> void:
 			var largo := (fin - x + 1) * C
 			_caja_colision(cuerpo, Vector3(x * C + largo / 2, h / 2, (z + 0.5) * C), Vector3(largo, h, C))
 			x = fin + 1
+	for extra in _colisiones_extra:
+		_caja_colision(cuerpo, extra[0], extra[1])
 
 
 func _caja_colision(cuerpo: StaticBody3D, pos: Vector3, tam: Vector3) -> void:
@@ -420,6 +467,9 @@ func _ambiente(a: Dictionary) -> void:
 	var we := WorldEnvironment.new()
 	we.environment = env
 	add_child(we)
+	_sol = sol
+	_entorno = env
+	_cielo = cielo_mat
 	if a.get("aves", false):
 		var aves := Aves.new()
 		aves.position = Vector3(ancho * C / 2, 0, alto * C / 2)
@@ -436,6 +486,116 @@ func _ambiente(a: Dictionary) -> void:
 		ciclo.configurar(a["ciclo"])
 
 
+## Cambios visuales del relato del diluvio; sin sustituir hechos por decisiones del jugador.
+func aplicar_clima(tipo: String) -> void:
+	if tipo == "lluvia":
+		Sonido.tocar_ambiente("lluvia")
+		Sonido.efecto("trueno")
+		if ciclo:
+			ciclo.set_process(false)
+		if _entorno:
+			_entorno.fog_density = maxf(_entorno.fog_density, 0.045)
+			_entorno.ambient_light_energy = minf(_entorno.ambient_light_energy, 0.28)
+		if _sol:
+			_sol.light_energy = 0.12
+			_sol.light_color = Color("77819b")
+		if _cielo:
+			_cielo.set_shader_parameter("arriba", Color("343d52"))
+			_cielo.set_shader_parameter("horizonte", Color("596273"))
+			_cielo.set_shader_parameter("nubes", 1.0)
+			_cielo.set_shader_parameter("color_nube", Color("596273"))
+			_cielo.set_shader_parameter("sombra_nube", Color("343d52"))
+		if not is_instance_valid(_lluvia):
+			_lluvia = CPUParticles3D.new()
+			_lluvia.name = "Lluvia"
+			_lluvia.amount = 450  # lluvia densa sin cargar la CPU de los celulares
+			_lluvia.lifetime = 1.8
+			_lluvia.emission_shape = CPUParticles3D.EMISSION_SHAPE_BOX
+			_lluvia.emission_box_extents = Vector3(18, 8, 18)
+			_lluvia.position = Vector3(ancho, 9, alto)
+			_lluvia.direction = Vector3(-0.15, -1, 0)
+			_lluvia.spread = 8
+			_lluvia.initial_velocity_min = 13
+			_lluvia.initial_velocity_max = 18
+			_lluvia.gravity = Vector3.ZERO
+			var malla := BoxMesh.new()
+			malla.size = Vector3(0.025, 0.28, 0.025)
+			var material_lluvia := StandardMaterial3D.new()
+			material_lluvia.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+			material_lluvia.albedo_color = Color("b4c9dc")
+			malla.material = material_lluvia
+			_lluvia.mesh = malla
+			add_child(_lluvia)
+	elif tipo == "diluvio":
+		if not is_instance_valid(_agua_diluvio):
+			_agua_diluvio = MeshInstance3D.new()
+			var plano := PlaneMesh.new()
+			plano.size = Vector2(ancho * C + 16, alto * C + 16)
+			_agua_diluvio.mesh = plano
+			_agua_diluvio.material_override = material("agua")
+			_agua_diluvio.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+			add_child(_agua_diluvio)
+			_nivel_agua = -1.2
+			_agua_diluvio.position = Vector3(ancho * C / 2, _nivel_agua, alto * C / 2)
+		_agua_diluvio.visible = true
+		_agua_diluvio.position.y = maxf(_agua_diluvio.position.y, 0.0)
+	elif tipo == "bajar":
+		if is_instance_valid(_agua_diluvio):
+			_agua_diluvio.position.y = -8.0
+			_agua_diluvio.visible = false
+		if is_instance_valid(_lluvia):
+			_lluvia.emitting = false
+		var ambiente: Dictionary = datos.get("ambiente", {})
+		if _entorno:
+			_entorno.fog_density = float(ambiente.get("densidad_niebla", 0.025))
+			_entorno.ambient_light_energy = float(ambiente.get("energia_ambiente", 0.55))
+		if _sol:
+			_sol.light_energy = float(ambiente.get("sol_energia", 0.35))
+			_sol.light_color = Color(ambiente.get("sol_color", "#9fb0ff"))
+		if _cielo:
+			_cielo.set_shader_parameter("arriba", Color(ambiente.get("cielo_arriba", "#141a33")))
+			_cielo.set_shader_parameter("horizonte", Color(ambiente.get("cielo_horizonte", "#4a3a5a")))
+			_cielo.set_shader_parameter("nubes", float(ambiente.get("nubes", 0.45)))
+			_cielo.set_shader_parameter("color_nube", Color(ambiente.get("color_nube", "#fff6ec")))
+			_cielo.set_shader_parameter("sombra_nube", Color(ambiente.get("sombra_nube", "#b8aec8")))
+		Sonido.tocar_ambiente(String(datos.get("ambiente_sonido", "")))
+	elif tipo == "arcoiris":
+		if not is_instance_valid(_arcoiris):
+			_crear_arcoiris()
+		_arcoiris.visible = true
+
+
+func _crear_arcoiris() -> void:
+	_arcoiris = Node3D.new()
+	_arcoiris.name = "Arcoiris"
+	var centro_mapa := Vector3(ancho * C * 0.5, 7.0, alto * C * 0.5 - 12.0)
+	_arcoiris.position = centro_mapa
+	add_child(_arcoiris)
+	var colores := ["#e85b4b", "#f19a45", "#f1d15b", "#73bd68", "#5d9bdd", "#6670bd", "#a36abd"]
+	for banda in colores.size():
+		var radio := 8.2 - float(banda) * 0.38
+		var st := SurfaceTool.new()
+		st.begin(Mesh.PRIMITIVE_TRIANGLES)
+		for i in 48:
+			var a0 := PI * float(i) / 48.0
+			var a1 := PI * float(i + 1) / 48.0
+			var ancho_banda := 0.24
+			var p0 := Vector3(cos(a0) * radio, sin(a0) * radio, 0)
+			var p1 := Vector3(cos(a1) * radio, sin(a1) * radio, 0)
+			var p2 := Vector3(cos(a1) * (radio + ancho_banda), sin(a1) * (radio + ancho_banda), 0)
+			var p3 := Vector3(cos(a0) * (radio + ancho_banda), sin(a0) * (radio + ancho_banda), 0)
+			for v in [p0, p1, p2, p0, p2, p3]:
+				st.add_vertex(v)
+		var malla := MeshInstance3D.new()
+		malla.mesh = st.commit()
+		var mat := StandardMaterial3D.new()
+		mat.shading_mode = BaseMaterial3D.SHADING_MODE_UNSHADED
+		mat.albedo_color = Color(colores[banda])
+		malla.material_override = mat
+		_arcoiris.add_child(malla)
+	_arcoiris.visible = false
+
+
 # ------------------------------------------------------------------ entidades
 func _crear_entidad(def: Dictionary, x: int, z: int, letra: String) -> void:
 	if def.has("id") and Juego.flags.get("tomado_" + String(def["id"]), false):
@@ -448,6 +608,64 @@ func _crear_entidad(def: Dictionary, x: int, z: int, letra: String) -> void:
 	entidades.append(e)
 	if e.solido:
 		_solidos[Vector2i(x, z)] = 1.2
+
+
+## Brecha del muro que se repara con bloques: la mitad de afuera sigue en pie y la de adentro
+## es un plano de piedras (2 de ancho × "alto" de alto) que el jugador llena.
+func agregar_obra(e: Entidad) -> void:
+	var cx := floori(e.position.x / C)
+	var cz := floori(e.position.z / C)
+	var fila: String = datos["mapa"][cz]
+	var en_x := (cx > 0 and fila[cx - 1] == "#") or (cx + 1 < fila.length() and fila[cx + 1] == "#")
+	var p := centro(cx, cz)
+	var celdas := {}
+	var alto_obra := int(e.def.get("alto", 3))
+	if en_x:  # muro de oeste a este: adentro es hacia el centro del mapa en z
+		var adentro := 1 if cz < alto / 2 else 0
+		var zb := cz * 2 + adentro
+		for i in 2:
+			for y in alto_obra:
+				celdas[Vector3i(cx * 2 + i, y, zb)] = e.def.get("material", "piedra")
+		var z0 := float(cz * 2 + (1 - adentro))
+		_caja(Vector3(p.x - C / 2, 0, z0), Vector3(p.x + C / 2, 3.2, z0 + 1), "muro", "muro")
+		_colisiones_extra.append([Vector3(p.x, 1.6, z0 + 0.5), Vector3(C, 3.2, 1)])
+	else:  # muro de norte a sur: adentro es hacia el centro del mapa en x
+		var adentro := 1 if cx < ancho / 2 else 0
+		var xb := cx * 2 + adentro
+		for i in 2:
+			for y in alto_obra:
+				celdas[Vector3i(xb, y, cz * 2 + i)] = e.def.get("material", "piedra")
+		var x0 := float(cx * 2 + (1 - adentro))
+		_caja(Vector3(x0, 0, p.z - C / 2), Vector3(x0 + 1, 3.2, p.z + C / 2), "muro", "muro")
+		_colisiones_extra.append([Vector3(x0 + 0.5, 1.6, p.z), Vector3(1, 3.2, C)])
+	construccion.agregar_plano(String(e.def.get("flag_activo", "obra_%d_%d" % [cx, cz])), celdas,
+		e.def.get("efectos", {}), String(e.def.get("dialogo_listo", "")), e.def.get("requiere", []),
+		String(e.def.get("nombre_obra", "Brecha en el muro")))
+	construccion.planos[String(e.def.get("flag_activo", "obra_%d_%d" % [cx, cz]))]["pendiente"] = String(e.def.get("pendiente", "más adelante"))
+
+
+## Plano libre (por ejemplo, el arca): una caja hueca o llena de bloques descrita en el JSON.
+## "desde": [x, y, z] en bloques, "tam": [ancho, alto, largo], "material", "hueca": solo las paredes.
+func agregar_plano_json(id: String, def: Dictionary) -> void:
+	var celdas := {}
+	for parte in def.get("partes", [def]):
+		var o: Array = parte["desde"]
+		var t: Array = parte["tam"]
+		var hueca: bool = parte.get("hueca", false)
+		for x in int(t[0]):
+			for y in int(t[1]):
+				for z in int(t[2]):
+					var borde := x == 0 or z == 0 or x == int(t[0]) - 1 or z == int(t[2]) - 1 or y == 0
+					if hueca and not borde:
+						continue
+					var c := Vector3i(int(o[0]) + x, int(o[1]) + y, int(o[2]) + z)
+					if parte.get("quitar", false):
+						celdas.erase(c)
+					else:
+						celdas[c] = parte.get("material", "madera")
+	construccion.agregar_plano(id, celdas, def.get("efectos", {}), String(def.get("dialogo", "")), def.get("requiere", []),
+		String(def.get("nombre", "Aquí irá la obra")))
+	construccion.planos[id]["pendiente"] = String(def.get("pendiente", "más adelante"))
 
 
 func lampara_encendida(e: Entidad) -> void:
@@ -510,6 +728,10 @@ func chispas(pos: Vector3, color := Color("ffd36b"), cantidad := 40) -> void:
 func _process(delta: float) -> void:
 	if _material_agua:  # el agua corre despacio
 		_material_agua.uv1_offset += Vector3(delta * 0.12, delta * 0.05, 0)
+	if is_instance_valid(_agua_diluvio) and _agua_diluvio.visible:
+		_agua_diluvio.position.y = minf(_agua_diluvio.position.y + delta * 1.2, 8.0)
+	if is_instance_valid(_lluvia) and jugador:
+		_lluvia.global_position = jugador.global_position + Vector3(0, 8, 0)
 
 
 ## Fogata: leños, llamas que titilan, chispas que suben y luz cálida.

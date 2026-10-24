@@ -1,0 +1,788 @@
+{
+  "id": "cap0_noe",
+  "titulo": "Noé y el arca",
+  "subtitulo": "Génesis 6–9",
+  "protagonista": {
+    "nombre": "Noé",
+    "modelo": "noe"
+  },
+  "retratos": {
+    "Mujer de Noé": "mujer_noe",
+    "Sem": "sem",
+    "Cam": "cam",
+    "Jafet": "jafet"
+  },
+  "suelo": ".",
+  "mirar_inicio": -90,
+  "construccion": true,
+  "musica": "noe",
+  "ambiente_sonido": "campo",
+  "ambiente": {
+    "cielo_arriba": "#253b58",
+    "cielo_horizonte": "#b98b69",
+    "luz_ambiente": "#8493a5",
+    "energia_ambiente": 0.65,
+    "niebla": "#708093",
+    "densidad_niebla": 0.008,
+    "sol_color": "#ffe0ac",
+    "sol_energia": 0.75,
+    "sol_rotacion": [
+      -48,
+      20
+    ],
+    "montanas": "#647586",
+    "suelo_lejano": "#586450",
+    "nubes": 0.32,
+    "ciclo": {
+      "inicio": 8,
+      "fin": 18,
+      "minutos": 12
+    }
+  },
+  "mapa": [
+    "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^",
+    "^^................................^^",
+    "^^................................^^",
+    "^^................................^^",
+    "^^................................^^",
+    "^^................................^^",
+    "^^................................^^",
+    "^^.T.......................T......^^",
+    "^^................................^^",
+    "^^..R.....o.v.c.w.................^^",
+    "^^................................^^",
+    "^^................................^^",
+    "^^.............X..................^^",
+    "^^.................B..............^^",
+    "^^.+...tttttt.....................^^",
+    "^^..+.....................R.......^^",
+    "^^........................R.......^^",
+    "^^...P..S.........................^^",
+    "^^..+..MCJ....................T...^^",
+    "^^.....1234.......................^^",
+    "^^.....pp.........................^^",
+    "^^.+..............................^^",
+    "^^........................T.......^^",
+    "^^................................^^",
+    "^^.R.........................R....^^",
+    "^^................................^^",
+    "^^.........................i......^^",
+    "^^..T.............................^^",
+    "^^..........................T.....^^",
+    "^^................................^^",
+    "^^................................^^",
+    "^^................................^^",
+    "^^................................^^",
+    "^^................................^^",
+    "^^................................^^",
+    "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^"
+  ],
+  "leyenda": {
+    "M": {
+      "tipo": "npc",
+      "nombre": "Mujer de Noé",
+      "modelo": "mujer_noe",
+      "dialogos": [
+        {
+          "si": [
+            "flag:arca_lista"
+          ],
+          "id": "familia_lista"
+        },
+        {
+          "id": "esposa"
+        }
+      ]
+    },
+    "S": {
+      "tipo": "npc",
+      "nombre": "Sem",
+      "modelo": "sem",
+      "dialogos": [
+        {
+          "si": [
+            "flag:arca_lista"
+          ],
+          "id": "familia_lista"
+        },
+        {
+          "id": "hijos"
+        }
+      ]
+    },
+    "C": {
+      "tipo": "npc",
+      "nombre": "Cam",
+      "modelo": "cam",
+      "dialogos": [
+        {
+          "si": [
+            "flag:arca_lista"
+          ],
+          "id": "familia_lista"
+        },
+        {
+          "id": "hijos"
+        }
+      ]
+    },
+    "J": {
+      "tipo": "npc",
+      "nombre": "Jafet",
+      "modelo": "jafet",
+      "dialogos": [
+        {
+          "si": [
+            "flag:arca_lista"
+          ],
+          "id": "familia_lista"
+        },
+        {
+          "id": "hijos"
+        }
+      ]
+    },
+    "t": {
+      "tipo": "monton",
+      "material": "tronco",
+      "bloques": 5
+    },
+    "p": {
+      "tipo": "monton",
+      "material": "brea",
+      "bloques": 6
+    },
+    "o": {
+      "tipo": "pareja",
+      "id": "pareja_ovejas",
+      "accion": "Recibir",
+      "especies": [
+        "oveja",
+        "oveja"
+      ],
+      "aparece_si": [
+        "flag:arca_lista"
+      ],
+      "efectos": {
+        "sumar": {
+          "parejas": 1
+        }
+      },
+      "destino": [
+        30,
+        1,
+        24
+      ]
+    },
+    "v": {
+      "tipo": "pareja",
+      "id": "pareja_vacas",
+      "accion": "Recibir",
+      "especies": [
+        "vaca",
+        "vaca"
+      ],
+      "aparece_si": [
+        "flag:arca_lista"
+      ],
+      "efectos": {
+        "sumar": {
+          "parejas": 1
+        }
+      },
+      "destino": [
+        30,
+        1,
+        24
+      ]
+    },
+    "c": {
+      "tipo": "pareja",
+      "id": "pareja_camellos",
+      "accion": "Recibir",
+      "especies": [
+        "camello",
+        "camello"
+      ],
+      "aparece_si": [
+        "flag:arca_lista"
+      ],
+      "efectos": {
+        "sumar": {
+          "parejas": 1
+        }
+      },
+      "destino": [
+        30,
+        1,
+        24
+      ]
+    },
+    "w": {
+      "tipo": "pareja",
+      "id": "pareja_aves",
+      "accion": "Recibir",
+      "especies": [
+        "ave",
+        "ave"
+      ],
+      "aparece_si": [
+        "flag:arca_lista"
+      ],
+      "efectos": {
+        "sumar": {
+          "parejas": 1
+        }
+      },
+      "destino": [
+        30,
+        1,
+        24
+      ]
+    },
+    "B": {
+      "tipo": "obra",
+      "planos": [
+        "costado",
+        "aposentos",
+        "brea"
+      ],
+      "accion": "Ver los planos",
+      "etiqueta": "Planos del arca",
+      "dialogo_falta": "obra_espera",
+      "dialogo_hecho": "obra_lista"
+    },
+    "X": {
+      "tipo": "salida",
+      "accion": "Entrar en el arca",
+      "requiere": [
+        "flag:arca_lista",
+        "cont:alimento>=4",
+        "cont:parejas>=4"
+      ],
+      "dialogo_cerrado": "salida_falta"
+    },
+    "1": {
+      "tipo": "objeto",
+      "id": "alimento_1",
+      "icono": "pan",
+      "nombre": "Alimento",
+      "efectos": {
+        "sumar": {
+          "alimento": 1
+        }
+      },
+      "dialogo": "alimento"
+    },
+    "2": {
+      "tipo": "objeto",
+      "id": "alimento_2",
+      "icono": "pan",
+      "nombre": "Alimento",
+      "efectos": {
+        "sumar": {
+          "alimento": 1
+        }
+      },
+      "dialogo": "alimento"
+    },
+    "3": {
+      "tipo": "objeto",
+      "id": "alimento_3",
+      "icono": "pan",
+      "nombre": "Alimento",
+      "efectos": {
+        "sumar": {
+          "alimento": 1
+        }
+      },
+      "dialogo": "alimento"
+    },
+    "4": {
+      "tipo": "objeto",
+      "id": "alimento_4",
+      "icono": "pan",
+      "nombre": "Alimento",
+      "efectos": {
+        "sumar": {
+          "alimento": 1
+        }
+      },
+      "dialogo": "alimento"
+    },
+    "i": {
+      "tipo": "objeto",
+      "id": "generaciones_adam",
+      "icono": "pergamino",
+      "nombre": "Libro de las generaciones de Adán",
+      "efectos": {
+        "secreto": 1
+      },
+      "dialogo": "libro_adam"
+    }
+  },
+  "estructuras": [
+    {
+      "material": "madera",
+      "partes": [
+        {
+          "desde": [
+            16,
+            0,
+            20
+          ],
+          "tam": [
+            30,
+            3,
+            5
+          ],
+          "hueca": true
+        },
+        {
+          "desde": [
+            30,
+            1,
+            24
+          ],
+          "tam": [
+            2,
+            2,
+            1
+          ],
+          "quitar": true
+        },
+        {
+          "desde": [
+            36,
+            1,
+            24
+          ],
+          "tam": [
+            6,
+            2,
+            1
+          ],
+          "quitar": true
+        },
+        {
+          "desde": [
+            16,
+            3,
+            20
+          ],
+          "tam": [
+            30,
+            1,
+            5
+          ]
+        },
+        {
+          "desde": [
+            16,
+            4,
+            22
+          ],
+          "tam": [
+            14,
+            1,
+            1
+          ]
+        },
+        {
+          "desde": [
+            34,
+            4,
+            22
+          ],
+          "tam": [
+            12,
+            1,
+            1
+          ]
+        }
+      ]
+    }
+  ],
+  "planos": {
+    "costado": {
+      "desde": [
+        36,
+        1,
+        24
+      ],
+      "tam": [
+        6,
+        2,
+        1
+      ],
+      "material": "madera",
+      "efectos": {
+        "flag": "costado_listo"
+      },
+      "dialogo": "costado_completo"
+    },
+    "aposentos": {
+      "partes": [
+        {
+          "desde": [
+            23,
+            1,
+            21
+          ],
+          "tam": [
+            1,
+            2,
+            1
+          ]
+        },
+        {
+          "desde": [
+            23,
+            1,
+            23
+          ],
+          "tam": [
+            1,
+            2,
+            1
+          ]
+        },
+        {
+          "desde": [
+            27,
+            1,
+            21
+          ],
+          "tam": [
+            1,
+            2,
+            1
+          ]
+        },
+        {
+          "desde": [
+            27,
+            1,
+            23
+          ],
+          "tam": [
+            1,
+            2,
+            1
+          ]
+        },
+        {
+          "desde": [
+            38,
+            1,
+            21
+          ],
+          "tam": [
+            1,
+            2,
+            1
+          ]
+        },
+        {
+          "desde": [
+            38,
+            1,
+            23
+          ],
+          "tam": [
+            1,
+            2,
+            1
+          ]
+        }
+      ],
+      "material": "madera",
+      "requiere": [
+        "flag:plano_costado"
+      ],
+      "efectos": {
+        "flag": "aposentos_listos"
+      },
+      "dialogo": "aposentos_completos",
+      "nombre": "Cuartos del arca",
+      "pendiente": "primero el costado"
+    },
+    "brea": {
+      "desde": [
+        18,
+        0,
+        25
+      ],
+      "tam": [
+        10,
+        1,
+        1
+      ],
+      "material": "brea",
+      "requiere": [
+        "flag:plano_aposentos"
+      ],
+      "efectos": {
+        "flag": "arca_lista"
+      },
+      "dialogo": "arca_lista",
+      "nombre": "Brea del arca",
+      "pendiente": "primero los cuartos"
+    }
+  },
+  "objetivos": [
+    {
+      "texto": "Termina el costado del arca: pon madera en la silueta azul",
+      "hecho": [
+        "flag:plano_costado"
+      ],
+      "marca_plano": "costado",
+      "ayuda": "Primero pica los troncos con «Picar» para sacar madera. Luego apunta a la silueta azul del arca y pulsa «Poner». El rombo dorado te muestra dónde."
+    },
+    {
+      "texto": "Entra al arca por la puerta y levanta los cuartos con madera",
+      "hecho": [
+        "flag:plano_aposentos"
+      ],
+      "marca_plano": "aposentos",
+      "ayuda": "Entra por la puerta del costado del arca. Adentro verás siluetas azules: llénalas con madera usando «Poner»."
+    },
+    {
+      "texto": "Cubre por fuera la parte de abajo del arca con brea",
+      "hecho": [
+        "flag:plano_brea"
+      ],
+      "marca_plano": "brea",
+      "ayuda": "Pica los montones negros para sacar brea. Después ponla en la silueta azul que está al pie del arca, por fuera."
+    },
+    {
+      "texto": "Guarda comida para todos (4)",
+      "hecho": [
+        "cont:alimento>=4"
+      ],
+      "marca": "1234",
+      "ayuda": "Busca las cuatro raciones de comida que marca el rombo dorado. Acércate y pulsa «Tomar»."
+    },
+    {
+      "texto": "Recibe a los animales que llegan de dos en dos (4 parejas)",
+      "hecho": [
+        "cont:parejas>=4"
+      ],
+      "marca": "ovcw",
+      "ayuda": "Las parejas de animales esperan cerca del arca. Acércate a cada pareja y pulsa «Recibir»."
+    },
+    {
+      "texto": "Entra en el arca con tu familia",
+      "hecho": [
+        "flag:__nunca"
+      ],
+      "marca": "X",
+      "ayuda": "Ve a la puerta del arca y pulsa «Entrar en el arca»."
+    }
+  ],
+  "intro": [
+    {
+      "quien": "",
+      "texto": "Hace muchísimo tiempo, la gente se había vuelto mala y la tierra estaba llena de violencia. (Génesis 6:11-12)"
+    },
+    {
+      "quien": "",
+      "texto": "Pero Noé era un hombre justo que caminaba con Dios. Tenía tres hijos: Sem, Cam y Jafet. (Génesis 6:8-10)"
+    },
+    {
+      "quien": "",
+      "texto": "Dios le dijo a Noé: «Haz un arca, un barco enorme de madera de gofer. Hazle cuartos por dentro y cúbrela con brea por dentro y por fuera». (Génesis 6:14)"
+    },
+    {
+      "quien": "",
+      "texto": "«Hazla de trescientos codos de largo, cincuenta de ancho y treinta de alto. Ponle una ventana arriba y una puerta en un costado». (Génesis 6:15-16)"
+    },
+    {
+      "quien": "",
+      "texto": "«Entrarás en el arca con tus hijos, tu esposa y las esposas de tus hijos». (Génesis 6:18)"
+    },
+    {
+      "quien": "",
+      "texto": "Tú eres Noé. Sigue el rombo dorado: te muestra dónde va cada bloque y dónde conseguir el material."
+    }
+  ],
+  "epilogo": [
+    {
+      "quien": "",
+      "texto": "Dios le dijo a Noé: «Entra en el arca con toda tu familia, porque he visto que tú eres justo». (Génesis 7:1)",
+      "efectos": {
+        "clima": "lluvia"
+      }
+    },
+    {
+      "quien": "",
+      "texto": "Noé entró con su familia y con los animales, y Dios cerró la puerta. (Génesis 7:7, 16)"
+    },
+    {
+      "quien": "",
+      "texto": "Entonces llovió sobre la tierra cuarenta días y cuarenta noches. (Génesis 7:12)",
+      "efectos": {
+        "clima": "diluvio"
+      }
+    },
+    {
+      "quien": "",
+      "texto": "El agua subió muchísimo, pero el arca flotaba sobre las aguas. (Génesis 7:17-18)"
+    },
+    {
+      "quien": "",
+      "texto": "Dios se acordó de Noé y de todos los animales. Hizo soplar un viento, y el agua empezó a bajar. (Génesis 8:1)",
+      "efectos": {
+        "clima": "bajar"
+      }
+    },
+    {
+      "quien": "",
+      "texto": "El arca se detuvo sobre los montes de Ararat. (Génesis 8:4)"
+    },
+    {
+      "quien": "",
+      "texto": "Noé soltó una paloma. Por la tarde volvió con una hoja de olivo en el pico: ¡la tierra se estaba secando! (Génesis 8:11)"
+    },
+    {
+      "quien": "",
+      "texto": "Dios le dijo: «Sal del arca con tu esposa, tus hijos, sus esposas y todos los animales». (Génesis 8:15-17)"
+    },
+    {
+      "quien": "",
+      "texto": "Noé construyó un altar y ofreció sacrificios a Dios. (Génesis 8:20)"
+    },
+    {
+      "quien": "",
+      "texto": "Dios prometió que nunca más un diluvio destruiría la tierra, y puso el arcoíris en las nubes como señal de su promesa. (Génesis 9:11-13)",
+      "efectos": {
+        "clima": "arcoiris"
+      }
+    }
+  ],
+  "aldeanos_frases": [
+    "La gente come, bebe y celebra bodas, sin imaginar lo que va a pasar. (Mateo 24:38-39)",
+    "La tierra está llena de violencia. (Génesis 6:11)",
+    "Noé anunciaba a todos lo que es justo. (2 Pedro 2:5)"
+  ],
+  "dialogos": {
+    "esposa": [
+      {
+        "quien": "",
+        "texto": "La esposa de Noé entrará con él en el arca. (Génesis 7:7)"
+      },
+      {
+        "quien": "",
+        "texto": "Consejo: los troncos dan madera y los montones negros dan brea. Apunta con la mira y pulsa «Picar»."
+      }
+    ],
+    "hijos": [
+      {
+        "quien": "",
+        "texto": "Sem, Cam y Jafet son los hijos de Noé. Ellos y sus esposas también entrarán en el arca. (Génesis 7:13)"
+      },
+      {
+        "quien": "",
+        "texto": "Consejo: si no sabes qué hacer, mira el objetivo arriba y sigue el rombo dorado."
+      }
+    ],
+    "familia_lista": [
+      {
+        "quien": "",
+        "texto": "Tu familia está lista para entrar. Ocho personas en total se salvarán en el arca. (1 Pedro 3:20)"
+      }
+    ],
+    "alimento": [
+      {
+        "quien": "",
+        "texto": "Guardas comida para tu familia y para los animales, como Dios mandó. (Génesis 6:21)"
+      }
+    ],
+    "obra_espera": [
+      {
+        "quien": "",
+        "texto": "Termina primero lo que señala el objetivo. Los planos se van abriendo uno por uno."
+      }
+    ],
+    "obra_lista": [
+      {
+        "quien": "",
+        "texto": "¡El arca está terminada, tal como Dios lo mandó!"
+      }
+    ],
+    "costado_completo": [
+      {
+        "quien": "",
+        "texto": "¡El costado está cerrado! Ahora entra por la puerta y levanta los cuartos de adentro. (Génesis 6:14)"
+      }
+    ],
+    "aposentos_completos": [
+      {
+        "quien": "",
+        "texto": "¡Listos los cuartos! Ahora sal y cubre el arca por fuera con brea. (Génesis 6:14)"
+      }
+    ],
+    "arca_lista": [
+      {
+        "quien": "",
+        "texto": "Noé hizo todo tal como Dios le mandó. (Génesis 6:22)"
+      },
+      {
+        "quien": "",
+        "texto": "Mira: los animales están llegando de dos en dos, macho y hembra. Recíbelos y guarda comida para todos. (Génesis 7:8-9)"
+      }
+    ],
+    "salida_falta": [
+      {
+        "quien": "",
+        "texto": "Todavía no. Primero termina el arca, guarda la comida y recibe a todos los animales."
+      }
+    ],
+    "libro_adam": [
+      {
+        "quien": "",
+        "texto": "Encontraste un rollo antiguo: «Este es el libro de la familia de Adán». Cuenta las generaciones desde Adán hasta Noé. (Génesis 5:1)"
+      }
+    ]
+  },
+  "secreto": {
+    "nombre": "Libro de las generaciones de Adán",
+    "referencia": "Génesis 5:1"
+  },
+  "repaso": {
+    "versiculo": "Mi arco pondré en las nubes, el cual será por señal de convenio entre mí y la tierra.",
+    "cita": "Génesis 9:13",
+    "preguntas": [
+      {
+        "pregunta": "¿De qué madera se construyó el arca?",
+        "opciones": [
+          "Gofer",
+          "Cedro",
+          "Olivo"
+        ],
+        "correcta": 0,
+        "explica": "Dios le dijo a Noé: «Haz un arca de madera de gofer». (Génesis 6:14)"
+      },
+      {
+        "pregunta": "¿Cuánto duró la lluvia?",
+        "opciones": [
+          "Siete días",
+          "Cuarenta días y cuarenta noches",
+          "Cien días"
+        ],
+        "correcta": 1,
+        "explica": "Llovió sobre la tierra cuarenta días y cuarenta noches. (Génesis 7:12)"
+      },
+      {
+        "pregunta": "¿Qué trajo la paloma?",
+        "opciones": [
+          "Una rama de cedro",
+          "Una hoja de oliva",
+          "Una espiga"
+        ],
+        "correcta": 1,
+        "explica": "La paloma volvió por la tarde con una hoja de olivo en el pico. (Génesis 8:11)"
+      }
+    ]
+  }
+}

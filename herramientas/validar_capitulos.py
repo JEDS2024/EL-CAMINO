@@ -65,6 +65,17 @@ def revisar(ruta):
                     vecinos = [(x, z), (x + 1, z), (x - 1, z), (x, z + 1), (x, z - 1)]
                     if not any(v in vistos for v in vecinos):
                         errores.append(f"no se puede llegar caminando a '{ch}' (columna {x}, fila {z})")
+    for identificador, plano in cap.get("planos", {}).items():
+        dialogo = plano.get("dialogo", "")
+        if dialogo and dialogo not in dialogos:
+            errores.append(f"el plano '{identificador}' usa el diálogo inexistente '{dialogo}'")
+        for pieza in plano.get("partes", [plano]):
+            if len(pieza.get("desde", [])) != 3 or len(pieza.get("tam", [])) != 3:
+                errores.append(f"el plano '{identificador}' necesita vectores desde/tam de tres valores")
+    for pieza in cap.get("estructuras", []):
+        for parte in pieza.get("partes", [pieza]):
+            if len(parte.get("desde", [])) != 3 or len(parte.get("tam", [])) != 3:
+                errores.append("una estructura necesita vectores desde/tam de tres valores")
     for nombre, lineas in dialogos.items():
         for l in lineas:
             for o in l.get("opciones", []):
@@ -74,6 +85,24 @@ def revisar(ruta):
         for k in ("dialogo_exito", "dialogo_fallo"):
             if a.get(k) and a[k] not in dialogos:
                 errores.append(f"el acertijo '{nombre}' usa el diálogo inexistente '{a[k]}'")
+    if cap.get("id") == "cap0_noe":
+        # Comprueba que las fuentes del mapa alcancen para construir los tres planos.
+        total = {"madera": 0, "brea": 0}
+        for plano in cap.get("planos", {}).values():
+            for parte in plano.get("partes", [plano]):
+                tam = parte["tam"]
+                material = parte.get("material", plano.get("material", ""))
+                if material in total:
+                    total[material] += tam[0] * tam[1] * tam[2]
+        fuente = {"madera": 0, "brea": 0}
+        for letra, defn in cap.get("leyenda", {}).items():
+            if defn.get("tipo") == "monton":
+                material = {"tronco": "madera"}.get(defn.get("material"), defn.get("material"))
+                if material in fuente:
+                    fuente[material] += int(defn.get("bloques", 0)) * sum(fila.count(letra) for fila in filas)
+        for material in total:
+            if fuente[material] < total[material]:
+                errores.append(f"hay {fuente[material]} bloques de {material}, pero los planos requieren {total[material]}")
     return errores
 
 

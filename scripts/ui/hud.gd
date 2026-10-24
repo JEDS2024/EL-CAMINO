@@ -8,6 +8,10 @@ signal pedir_interactuar
 signal pedir_vista
 signal pedir_pausa
 signal pedir_mochila
+signal pedir_ayuda
+signal pedir_picar
+signal pedir_poner
+signal elegir_casilla(i: int)
 
 const CASILLAS := 9
 const TAM_CASILLA := 62
@@ -16,6 +20,17 @@ var boton_accion: Button
 var boton_vista: Button
 var boton_pausa: Button
 var boton_mochila: Button
+var boton_ayuda: Button
+var _mision: PanelContainer
+var _mision_titulo: Label
+var _mision_texto: Label
+var _tween_mision: Tween
+var boton_picar: Button
+var boton_poner: Button
+var barra: HBoxContainer
+var construir := false  # el capítulo tiene bloques: se muestran Picar/Poner y la mira
+var casilla_elegida := -1
+var _marco: Panel
 var _valores := {}
 var _barra_luz: ProgressBar
 var _texto_luz: Label
@@ -35,7 +50,7 @@ func _ready() -> void:
 	mouse_filter = Control.MOUSE_FILTER_IGNORE
 
 	# barra de objetos (abajo al centro)
-	var barra := HBoxContainer.new()
+	barra = HBoxContainer.new()
 	barra.add_theme_constant_override("separation", 2)
 	barra.anchor_left = 0.5
 	barra.anchor_right = 0.5
@@ -51,12 +66,16 @@ func _ready() -> void:
 		var c := Panel.new()
 		c.custom_minimum_size = Vector2(TAM_CASILLA, TAM_CASILLA)
 		c.add_theme_stylebox_override("panel", Tema.textura("ranura", Vector2.ZERO))
-		c.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		c.mouse_filter = Control.MOUSE_FILTER_STOP
+		c.gui_input.connect(func(ev: InputEvent):
+			if (ev is InputEventScreenTouch or ev is InputEventMouseButton) and ev.pressed:
+				elegir_casilla.emit(i))
 		barra.add_child(c)
 		var ic := TextureRect.new()
 		ic.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 		ic.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		ic.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
+		ic.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		ic.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 		ic.offset_left = 10
 		ic.offset_top = 10
@@ -71,10 +90,21 @@ func _ready() -> void:
 		n.offset_top = -30
 		n.offset_right = -6
 		n.offset_bottom = -2
+		n.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		c.add_child(n)
 		_casillas.append(c)
 		_iconos.append(ic)
 		_cantidades.append(n)
+
+	# marco blanco sobre la casilla elegida (como en Minecraft)
+	_marco = Panel.new()
+	var borde := StyleBoxFlat.new()
+	borde.bg_color = Color(0, 0, 0, 0)
+	borde.border_color = Color(1, 1, 1, 0.95)
+	borde.set_border_width_all(4)
+	_marco.add_theme_stylebox_override("panel", borde)
+	_marco.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_marco.visible = false
 
 	# barra de luz (como la experiencia) justo encima
 	_barra_luz = ProgressBar.new()
@@ -145,7 +175,7 @@ func _ready() -> void:
 
 	# objetivo, título y avisos (arriba al centro)
 	_objetivo = _etiqueta(26, Color("fff3dc"))
-	Tema.anclar(_objetivo, 0.26, 0.0, 0.74, 0.0)
+	Tema.anclar(_objetivo, 0.2, 0.0, 0.7, 0.0)
 	_objetivo.offset_top = 18
 	_objetivo.add_theme_stylebox_override("normal", Tema.textura("panel", Vector2(18, 8)))
 	_titulo = _etiqueta(68, Color("ffd36b"))
@@ -163,6 +193,12 @@ func _ready() -> void:
 	boton_vista = _boton("", Vector2(150, 64))
 	_esquina(boton_vista, -258, 18, -104, 82)
 	boton_vista.pressed.connect(func(): pedir_vista.emit())
+	boton_ayuda = _boton("?", Vector2(72, 64))
+	_esquina(boton_ayuda, -338, 18, -266, 82)
+	boton_ayuda.add_theme_font_size_override("font_size", 34)
+	boton_ayuda.tooltip_text = "¿Qué hago ahora?"
+	boton_ayuda.pressed.connect(func(): pedir_ayuda.emit())
+	_crear_tarjeta_mision()
 	boton_mochila = _boton("Mochila", Vector2(150, 64))
 	_esquina(boton_mochila, -258, 94, -104, 158)
 	boton_mochila.pressed.connect(func(): pedir_mochila.emit())
@@ -178,6 +214,16 @@ func _ready() -> void:
 	boton_accion.offset_bottom = -50
 	boton_accion.visible = false
 	boton_accion.pressed.connect(func(): pedir_interactuar.emit())
+	# construir: encima del botón de acción
+	boton_poner = _boton("Poner", Vector2(96, 96))
+	_esquina_abajo(boton_poner, -240, -286, -144, -190)
+	boton_poner.pressed.connect(func(): pedir_poner.emit())
+	boton_picar = _boton("Picar", Vector2(96, 96))
+	_esquina_abajo(boton_picar, -136, -286, -40, -190)
+	boton_picar.pressed.connect(func(): pedir_picar.emit())
+	for b in [boton_poner, boton_picar]:
+		b.add_theme_font_size_override("font_size", 26)
+		b.visible = false
 
 	Juego.estado_cambiado.connect(actualizar)
 	actualizar()
@@ -186,6 +232,17 @@ func _ready() -> void:
 func _esquina(b: Control, izq: float, arriba: float, der: float, abajo: float) -> void:
 	b.anchor_left = 1.0
 	b.anchor_right = 1.0
+	b.offset_left = izq
+	b.offset_right = der
+	b.offset_top = arriba
+	b.offset_bottom = abajo
+
+
+func _esquina_abajo(b: Control, izq: float, arriba: float, der: float, abajo: float) -> void:
+	b.anchor_left = 1.0
+	b.anchor_right = 1.0
+	b.anchor_top = 1.0
+	b.anchor_bottom = 1.0
 	b.offset_left = izq
 	b.offset_right = der
 	b.offset_top = arriba
@@ -220,13 +277,31 @@ func actualizar() -> void:
 	create_tween().tween_property(_barra_luz, "value", Juego.luz, 0.6)
 	_texto_luz.text = "Luz %d" % int(Juego.luz)
 	boton_vista.text = "Vista: 1ª" if Juego.primera_persona else "Vista: 3ª"
-	_mira.visible = Juego.primera_persona
+	_mira.visible = Juego.primera_persona or construir
 	var objetos: Array = Juego.inventario_capitulo().values()
 	for i in CASILLAS:
 		var o: Dictionary = objetos[i] if i < objetos.size() else {}
 		_iconos[i].texture = load("res://assets/iconos/%s.png" % o["icono"]) if o.has("icono") else null
 		_cantidades[i].text = str(o["cantidad"]) if o.get("cantidad", 0) > 1 else ""
 		_casillas[i].add_theme_stylebox_override("panel", Tema.textura("ranura_sel" if o.get("reliquia", false) else "ranura", Vector2.ZERO))
+	_marco.visible = casilla_elegida >= 0 and casilla_elegida < CASILLAS
+	if _marco.visible:
+		if _marco.get_parent():
+			_marco.get_parent().remove_child(_marco)
+		_casillas[casilla_elegida].add_child(_marco)
+		_marco.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		_marco.offset_left = -3
+		_marco.offset_top = -3
+		_marco.offset_right = 3
+		_marco.offset_bottom = 3
+
+
+## Muestra u oculta Picar/Poner; se atenúan cuando no hay nada que picar o dónde poner.
+func fijar_construccion(visible_si: bool, puede_picar: bool, puede_poner: bool) -> void:
+	for b in [boton_picar, boton_poner]:
+		b.visible = visible_si
+	boton_picar.modulate.a = 1.0 if puede_picar else 0.45
+	boton_poner.modulate.a = 1.0 if puede_poner else 0.45
 
 
 func fijar_accion(texto: String) -> void:
@@ -234,9 +309,64 @@ func fijar_accion(texto: String) -> void:
 	boton_accion.text = texto
 
 
+## Tarjeta «Nueva misión»: qué hay que hacer y cómo, debajo del objetivo. No detiene el juego.
+func _crear_tarjeta_mision() -> void:
+	_mision = PanelContainer.new()
+	Tema.anclar(_mision, 0.2, 0.0, 0.7, 0.0)
+	_mision.offset_top = 78
+	_mision.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_mision.modulate.a = 0.0
+	add_child(_mision)
+	var col := VBoxContainer.new()
+	col.add_theme_constant_override("separation", 6)
+	col.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_mision.add_child(col)
+	_mision_titulo = Label.new()
+	_mision_titulo.add_theme_color_override("font_color", Color("ffd36b"))
+	_mision_titulo.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	col.add_child(_mision_titulo)
+	_mision_texto = Label.new()
+	_mision_texto.add_theme_font_override("font", Tema.fuente_lectura())
+	_mision_texto.add_theme_color_override("font_color", Color("fff3dc"))
+	_mision_texto.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	col.add_child(_mision_texto)
+
+
+## Muestra la misión con su explicación durante unos segundos.
+func mostrar_mision(titulo: String, como: String, nueva: bool) -> void:
+	if titulo == "":
+		return
+	_mision_titulo.text = ("Nueva misión: " if nueva else "Misión: ") + titulo
+	_mision_texto.text = como
+	_mision_texto.visible = como != ""
+	var grande := Juego.texto_grande
+	_mision_titulo.add_theme_font_size_override("font_size", 30 if grande else 26)
+	_mision_texto.add_theme_font_size_override("font_size", 34 if grande else 28)
+	_colocar_mision.call_deferred()
+	if _tween_mision:
+		_tween_mision.kill()
+	_tween_mision = create_tween()
+	_tween_mision.tween_property(_mision, "modulate:a", 1.0, 0.3)
+	_tween_mision.tween_interval(clampf(4.0 + como.length() * 0.06, 6.0, 14.0))
+	_tween_mision.tween_property(_mision, "modulate:a", 0.0, 0.8)
+
+
+## Siempre debajo del objetivo, aunque este ocupe dos líneas (su alto se conoce un cuadro después).
+func _colocar_mision() -> void:
+	_objetivo.offset_bottom = _objetivo.offset_top + _objetivo.get_combined_minimum_size().y
+	_mision.offset_top = _objetivo.position.y + _objetivo.size.y + 10 if _objetivo.visible else 18.0
+
+
+func ocultar_mision() -> void:
+	if _tween_mision:
+		_tween_mision.kill()
+	_mision.modulate.a = 0.0
+
+
 func fijar_objetivo(texto: String) -> void:
 	_objetivo.text = ("» " + texto) if texto != "" else ""
 	_objetivo.visible = texto != ""
+	_colocar_mision.call_deferred()
 
 
 func mostrar_titulo(titulo: String, subtitulo: String) -> void:

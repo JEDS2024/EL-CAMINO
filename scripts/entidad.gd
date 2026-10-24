@@ -1,7 +1,7 @@
 class_name Entidad
 extends Node3D
 ## Todo lo que se puede tocar en el mundo: personajes (npc), lámparas, letreros,
-## objetos, mecanismos (pozo, brecha del muro, montón) y salidas. Su comportamiento viene del JSON.
+## objetos, mecanismos (pozo, brecha del muro, montón), obras (se reparan con bloques) y salidas. Su comportamiento viene del JSON.
 ## Opcionales para cualquier entidad: "aparece_si" (condiciones para existir), "etiqueta" (nombre
 ## flotante) y "accion" (texto del botón).
 
@@ -14,6 +14,8 @@ var solido := false
 var encendida := false
 
 var personaje: Personaje3D
+var animales: Array[Oveja] = []
+var _recibida := false
 var sprite: Sprite3D
 var simbolo: Sprite3D
 var luz: OmniLight3D
@@ -77,6 +79,17 @@ func preparar(d: Dictionary, n: Nivel) -> void:
 				"monton": _crear_monton()
 				_: _crear_pozo()
 			solido = true
+		"obra":
+			if not d.has("planos"):  # con "planos" solo es un cartel de planos ya definidos en el JSON
+				nivel.agregar_obra(self)
+		"pareja":
+			var especies: Array = d.get("especies", [d.get("especie", "oveja"), d.get("especie", "oveja")])
+			for i in mini(2, especies.size()):
+				var animal := Oveja.new()
+				animal.configurar(String(especies[i]))
+				animal.position = Vector3(-0.55 if i == 0 else 0.55, 0, 0)
+				add_child(animal)
+				animales.append(animal)
 		"salida":
 			sprite = _sprite("arco_cerrado", 0.13, 0.0)
 			luz = OmniLight3D.new()
@@ -272,7 +285,9 @@ func texto_accion() -> String:
 		"lampara": return "Encender"
 		"letrero": return "Leer"
 		"objeto": return "Tomar"
+		"pareja": return String(def.get("accion", "Recibir"))
 		"mecanismo": return "Usar"
+		"obra": return "Ver la obra"
 		"salida": return "Cruzar"
 	return "Ver"
 
@@ -316,6 +331,23 @@ func interactuar(main: Node) -> void:
 			var t := create_tween()
 			t.tween_property(self, "scale", Vector3.ZERO, 0.3)
 			t.tween_callback(queue_free)
+		"pareja":
+			if _recibida:
+				return
+			_recibida = true
+			var efectos: Dictionary = def.get("efectos", {}).duplicate(true)
+			var marcas = efectos.get("flag", [])
+			marcas = marcas if marcas is Array else [marcas]
+			if def.has("id"):
+				marcas.append("tomado_" + String(def["id"]))
+			efectos["flag"] = marcas
+			Juego.aplicar(efectos)
+			var destino: Array = def.get("destino", [global_position.x, global_position.y, global_position.z])
+			var puerta := Vector3(float(destino[0]), float(destino[1]), float(destino[2]))
+			for animal in animales:
+				animal.ir_a(puerta)
+			remove_from_group("interactuable")
+			main.decir("La pareja entra en el arca.")
 		"mecanismo":
 			var flag_activo := "flag:" + String(def.get("flag_activo", ""))
 			if Juego.cumple(flag_activo):
@@ -331,6 +363,25 @@ func interactuar(main: Node) -> void:
 				main.iniciar_dialogo(def.get("dialogo_listo", ""))
 			else:
 				main.iniciar_dialogo(def.get("dialogo_falta", ""))
+		"obra":
+			if def.has("planos"):
+				var con := nivel.construccion
+				for id_plano in def["planos"]:
+					if con.planos.has(id_plano) and not con.planos[id_plano]["hecho"]:
+						if con.planos[id_plano]["activo"]:
+							main.ayuda_construir(con.faltan(id_plano))
+						else:
+							main.iniciar_dialogo(def.get("dialogo_falta", ""))
+						return
+				main.iniciar_dialogo(def.get("dialogo_hecho", ""))
+				return
+			var id := String(def.get("flag_activo", ""))
+			if Juego.cumple("flag:" + id):
+				main.iniciar_dialogo(def.get("dialogo_hecho", ""))
+			elif not Juego.cumple(def.get("requiere", [])):
+				main.iniciar_dialogo(def.get("dialogo_falta", ""))
+			else:
+				main.ayuda_construir(nivel.construccion.faltan(id))
 		"salida":
 			if Juego.cumple(def.get("requiere", [])):
 				main.terminar_capitulo()
@@ -347,6 +398,18 @@ func _process(delta: float) -> void:
 	if aviso and aviso.visible:
 		aviso.position.y = 2.95 + sin(_t * 4.0) * 0.1
 	if not activo:
+		return
+	if tipo == "pareja" and _recibida:
+		var destino_a: Array = def.get("destino", [global_position.x, global_position.y, global_position.z])
+		var puerta := Vector3(float(destino_a[0]), float(destino_a[1]), float(destino_a[2]))
+		var llegaron := true
+		for animal in animales:
+			if is_instance_valid(animal) and Vector2(animal.global_position.x - puerta.x, animal.global_position.z - puerta.z).length() > 0.9:
+				llegaron = false
+		if llegaron:
+			for animal in animales:
+				if is_instance_valid(animal): animal.queue_free()
+			queue_free()
 		return
 	if simbolo:
 		simbolo.position.y += sin(_t * 2.5) * 0.002
@@ -399,7 +462,8 @@ func _mover_personaje(delta: float) -> void:
 	if def.get("aldeano", false) and dist > 3.0 and not personaje.hablando:
 		var paso := _vagar(delta)
 		if paso != Vector3.ZERO:
-			personaje.actualizar(delta, paso, true)
+			# el paso de un cuadro mide ~2 cm: sin normalizar, el modelo no giraba y caminaba de espaldas
+			personaje.actualizar(delta, paso.normalized(), true)
 			return
 	# quieto: solo gira el cuerpo si estás muy cerca y a un costado (la cabeza ya te mira)
 	var girar := hacia if dist < 3.2 else Vector3.ZERO
